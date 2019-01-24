@@ -2,10 +2,7 @@
 <html xmlns:th="https://www.thymeleaf.org">
 
 <head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link},~{})">
-    <title th:text="${'InnoSensr - ' + #strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}">InnoSensr</title>
-    <!--
     <title th:text="${'OpenReq!Live - ' + #strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}">OpenReq</title>
-    -->
     <link href="/css/mvp.css?v=3" rel="stylesheet" media="screen" />
     <link href="/css/openreq-mvp.css?v=3" rel="stylesheet" media="screen" />
     <link href="/css/jquery-ui.min.css" rel="stylesheet" media="screen" />
