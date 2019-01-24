@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title>Choiclaweb</title>
+
+</head>
+
+<body>
+
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:replace="fragments/basictemplate :: subtitle('Loginpage','Register at Choicla Web to use advanced features and get a better overview about your polls.')"></div>
+
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+	    <div class="starter-template">
+	        <h1>403 - Access is denied</h1>
+	        <div th:inline="text">Hello '[[${#httpServletRequest.remoteUser}]]',
+	                you do not have permission to access this page.</div>
+	    </div>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate:: footer">&nbsp;</div>
+
+</body>
+
+</html>

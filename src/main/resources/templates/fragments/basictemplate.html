@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns="https://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:fragment="common_header(title,links,scripts)">
+    <!-- Required meta tags -->
+    <meta name="viewport" charset="UTF-8" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1" />
+    <!-- <title th:replace="${title}">OpenReq - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title> -->
+    <title th:replace="${title}">InnoSensr - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/font-awesome-4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css" />
+    <link href="/css/bootstrap-datepicker.css" rel="stylesheet" media="screen" />
+    <link href="/css/sweetalert2.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/materialize.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" media="screen" />
+    <th:block th:replace="${links}" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+            integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+            crossorigin="anonymous"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script> -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
+    <!-- Include Bootstrap Scripts -->
+    <script src="/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/bootstrap-datepicker.de.min.js"></script>
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <th:block th:replace="${scripts}" />
+</head>
+
+<div class="or-navbar navbar navbar-fixed-top navbar-default" th:fragment="header(visible,isLoggedIn,isExtendedNavbarMode)">
+    <div class="container" th:classappend="${isExtendedNavbarMode} ? 'or-navbar-container' : ''">
+        <div th:if="${isExtendedNavbarMode}" class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false" th:if="${visible}">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="or-navbar-logo-small navbar-brand" href="/">
+                <i class="material-icons dp48">keyboard_arrow_left</i><img alt="Logo" src="/images/innosensr_small.png" height="32" />
+                <!-- <i class="material-icons dp48">keyboard_arrow_left</i><img alt="Logo" src="/images/openreq_small.png" height="32" /> -->
+            </a>
+            <div id="or-navbar-content-container"></div>
+        </div>
+        <div th:unless="${isExtendedNavbarMode}" class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false" th:if="${visible}">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="or-navbar-logo-normal navbar-brand" href="/" title="InnoSensr - Manage your requirements with ease"><img alt="Logo" src="/images/innosensr_logo.png" width="130" /></a>
+            <!--
+            <a class="or-navbar-logo-normal navbar-brand" href="/" title="OpenReq!Live"><img alt="Logo" src="/images/openreq.png" width="130" /></a>
+            -->
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" th:if="${visible}">
+        <!--
+            <ul class="nav navbar-nav navbar-right">
+                <li class="or-navbar-user-section" th:if="${isLoggedIn}"><a th:href="@{/logout}" onclick="return alert('Logout!');">Administrator</a></li>
+                <li><a href="?lang=en">EN</a></li>
+                <li><a href="?lang=de">DE</a></li>
+
+                <li style="display: none;"><a href="/login">Login</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" style="display: none;">
+                        Profile <span class="caret"></span></a>
+                    <ul class="dropdown-menu" >
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="#">Edit</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+          -->
+	        <ul class="nav navbar-nav navbar-right">
+				<li class="dropdown" sec:authorize="isAuthenticated()">
+		          <a href="#" class="or-navbar-user-section dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="padding:0 5px !important;margin:0 !important;">
+                    <!-- th:style="'background-image:url(\'' + ${#authentication.getPrincipal().getProfileImagePath()} + '\');'" -->
+                    <span class="or-avatar-image-area" style="height: 40px;display: inline-block;width: 42px;margin: 4px 4px 4px 0 !important;">
+                        <img style="height: 42px;width: 42px;" th:src="${#authentication.getPrincipal().getProfileImagePath()}" class="or-message-avatar or-avatar" th:alt="${#authentication.getPrincipal().getFullName()}" />
+                    </span>
+                    <span class="or-avatar-text-area" style="height: auto;display: inline-block;margin-top: auto;margin-bottom: auto;">
+                        <th:block th:text="${#authentication.getPrincipal().getShortFullName(12)}"></th:block> <span class="caret"></span>
+                    </span>
+		          </a>
+		          <ul class="dropdown-menu">
+		            <!-- <li><a href="#">Action</a></li>
+		            <li role="separator" class="divider"></li> -->
+                    <!-- account_circle, contact_mail -->
+                      <li><a th:href="@{/user/profile}"><span class="material-icons" style="font-size:20px;padding-top:5px;">account_box</span> <span>My Profile</span></a></li>
+		            <li><a th:href="@{/logout}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+		          </ul>
+		        </li>
+	          <li th:unless="${isExtendedNavbarMode}" sec:authorize="!isAuthenticated()"><a href="/registration">
+	              <span class="glyphicon glyphicon-user"></span><span>Sign up</span>
+	            </a></li>
+	          <li sec:authorize="!isAuthenticated()"><a href="/login">
+	              <span class="glyphicon glyphicon-lock"></span><span>Log in</span>
+	            </a></li>
+	          <!--
+	          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">
+	              <span class="glyphicon glyphicon-globe"></span><span>Language</span><span class="caret"></span>
+	            </a>
+	            <ul class="dropdown-menu">
+	              <li><a href="?lang=en">
+	                  <span>Englisch</span> <span class="glyphicon glyphicon-ok"></span>
+	                </a></li>
+	              <li><a href="?lang=de">
+	                  <span>Deutsch</span>
+	                </a></li>
+	            </ul></li>
+	          -->
+	        </ul>
+        </div>
+    </div>
+    <!--
+	<div class="fixed-action-btn">
+	    <a id="or-add-release-button" class="btn-floating btn-large waves-effect waves-light orange darken-4 z-depth-3 hoverable" href="#"><i class="material-icons">add</i></a>
+	</div>
+	<div class="tap-target" data-activates="or-add-release-button">
+	    <div class="tap-target-content">
+	      <h5>Add release</h5>
+	      <p>Click here to add a new release!</p>
+	    </div>
+	</div>
+	-->
+</div>
+
+<div id="maincontainer" th:fragment="maintitle(value)" th:insert="${value}">
+    <!-- ============================================================================ -->
+    <!-- This content is only used for static prototyping purposes (natural templates)-->
+    <!-- and is therefore entirely optional.
+    <!-- ============================================================================ -->
+    <h1>Static content for prototyping purposes only</h1>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+        Phasellus et placerat elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+        Phasellus et placerat elit.
+    </p>
+</div>
+
+<div id="maincontainer" th:fragment="subtitle(title, description)">
+    <div class="container">
+        <row class="top-buffer">
+            <h2 class="title" th:text="${title}">Page.Title</h2>
+        </row>
+        <row>
+            <p class="title" th:text="${description}">Page.Description</p>
+        </row>
+    </div>
+</div>
+
+<div id="maincontainer" th:fragment="project_header(activeSection, id, title, image_path)">
+    <div class="container">
+        <row class="top-buffer">
+            <h2 class="title"><img th:src="${image_path}" class="img-thumbnail" style="max-width:80px;max-height:40px;margin-right:20px" /><th:block th:text="${title}"></th:block></h2>
+        </row>
+        <row>
+	        <a th:href="'/project/' + ${id} + '/requirement/list/new'" th:class="'btn ' + (${activeSection == 1} ? 'btn-info' : 'btn-secondary') + ' btn-lg active'" role="button" aria-pressed="true" style="width:24%;">Requirements</a>
+			<a th:href="'/project/' + ${id} + '/release/list/new'" th:class="'btn ' + (${activeSection == 2} ? 'btn-info' : 'btn-secondary') + ' btn-lg active'" role="button" aria-pressed="true" style="width:24%;">Releases</a>
+			<a onclick="alert('Issues are not supported by the first prototype.');return false;" href="#" th:class="'btn ' + (${activeSection == 3} ? 'btn-info' : 'btn-secondary') + ' btn-lg active'" role="button" aria-pressed="true" style="width:24%;">Issues</a>
+			<a th:href="'/project/' + ${id} + '/info'" th:class="'btn ' + (${activeSection == 4} ? 'btn-info' : 'btn-secondary') + ' btn-lg active'" role="button" aria-pressed="true" style="width:24%;">General</a>
+        </row>
+    </div>
+</div>
+
+<div id="maincontainer" th:fragment="requirement_header(project_title, requirement_title)">
+    <div class="container">
+        <row class="top-buffer">
+            <h2 class="title" th:text="${project_title}"></h2>
+            <h3 class="title" th:text="${requirement_title}"></h3>
+        </row>
+        <row>
+        		<p>&nbsp;</p>
+        		<div>
+		        <a href="#" class="btn btn-info btn-lg active" role="button" aria-pressed="true" style="width:48%;">General</a>
+				<a href="#" onclick="alert('Dependencies are not supported by the first prototype.'); return false;" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" style="width:48%;margin-left:1%;">Dependencies</a>
+			</div>
+        </row>
+    </div>
+</div>
+
+<div id="maincontainer" th:fragment="release_header(project_title)">
+    <div class="container">
+        <row class="top-buffer">
+            <h2 class="title" th:text="${project_title}"></h2>
+        </row>
+    </div>
+</div>
+
+<div id="contentcontainer" th:fragment="content(value)" th:insert="${value}">
+    <!-- ============================================================================ -->
+    <!-- This content is only used for static prototyping purposes (natural templates)-->
+    <!-- and is therefore entirely optional.
+    <!-- ============================================================================ -->
+    <h1>Static content for prototyping purposes only</h1>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+        Phasellus et placerat elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+        Phasellus et placerat elit.
+    </p>
+</div>
+
+<div id="contentcontainer" th:fragment="panelcollapse(value)">
+    <div class="container">
+        <div class="dashboardpanel" th:insert="${value}">
+
+        </div>
+
+    </div>
+</div>
+
+<div class="footer" th:fragment="footer">
+    <div class="container">
+    <!-- 
+    <footer class="page-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <h5 class="white-text">Footer Content</h5>
+            <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+          </div>
+          <div class="col l4 offset-l2 s12">
+            <h5 class="white-text">Links</h5>
+            <ul>
+              <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+              <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+              <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+              <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+        © 2014 Copyright Text
+        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+        </div>
+      </div>
+    </footer>
+     -->
+        <div class="col-md-12 nopadding" style="text-align: center">
+           <div>Copyright 2018. <a href="https://ase.ist.tugraz.at" target="_blank">Powered by Applied Artificial Intelligence Group @ TU Graz</a></div>
+           <div><a href="/aboutus" th:text="#{footer.needHelp}">Need help</a>&nbsp;|&nbsp;<a href="/privacypolicy">Privacy policy</a>&nbsp;|&nbsp;<a href="mailto:innosensr@gmail.com" th:text="#{footer.feedback}">Feedback</a></div>
+        </div>
+    </div>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128248883-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-128248883-1');
+    </script>
+</div>
+
+</body>
+</html>

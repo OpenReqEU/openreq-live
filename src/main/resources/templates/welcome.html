@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link},~{})">
+    <title th:text="#{index.browserTitle}">InnoSensr - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title>
+    <link href="/css/analysis.css" rel="stylesheet" media="screen" />
+</head>
+<body>
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <div id="or-overlay">
+            <div id="or-overlay-text">
+                <div>You seem to be inactive...</div>
+                <div class="or-overlay-description">Click anywhere on this page to hide this screen.</div>
+            </div>
+        </div>
+        <div class="row">
+            <div th:insert="fragments/basictemplate :: maintitle(~{::#maintitle})">
+                <div id="maintitle" class="container">
+                    <h1 class="title text-center">Requirement Dependency Analysis</h1>
+                    <h2 class="text-center hidden-xs">Analyzation of a given set of requirement pairs.</h2>
+                    <div>
+                        <p>Dear Students,</p>
+
+                        <p>
+                        welcome to the "Requirement Dependency Analyzation" task of assignment sheet 2 ("Übungsblatt 2")!
+                        In this task you have to identify dependencies between software requirements for the development of a "Smart
+                        House", called DigitalHome (DH).  A "Smart House" is a home management system that allows
+                        home residents to easily manage their daily lives by providing for a lifestyle that
+                        brings together security, environmental and energy management (temperature,
+                        humidity and lighting), entertainment, and communications.
+                        </p>
+
+                        <p>
+                        All software requirements of DH are defined and listed in the <a href="/upload/re_smarthome.pdf">PDF file</a> (<a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" width="20" height="21" style="margin-right:8px;" />Download PDF</a>).
+                        <div class="alert alert-danger or-alert">
+                            Before you start with the identification of the dependencies between the requirements, please read the <a href="/upload/re_smarthome.pdf">PDF document</a> VERY CAREFULLY!<br />
+                            Requirement dependencies can ONLY be identified correctly, after you completely understood the full content of the given PDF document.
+                        </div>
+                        </p>
+
+                        <p>
+                        On the next page you find a list of requirement pairs which has to be analyzed by you.
+                        Your task is to manually analyze the two requirements of each requirement pair individually and
+                        then to classify whether there exists a dependency between the two different requirements or not.
+                        The analyzation/classification of each pair should be done based on the descriptions of both requirements
+                        and the background knowledge you gained when reading the PDF document.
+                        </p>
+
+                        <h2>Dependency types:</h2>
+                        <p>
+                        For every classified dependency you also have to specify the type of the dependency.
+                        Thereby, you have to choose one of the following 4 different dependency types:
+                        <ul class="or-explanation-list">
+                            <li>
+                                <b>REQUIRES dependency:</b><br />
+                                x REQUIRES y: For the implementation of the Requirement x, Requirement y needs to be implemented first.
+                                <b>Attention:</b> A REQUIRES DEPENDENCY is always <i>unidirectional</i>, that means (x REQUIRES y) is NOT the same as (y REQUIRES x).
+                            </li>
+                            <li>
+                                <b>EXCLUDES dependency:</b><br />
+                                x EXCLUDES y: Requirement x and requirement y can not implemented in the same release, which means that the implementation of x forbids the implementation of y and vice versa.
+                            </li>
+                            <li>
+                                <b>IS SIMILAR TO dependency:</b><br />
+                                Rx IS SIMILAR TO Ry: Both Requirements are similar or related to each other based on their descriptions.
+                            </li>
+                            <li>
+                                <b>IS PART OF dependency:</b><br />
+                                x IS PART OF y: Requirement x is a part of requirement y means that y includes x.
+                                This can also be interpreted as follow: x is child/subrequirement of y, whereby y can have several children/subrequirements.
+                            </li>
+                        </ul>
+
+                        <h2>Examples for dependency types:</h2>
+                        <p>
+                            To understand the meaning of the 4 given dependency types a demonstrative example is provided.
+                            Consider the following subset of requirements for the development of a sportswatch:<br />
+                            <u>Requirement a:</u> For statistical purposes, a distance measurement is necessary.<br />
+                            <u>Requirement b:</u> The average length of steps are required.<br />
+                            <u>Requirement c:</u> Number of steps have to be measured with a pedometer.<br />
+                            <u>Requirement d:</u> The sportswatch should only be based on iOS.<br />
+                            <u>Requirement e:</u> The sportswatch should only be based on Android.<br />
+                        </p>
+
+                        <p>
+                            <u>Dependencies of <i>unidirectional</i> type <b>REQUIRES</b>:</u><br />
+                            Requirement <b>a</b> REQUIRES requirement <b>b</b><br />
+                            Requirement <b>a</b> REQUIRES requirement <b>c</b><br /><br />
+                            <u>Reason:</u> <i>in order to implement requirement a requirement b must be implemented first
+                            because for the calculation of the distance the average length of steps is needed (i.e., a REQUIRES b).
+                            Also, the number of steps must be measured as well to compute the distance (i.e., a REQUIRES c).</i><br /><br />
+                        </p>
+
+                        <p>
+                            <u>Dependencies of <i>unidirectional</i> type <b>IS PART OF</b>:</u><br />
+                            Requirement <b>c</b> IS PART OF requirement <b>a</b><br />
+                            Requirement <b>b</b> IS PART OF requirement <b>a</b>
+                        </p>
+
+                        <p>
+                            <u>Dependencies of <i>bidirectional</i> type <b>EXCLUDES</b>:</u><br />
+                            Requirement <b>d</b> EXCLUDES requirement <b>e</b> (is equivalent to <b>e</b> EXCLUDES <b>d</b>, because it's a <i>bidirectional</i> dependency)<br />
+                        </p>
+
+                        <p>
+                            <u>Dependencies of <i>bidirectional</i> type <b>IS SIMILAR TO</b>:</u><br />
+                            Requirement <b>b</b> IS SIMILAR TO requirement <b>a</b> (is equivalent to <b>a</b> IS SIMILAR TO <b>b</b>, because it's a <i>bidirectional</i> dependency)<br />
+                        </p>
+
+                        <p>
+                            <div class="alert alert-warning">
+                                Keep in mind that you will <b>ONLY</b> get all points if all of your defined requirement dependencies are accurate.<br />
+                                <b>Deadline:</b> 2018/12/04 at 11:59:00 PM
+                            </div>
+                        </p>
+
+                        <div class="center" th:unless="${deadlineExpired}">
+                            <p th:if="${continue}">
+                                <a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" th:href="'/project/' + ${project.uniqueKey} + '/requirement/pairs/recommend'" role="button">Continue</a>
+                            </p>
+                            <p th:unless="${continue}">
+                                <a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" th:href="'/project/' + ${project.uniqueKey} + '/requirement/pairs/recommend'" role="button">Start</a>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+</body>
+</html>

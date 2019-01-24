@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="https://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head></head>
+
+<div id="or-image-upload-container-area" th:fragment="imageUploadContainer(defaultImageUrl)" style="display:none;">
+    <div class="or-image-upload-container">
+        <div class="or-image-upload-loader">
+            <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="or-image-cropper-area">
+            <img style="width: auto;height: auto;max-width: 100%;" th:src="${defaultImageUrl}" class="or-image" />
+        </div>
+        <div style="margin-top:20px;text-align:center;">
+            <div class="btn-group">
+                <a href="#" class="or-imagecropper-zoom-in btn btn-primary" title="Zoom In">
+                    <span class="fa fa-search-plus"></span>
+                </a>
+                <a href="#" class="or-imagecropper-zoom-out btn btn-primary" title="Zoom Out">
+                    <span class="fa fa-search-minus"></span>
+                </a>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="or-imagecropper-rotate-left btn btn-primary" title="Rotate Left">
+                    <span class="fa fa-rotate-left"></span>
+                </a>
+                <a href="#" class="or-imagecropper-rotate-right btn btn-primary" title="Rotate Right">
+                    <span class="fa fa-rotate-right"></span>
+                </a>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="or-imagecropper-flip-horizontal btn btn-primary" title="Flip Horizontal">
+                    <span class="fa fa-arrows-h"></span>
+                </a>
+                <a href="#" class="or-imagecropper-flip-vertical btn btn-primary" title="Flip Vertical">
+                    <span class="fa fa-arrows-v"></span>
+                </a>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="or-imagecropper-reset btn btn-primary" title="Reset">
+                    <span class="fa fa-remove"></span>
+                </a>
+                <a href="#" class="or-imagecropper-upload btn btn-primary" title="Upload">
+                    <span class="fa fa-check"></span>
+                </a>
+            </div>
+        </div>
+        <div id="or-output"></div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>figure</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="figure">
+            <g id="img" fill="#E3E3E3">
+                <rect x="0" y="0" width="150" height="150" rx="29"></rect>
+            </g>
+            <g id="Group" transform="translate(34.000000, 42.000000)" fill="#FFFFFF">
+                <polygon id="Path-2" points="0 44 17.3022434 6 39.2930581 31.6008375 48.1083307 25 63 44"></polygon>
+                <ellipse id="Oval" cx="57" cy="6.5" rx="7" ry="6.5"></ellipse>
+                <polygon id="+" points="72.3009901 45.6990099 72.3009901 39 68.6990099 39 68.6990099 45.6990099 62 45.6990099 62 49.3009901 68.6990099 49.3009901 68.6990099 56 72.3009901 56 72.3009901 49.3009901 79 49.3009901 79 45.6990099"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

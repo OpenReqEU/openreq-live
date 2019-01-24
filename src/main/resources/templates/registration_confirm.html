@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title th:text="#{index.browserTitle}">OpenReq - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title>
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+	<div id="content" class="container">
+	    <div class="row">
+			<p>&nbsp;</p>
+			<div th:insert="fragments/basictemplate :: maintitle(~{::#maintitle})">
+			    <div id="maintitle" class="container">
+			        <h1 class="title text-center">Account Confirmation</h1>
+			    </div>
+			</div>
+			<div th:if="${registerConfirm} == 'alreadyconfirmed'">
+                <div class="alert alert-warning">
+                    Your account has already been confirmed.
+                    You can log in.
+                </div>
+                <p>&nbsp;</p>
+                <p class="center"><a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="/login" role="button">Login</a></p>
+            </div>
+			<div th:if="${registerConfirm} == 'invalidconfirmationkey'">
+                <div class="alert alert-danger">
+                    Invalid confirmation key given!
+                    You need to activate your account first before you can log in.
+                </div>
+            </div>
+			<div th:if="${registerConfirm} == 'confirmed'">
+                <div class="alert alert-success">
+                    You've successfully confirmed your account.
+                    Please log in.
+                </div>
+                <p>&nbsp;</p>
+                <p class="center"><a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="/login" role="button">Login</a></p>
+            </div>
+	    </div>
+	</div>
+</div>
+
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script>
+$(document).ready(function () {
+	$("#or-form-registration").submit(function () {
+		if (!$("#terms").is(':checked')) {
+			swal("Terms and Conditions", "You must agree with the terms and conditions!", "error");
+			return false;
+		}
+		if (!$("#privacy-policy").is(':checked')) {
+			swal("Privacy policy", "You must agree with the privacy policy!", "error");
+			return false;
+		}
+		return true;
+	});
+	$("#or-terms-conditions-button").on("click", function () {
+		swal("Terms and Conditions", "The text goes here...");
+		return false;
+	});
+	$("#or-privacy-policy-button").on("click", function () {
+		swal("Privacy policy", '<div class="or-privacy-page-content" style="overflow-y:scroll;max-height:700px;text-align:left;"> \
+				<h2>Data protection</h2> \
+				<p>The operators of these pages take the protection of your \
+					personal data very seriously. We treat your personal data \
+					confidentially and in accordance with the statutory data \
+					protection regulations as well as this privacy policy.</p> \
+				<p>The use of our web site is usually possible without \
+					providing personal information. As far as on our sides personal \
+					data (e.g name, address or e-mail addresses) are collected, this \
+					takes place, as far as possible, always on voluntary basis. The \
+					data is used to provide general information about other \
+					participants for all registered participants of an event - and \
+					only these ones. The deletion of this data takes place if the \
+					participant unregisters from the event or the event itself is \
+					removed. Further this data will not be disclosed to third parties \
+					without your explicit consent.</p> \
+				<p>In case of changes or actions regarding events in which you \
+					participate, you receive notifications via e-mail if an \
+					e-mail address has been provided. You can disable this behavior \
+					in the settings of your account.</p> \
+					<p>User which are participating in an event can only be seen by other \
+					participants that were invited or have access to the event. Postings which \
+					were created by users can also only be read by other participants of an event.</p> \
+				<p>We point out, that the data transfer on the Internet (e.g. \
+					with the communication by e-mail) may have vulnerabilities. A \
+					complete protection of the data from access by third parties is \
+					not possible.</p> \
+				<p>&nbsp;</p> \
+				<h2>Cookies</h2> \
+				<p>The internet pages partly use so-called cookies. Cookies do \
+					not damage your computer and do not contain any viruses. Cookies \
+					serve to make our offer more user-friendly, more effective and \
+					more secure. Cookies are small text files that are filed on your \
+					computer and stored by your browser.</p> \
+				<p>Most of the cookies we use are so-called "session cookies". \
+					They are automatically deleted after your visit. Other cookies \
+					remain stored on your device until you delete them. These cookies \
+					allow us to recognize your browser the next time you visit.</p> \
+				<p>You can set your browser so that you are informed about the \
+					setting of cookies and allow cookies only in individual cases, the \
+					acceptance of cookies for certain cases or generally exclude as \
+					well as activate the automatic deletion of cookies when closing \
+					the browser. Disabling cookies may limit the functionality of this \
+					website.</p> \
+				<p>&nbsp;</p> \
+				<h2>Server-Log-Files</h2> \
+				<p>The provider of the pages automatically collects and stores \
+					information in so-called server log files, which your browser \
+					automatically transmits to us. These are:</p> \
+				<ul> \
+					<li>Browser type and version</li> \
+					<li>Used operating system</li> \
+					<li>Referrer URL</li> \
+					<li>Host name of the accessing computer</li> \
+					<li>Time of the server request</li> \
+				</ul> \
+				<p>These data can not be assigned to specific persons. A merge \
+					of this data with other data sources will not be done. We reserve \
+					the right to check this data retrospectively, if we become aware \
+					of specific indications for illegal use.</p> \
+				<p>&nbsp;</p> \
+				<h2>Comment function on this website</h2> \
+				<p>In addition to your comment, the comment function on this \
+					page will also include information about when the comment was \
+					created and, if you are not anonymous, the name of your chosen \
+					user name.</p> \
+				<p>&nbsp;</p> \
+				<h2>SSL-Encryption</h2> \
+				<p>This site uses SSL encryption for security reasons and to \
+					protect the transmission of sensitive content, such as the \
+					requests you send to us as the site operator. You can recognize an \
+					encrypted connection if the address line of the browser changes \
+					from "http://" to "https://" and the lock symbol in your browser \
+					line.</p> \
+				<p>If SSL encryption is enabled, the data you submit to us can \
+					not be read by third parties.</p> \
+				<p>&nbsp;</p> \
+				<h2>Right to information, cancellation, blocking</h2> \
+				<p>At any time you have the right to free information about \
+					your stored personal data, their origin and recipient and the \
+					purpose of the data processing and a right to correct, block or \
+					delete this data. For further information on personal data you can \
+					contact us at any time at the address given in the imprint.</p> \
+			</div>');
+		return false;
+	});
+});
+</script>
+</body>
+</html>

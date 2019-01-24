@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title>Choiclaweb</title>
+</head>
+
+<body>
+	<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+	<div th:insert="fragments/basictemplate :: content(~{::#content})">
+	    <div id="content" class="container">
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+		    <h1>Data protection</h1>
+		    <p>
+		    		The operators of these pages take the protection of your personal data very seriously. We treat your personal data confidentially and in accordance with the statutory data protection regulations as well as this privacy policy.
+		    		The use of our web site is usually possible without providing personal information. As far as on our sides personal data (e.g name, address or e-mail addresses) are collected, this takes place, as far as possible, always on voluntary basis. The data is used to provide general information about other participants for all registered participants of an event - and only these ones. The deletion of this data takes place if the participant unregisters from the event or the event itself is removed. Further this data will not be disclosed to third parties without your explicit consent.
+				In case of changes or actions regarding events in which you participate, you receive notifications via e-mail if an e-mail address has been provided. You can disable this behavior in the settings of your account.
+				User which are participating in an event can only be seen by other participants that were invited or have access to the event. Postings which were created by users can also only be read by other participants of an event.
+				We point out, that the data transfer on the Internet (e.g. with the communication by e-mail) may have vulnerabilities. A complete protection of the data from access by third parties is not possible.
+			</p>
+	
+			<h1>Cookies</h1>
+			<p>
+				The internet pages partly use so-called cookies. Cookies do not damage your computer and do not contain any viruses. Cookies serve to make our offer more user-friendly, more effective and more secure. Cookies are small text files that are filed on your computer and stored by your browser.
+				Most of the cookies we use are so-called "session cookies". They are automatically deleted after your visit. Other cookies remain stored on your device until you delete them. These cookies allow us to recognize your browser the next time you visit.
+				You can set your browser so that you are informed about the setting of cookies and allow cookies only in individual cases, the acceptance of cookies for certain cases or generally exclude as well as activate the automatic deletion of cookies when closing the browser. Disabling cookies may limit the functionality of this website.
+			</p>
+	
+			<h1>Server-Log-Files</h1>
+			<p>
+				The provider of the pages automatically collects and stores information in so-called server log files, which your browser automatically transmits to us. These are:
+				<ul>
+					<li>Browser type and version</li>
+					<li>Used operating system</li>
+					<li>Referrer URL</li>
+					<li>Host name of the accessing computer</li>
+					<li>Time of the server request</li>
+				</ul>
+				These data can not be assigned to specific persons. A merge of this data with other data sources will not be done.
+				We reserve the right to check this data retrospectively, if we become aware of specific indications for illegal use.
+			</p>
+	
+			<h1>Comment function on this website</h1>
+			<p>
+				In addition to your comment, the comment function on this page will also include information about when the comment was created and, if you are not anonymous, the name of your chosen user name.
+			</p>
+	
+			<h1>SSL-Encryption</h1>
+			<p>
+				This site uses SSL encryption for security reasons and to protect the transmission of sensitive content, such as the requests you send to us as the site operator. You can recognize an encrypted connection if the address line of the browser changes from "http://" to "https://" and the lock symbol in your browser line.
+				If SSL encryption is enabled, the data you submit to us can not be read by third parties.
+			</p>
+	
+			<h1>Right to information, cancellation, blocking</h1>
+			<p>
+				At any time you have the right to free information about your stored personal data, their origin and recipient and the purpose of the data processing and a right to correct, block or delete this data.
+				For further information on personal data you can contact us at any time at the address given in the imprint.
+			</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+	    </div>
+	</div>
+	<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+</body>
+</html>

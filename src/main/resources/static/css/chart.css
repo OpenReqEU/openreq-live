@@ -1,0 +1,14 @@
+canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+#chart_placeholder {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dependencyWheel {
+    font: 10px sans-serif;
+}

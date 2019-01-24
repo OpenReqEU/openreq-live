@@ -1,0 +1,156 @@
+#or-overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 2;
+    cursor: pointer;
+}
+
+#or-overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 50px;
+    text-align: center;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+.or-alert {
+    font-weight: bold;
+}
+
+ul.or-explanation-list {
+    padding-left:40px;
+}
+
+ul.or-explanation-list > li {
+    padding-bottom:20px;
+}
+
+.or-overlay-description {
+    font-size: 20px;
+}
+
+.or-requirement-pair-list-item {
+    background-color: #fbfbfb;
+    cursor: pointer;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+}
+
+.or-requirement-pair-list-item > span.or-evaluated-icon > .material-icons {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.or-requirement-pair-list-item:hover {
+    background-color: #fdfdfd;
+}
+
+.or-list-item-highlight {
+    background-color: #e0e0e0;
+    font-weight: 400;
+    border: 1px #CCCCCC solid;
+}
+
+.or-icon-ok {
+    color: #079407;
+    font-weight: bold;
+}
+
+.or-icon-missing {
+    color: #943620;
+    font-weight: bold;
+}
+
+.or-icon-skipped {
+    color: #943620;
+    font-weight: bold;
+    vertical-align: baseline !important;
+    font-family: sans-serif;
+}
+
+.blue.darken-3 {
+    background-color: #02c0bc !important;
+}
+
+.blue.darken-3.disabled {
+    background-color: #DFDFDF !important;
+}
+
+.full-height-container {
+    display: table;
+    width: 100%;
+    padding: 20px 10px 20px 10px;
+    box-sizing: border-box;
+}
+
+.row {
+    height: 100%;
+    display: table-row;
+}
+
+.row .no-float {
+    display: table-cell;
+    float: none;
+}
+
+.or-select-menu {
+    white-space: nowrap;
+    display: block;
+    opacity: 1;
+    position: static;
+}
+
+.or-select-menu-item > span {
+    padding:14px 16px;
+}
+
+.or-select-menu-item > span > .or-select-menu-item-icon {
+    margin-left: 60px;
+    position: absolute;
+    left: 0px;
+    margin-top: 1px;
+    font-size: 22px;
+    color: #8f9598;
+}
+
+.or-checkbox-label {
+    padding-left: 61px !important;
+    color: #26a69a;
+    font-weight: 300;
+    line-height: 22px !important;
+    font-size: 16px !important;
+}
+
+[type="checkbox"].or-checkbox+label:before {
+    top: 2px !important;
+    width: 7px !important;
+    height: 12px !important;
+}
+
+[type="checkbox"].or-checkbox+label:after {
+    top: 2px !important;
+    height: 18px !important;
+    width: 18px !important;
+}
+
+.hide {
+    display: none;
+}
+
+.dropdown-content li > a > i {
+    margin: 0 12px 0 0;
+}
+
+.dropdown-content li > a {
+    text-decoration: none;
+}

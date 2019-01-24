@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link},~{})">
+    <title th:text="#{index.browserTitle}">InnoSensr - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title>
+    <link href="/css/analysis.css" rel="stylesheet" media="screen" />
+    <link href="/css/jquery.toast.min.css" rel="stylesheet" media="screen" />
+</head>
+<body>
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <div id="or-overlay">
+            <div id="or-overlay-text">
+                <div>You seem to be inactive...</div>
+                <div class="or-overlay-description">Move the mouse to hide this screen.</div>
+            </div>
+        </div>
+        <div class="row">
+            <div th:insert="fragments/basictemplate :: maintitle(~{::#maintitle})">
+                <div id="maintitle" class="container" style="width:100%;">
+                    <h1 class="title text-center">Requirement Dependency Analysis</h1>
+                    <h2 class="text-center hidden-xs">Analyzation of a given set of requirement pairs.</h2>
+                    <div th:if="${alreadyCompleted}">
+                        <div class="alert alert-success">
+                            Thank you for your participation!
+                        </div>
+                    </div>
+                    <div th:unless="${alreadyCompleted}">
+                        <p>Please read and classify the given set of requirement pairs.
+                           Determine for each pair (individually) whether a dependency between both requirements
+                           exists and assign the corresponding type of dependency.</p>
+                        <p style="text-align:center;margin-top:10px;margin-bottom:20px;">
+                            <a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" width="30" height="32" style="margin-right:8px;" />Download document</a>
+                        </p>
+                        <ul class="or-release-list collapsible" data-collapsible="expandable">
+                            <li id="or-no-release-found-placeholder">
+                                <div class="collapsible-header full-height-container" style="cursor:auto;">
+                                    <div class="row">
+                                        <div class="col-sm-4 hidden-xs no-float" style="border-right: 1px solid #f3f0f0;">
+                                            <div style="padding-right: 8px;">
+                                                <h2 style="margin-bottom: 10px;">List of requirement pairs:</h2>
+                                                <div id="or-requirement-pair-list" style="padding-bottom: 30px;padding: 10px;overflow-y: scroll;height: 480px;border: 1px #CCCCCC solid;margin-bottom: 15px;">
+                                                </div>
+                                                <h2 style="margin-bottom: 10px;">Filter by:</h2>
+                                                <ul class="or-filter-menu or-select-menu dropdown-content active">
+                                                    <li class="or-select-menu-item">
+                                                        <span>
+                                                            <input class="or-checkbox filled-in" type="checkbox" id="filter-evaluated" />
+                                                            <label class="or-checkbox-label" for="filter-evaluated">Only unevaluated pairs</label>
+                                                            <i class="or-select-menu-item-icon material-icons">error_outline</i>
+                                                            <span class="argument-issues"></span>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-12 no-float" style="padding-bottom: 15px;padding-top: 15px;padding-left: 20px;padding-right: 20px;">
+                                            <div style="display: table;width:100%;">
+                                                <div class="row">
+                                                    <div class="progress-text center"></div>
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                                            <span class="sr-only">0% Complete</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="text-align:center;">
+                                                    <div>
+                                                        <h3 style="font-size: 20px;color: #5d5c5c;font-weight: 400;">Source requirement:</h3>
+                                                        <div id="or-source-dependency-description" style="font-weight:bold;"></div>
+                                                    </div>
+                                                    <hr />
+                                                    <div style="height:300px;overflow-y:scroll;">
+                                                        <h3 style="font-size: 20px;color: #5d5c5c;font-weight: 400;">Target requirement:</h3>
+                                                        <div id="or-target-dependency-description"></div>
+                                                    </div>
+                                                    <div style="display: table;width: 100%;">
+                                                        <div class="row" style="margin-top:20px;text-align:center;">
+                                                            <div id="or-dependency-yes-div" class="col-sm-4 col-xs-12">
+                                                                <input id="or-dependency-yes" class="or-dependency-option" name="or-dependency-exists" type="radio" value="0" />
+                                                                <label for="or-dependency-yes">Yes, dependency exists</label>
+                                                            </div>
+                                                            <div id="or-dependency-no-div" class="col-sm-4 col-xs-12">
+                                                                <input id="or-dependency-no" class="or-dependency-option" name="or-dependency-exists" type="radio" value="1" />
+                                                                <label for="or-dependency-no"><u>N</u>o dependency exists</label>
+                                                            </div>
+                                                            <div id="or-dependency-unsure-div" class="col-sm-4 col-xs-12">
+                                                                <input id="or-dependency-unsure" class="or-dependency-option" name="or-dependency-exists" type="radio" value="2" />
+                                                                <label for="or-dependency-unsure"><u>S</u>kip, I'm unsure</label>
+                                                            </div>
+                                                        </div>
+                                                        <div id="or-dependency-type" style="margin-top:50px;text-align:center;display:none;">
+                                                            <div class="input-field" style="width:350px;margin-left:auto;margin-right:auto;">
+                                                                <select id="or-dependency-type-chooser">
+                                                                    <option value="" disabled selected>Choose dependency type...</option>
+                                                                    <option value="0">REQUIRES</option>
+                                                                    <option value="1">EXCLUDES</option>
+                                                                    <option value="2">SIMILAR</option>
+                                                                    <option value="3">IS PART OF</option>
+                                                                </select>
+                                                                <label>Type of dependency</label>
+                                                            </div>
+                                                        </div>
+                                                        <div id="or-dependency-direction" style="margin-top:50px;text-align:center;display:none;">
+                                                            <div class="input-field" style="width:350px;margin-left:auto;margin-right:auto;">
+                                                                <select id="or-dependency-direction-chooser">
+                                                                    <option value="" disabled selected>Choose dependency direction...</option>
+                                                                    <option class="or-dependency-direction-opt" value="0">Source requirement REQUIRES Target requirement</option>
+                                                                    <option class="or-dependency-direction-opt" value="1">Target requirement REQUIRES Source requirement</option>
+                                                                </select>
+                                                                <label>Type of dependency</label>
+                                                            </div>
+                                                        </div>
+                                                        <p>&nbsp;</p>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                                <div class="row" style="text-align: center;">
+                                                    <a id="or-show-previous-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><i class="material-icons left">arrow_back</i><span class="hidden-xs"> Back</span></a>&nbsp;
+                                                    <a id="or-show-next-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><i class="material-icons right">arrow_forward</i><span class="hidden-xs"> Next</span></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <p>&nbsp;</p>
+                        <div class="center" id="or-save-button-container">
+                            <form id="or-complete-form" th:action="'/project/' + ${project.uniqueKey} + '/requirement/pairs/recommend/complete'" method="post">
+                                <div>
+                                    <a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" th:href="'/project/' + ${project.uniqueKey} + '/requirement/pairs/welcome'" role="button"><i class="material-icons left" style="font-size:24px;">arrow_back</i>Back<span class="hidden-xs"> to welcome page</span></a>
+                                    <a id="or-complete-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">send</i>Submit and complete</a>
+                                </div>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script src="/js/jquery.toast.min.js"></script>
+<script src="/js/analysis.js"></script>
+<script th:inline="javascript">
+    var projectKey = [[${project.uniqueKey}]];
+    var currentUserID = [[${currentUser.id}]];
+    var presenter = new RequirementPairPresenter(projectKey, currentUserID);
+
+    (function keepAlivePoll() {
+        setTimeout(function() {
+            console.log("Sending heart beat...");
+            $.ajax({
+                url: "/user/keepalive",
+                type: "GET",
+                success: function (result) {
+                    if (result.error) {
+                        alert("Your session may have expired. Please log in again!");
+                        window.location = "/";
+                        return;
+                    }
+                },
+                dataType: "json",
+                complete: keepAlivePoll,
+                timeout: 7000
+            })
+        }, 10000);
+    })();
+
+    $(document).ready(function () {
+        $("#or-requirement-pair-list").hide();
+        $("#or-show-previous-requirement-pair").addClass("disabled");
+        $("#or-show-next-requirement-pair").addClass("disabled");
+
+        $.get("/project/" + projectKey + "/requirement/pairs/recommend.json", function(data, status) {
+            presenter.alreadyDefinedPotentialDependencies = data.alreadyDefinedPotentialDependencies;
+            presenter.recommendedRequirementPairs = data.recommendedPairs;
+            presenter.unsurePairs = data.unsurePairs;
+            presenter.showNavigationList();
+            presenter.showNextRequirementPair(null, null);
+            $(document).on("keydown", function (e) {
+                if (e.keyCode == 39) {
+                    presenter.showNextRequirementPair(e, null);
+                } else if (e.keyCode == 37) {
+                    presenter.showPreviousRequirementPair(e, null);
+                } else if (e.keyCode == 78) { // no
+                    $("#or-dependency-no-div").click();
+                } else if (e.keyCode == 83) { // unsure
+                    $("#or-dependency-unsure-div").click();
+                }
+            });
+            return false;
+        });
+        bindRegisteredUIEvents(presenter);
+        $("#or-complete-button").on("click", function () {
+            var additionalText = "";
+            var numberOfUnevaluatedPairs = $(".or-requirement-pair-unevaluated").length;
+            if (numberOfUnevaluatedPairs > 0) {
+                additionalText = "<br /><span style=\"color:#B90000;\"><b>" + numberOfUnevaluatedPairs + " pairs</b> have still <b>NOT</b> been evaluated!</span>";
+            }
+
+            additionalText += "<br /><br /><span style=\"color:#B90000;font-size:90%;\"><b>!!! Please keep in mind that this action is irreversible !!!</b></span><br />After confirmation you cannot make changes any more.";
+            var button = $(this);
+
+            swal({
+                title: "Confirm to complete",
+                html: "Do you really want to complete the study?" + additionalText,
+                showCancelButton: true,
+                focusCancel: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No"
+            }).then(function (result) {
+                if (("value" in result) && result.value) {
+                    button.addClass("disabled");
+                    $("#or-complete-form").submit();
+                }
+                return true;
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

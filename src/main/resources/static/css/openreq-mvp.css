@@ -1,0 +1,36 @@
+.tab > a.active {
+    color: #02c0bc !important;
+    border-bottom: 6px #02c0bc solid;
+}
+
+.tab > a {
+    color: #93e2e1 !important;
+    font-size: 14px !important;
+    text-decoration: none;
+}
+
+.orange.darken-4 {
+    background-color: #ff5300 !important;
+}
+
+.blue.darken-3 {
+    background-color: #02c0bc !important;
+}
+
+#or-visibility-button-public {
+    background-color: #02c0bc;
+}
+
+a {
+    color: #02c0bc;
+}
+
+.swal2-confirm {
+    background-color: #02c0bc !important;
+    border-left-color: #02c0bc !important;
+    border-right-color: #02c0bc !important;
+}
+
+.or-rate-link, .or-stakeholder-assign-link {
+    color: #02c0bc;
+}

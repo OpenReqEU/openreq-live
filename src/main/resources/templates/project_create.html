@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title>OpenReq - Projects</title>
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,true,false)"></div>
+<div th:replace="fragments/basictemplate :: subtitle('Create Project','Please fill in all fields.')"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+		<form action="#" th:action="@{/project/create}" th:object="${projectForm}" method="post">
+		  <div class="form-group">
+		    <label for="or-form-field-name">Project name *</label>
+		    <input th:field="*{name}" type="text" class="form-control" id="or-form-field-name" placeholder="Name of the project" autofocus="autofocus" />
+		    <div class="or-form-error alert alert-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+		  </div>
+		  <div class="form-group">
+		    <label for="or-form-field-description">Description</label>
+		    <textarea th:field="*{description}" class="form-control" id="or-form-field-description" rows="6" placeholder="Brief description of the project"></textarea>
+		    <div class="or-form-error alert alert-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+		  </div>
+		  <div class="form-group">
+		    <label for="or-form-field-start">Start date *</label>
+		    <input th:field="*{startDate}" type="text" class="form-control datepicker" id="or-form-field-start" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" data-date-format="yyyy-mm-dd" />
+		    <div class="or-form-error alert alert-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">Start Date Error</div>
+		  </div>
+		  <div class="form-group">
+		    <label for="or-form-field-end">End date *</label>
+		    <input th:field="*{endDate}" type="text" class="form-control datepicker" id="or-form-field-end" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" data-date-format="yyyy-mm-dd" />
+		    <div class="or-form-error alert alert-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">End Date Error</div>
+		  </div>
+		  <div class="form-group" style="display:none;">
+		    <label for="or-form-field-image-path">Image Path *</label>
+		    <input th:field="*{imagePath}" type="text" class="form-control" id="or-form-field-image-path" />
+		    <div class="or-form-error alert alert-danger" th:if="${#fields.hasErrors('imagePath')}" th:errors="*{imagePath}">Image Path Error</div>
+		  </div>
+		  <div class="form-group">
+		    <label for="or-form-field-image-path">Image</label>
+		    <input type="file" name="pic" accept="image/*" class="form-control" />
+		  </div>
+		  <p>&nbsp;</p>
+		  <div>
+		    <input class="btn btn-primary" type="submit" value="Save" />
+		  </div>
+		</form>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script>
+	$(document).ready(function () {
+		$('.datepicker').datepicker({
+		    format: "yyyy-mm-dd",
+		    startDate: '0d',
+		    weekStart: 1,
+		    maxViewMode: 0,
+		    autoclose: true,
+		    todayHighlight: true
+		});
+	});
+</script>
+</body>
+</html>

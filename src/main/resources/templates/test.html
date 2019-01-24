@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link}, ~{})">
+    <title>Testen</title>
+    <link href="/css/cropper/cropper.min.css" rel="stylesheet" />
+    <link href="/css/imagetool.css" rel="stylesheet" />
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:replace="fragments/basictemplate :: subtitle('About us','')"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <div th:replace="fragments/imagetool :: imageUploadContainer('/images/alexanderfelfernig.jpg')"></div>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script src="/js/cropper/cropper.min.js"></script>
+<script src="/js/cropper/jquery-cropper.min.js"></script>
+<script src="/js/cropper/orimagecropper.js"></script>
+<script>
+    var imageUploadContainer = $(".or-image-upload-container");
+    var imageUploadContainerContent = imageUploadContainer.wrap("<p/>").parent().html();
+    imageUploadContainer.unwrap();
+
+    swal({
+        html: '<div class="or-upload-image-area">' + imageUploadContainerContent + '</div>',
+        showCancelButton: false,
+        confirmButtonText: "Close"
+    });
+    $(".swal2-popup").css("width", "800px");
+    var imageLayer = $(".or-image");
+    var uploadURL = "/project/upload";
+    var imageCropper = new ImageCropper(imageLayer, uploadURL, 200);
+    imageCropper.run();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title>Choiclaweb</title>
+
+</head>
+
+<body>
+
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+
+
+<div th:replace="fragments/basictemplate :: subtitle('Error Page','')">
+</div>
+
+
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <h1 class="text-center" th:text="#{failure.title}"></h1>
+        <h4 class="text-center" th:text="#{failure.message}"></h4>
+    </div>
+
+</div>
+<div th:replace="fragments/basictemplate:: footer">&nbsp;</div>
+
+</body>
+
+</html>

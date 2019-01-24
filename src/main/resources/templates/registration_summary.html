@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title th:text="#{index.browserTitle}">OpenReq - Intelligent Recommendation &amp; Decision Technologies for Community-Driven Requirements Engineering</title>
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <div class="row">
+            <p>&nbsp;</p>
+            <div th:insert="fragments/basictemplate :: maintitle(~{::#maintitle})">
+                <div id="maintitle" class="container">
+                    <h1 class="title text-center">Account Confirmation</h1>
+                    <table class="or-registration-summary-table table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>First name:</td>
+                                <td th:text="${user.firstName}"></td>
+                            </tr>
+                            <tr>
+                                <td>Last name:</td>
+                                <td th:text="${user.lastName}"></td>
+                            </tr>
+                            <tr>
+                                <td>Username:</td>
+                                <td th:text="${user.username}"></td>
+                            </tr>
+                            <tr>
+                                <td>Mail Address:</td>
+                                <td><a th:href="'mailto:' + ${user.mailAddress}" th:text="${user.mailAddress}"></a></td>
+                            </tr>
+                            <tr>
+                                <td>Group Number:</td>
+                                <td th:text="${user.groupNumber}"></td>
+                            </tr>
+                            <tr>
+                                <td>Purpose of registration:</td>
+                                <td>Participation in course</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>&nbsp;</p>
+                    <div>In case your data is not correct or complete, please contact us via email as soon as possible (Mail: <a href="mailto:oad@ist.tugraz.at">oad@ist.tugraz.at</a>).</div>
+                    <p>&nbsp;</p>
+                    <form id="or-confirmation-form" th:action="'/registration/user/' + ${user.id} + '/confirm/' + ${user.confirmationKey} + '/finish'" method="post">
+                        <div class="form-group">
+                            <input id="confirmation" type="checkbox" name="confirmation" class="filled-in">
+                            <label class="control-label" for="confirmation">
+                                I confirm the correctness and completeness of my data shown in the table above.
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <input id="privacy-policy" type="checkbox" name="privacy-policy" class="filled-in">
+                            <label class="control-label" for="privacy-policy">
+                                I read and agree with the <a id="or-privacy-policy-button" href="#">privacy policy</a>.
+                            </label>
+                        </div>
+                        <p>&nbsp;</p>
+                        <p class="center">
+                            <a id="or-confirm-account" class="waves-effect waves-light btn btn-large btn-success" href="#" role="button">Confirm</a>
+                            <a id="or-cancel-account-confirmation" class="waves-effect waves-light btn btn-large btn-success" href="#" role="button">Cancel</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $("#or-confirm-account").click(function () {
+            if (!$("#confirmation").is(':checked')) {
+                swal("Confirmation and Completeness of my data",
+                     "You must confirm the completeness and correctness of your data! " +
+                     "In case your data is not correct or complete, please contact " +
+                     "<a href=\"mailto:oad@ist.tugraz.at\">oad@ist.tugraz.at</a> as soon as possible.",
+                     "error");
+                return false;
+            }
+            if (!$("#privacy-policy").is(':checked')) {
+                swal("Privacy policy", "You must agree with the privacy policy!", "error");
+                return false;
+            }
+            $("#or-confirmation-form").submit();
+            return false;
+        });
+        $("#or-cancel-account-confirmation").click(function () {
+            window.location = "/";
+            return false;
+        });
+        $("#or-terms-conditions-button").on("click", function () {
+            swal("Terms and Conditions", "The text goes here...");
+            return false;
+        });
+        $("#or-privacy-policy-button").on("click", function () {
+            swal("Privacy policy", '<div class="or-privacy-page-content" style="overflow-y:scroll;max-height:700px;text-align:left;"> \
+				<h2>Data protection</h2> \
+				<p>The operators of these pages take the protection of your personal data \
+                   very seriously. We treat your personal data confidentially and in accordance \
+                   with the statutory data protection regulations as well as this privacy policy. \
+                   The use of our web site is usually possible without providing personal information. \
+                   As far as on our sides personal data (e.g name, address or e-mail addresses) are \
+                   collected, this takes place, as far as possible, always on voluntary basis. \
+                   These data will not be disclosed to third parties without your explicit consent.\
+                   We point out, that the data transfer on the Internet (e.g., with the communication \
+                   by e-mail) may have vulnerabilities. A complete protection of the data from access \
+                   by third parties is not possible.</p> \
+				<p>&nbsp;</p> \
+				<h2>Cookies</h2> \
+				<p>The internet pages partly use so-called cookies. Cookies do not damage your \
+                   computer and do not contain any viruses. Cookies serve to make our offer more \
+                   user-friendly, more effective and more secure. Cookies are small text files \
+                   that are filed on your computer and stored by your browser. Most of the cookies \
+                   we use are so-called "session cookies". They are automatically deleted after \
+                   your visit. Other cookies remain stored on your device until you delete them. \
+                   These cookies allow us to recognize your browser the next time you visit. \
+                   You can set your browser so that you are informed about the setting of cookies \
+                   and allow cookies only in individual cases, the acceptance of cookies for certain \
+                   cases or generally exclude as well as activate the automatic deletion of cookies \
+                   when closing the browser. Disabling cookies may limit the functionality of this website.</p> \
+				<p>&nbsp;</p> \
+				<h2>Server-Log-Files</h2> \
+				<p>The provider of the pages automatically collects and stores \
+					information in so-called server log files, which your browser \
+					automatically transmits to us. These are:</p> \
+				<ul> \
+					<li>Browser type and version</li> \
+					<li>Used operating system</li> \
+					<li>Referrer URL</li> \
+					<li>Host name of the accessing computer</li> \
+					<li>Time of the server request</li> \
+				</ul> \
+				<p>This data can not be assigned to specific persons. A merge \
+					of this data with other data sources will not be done. We reserve \
+					the right to check this data retrospectively, if we become aware \
+					of specific indications for illegal use.</p> \
+				<p>&nbsp;</p> \
+				<h2>Comment function on this website</h2> \
+				<p>In addition to your comment, the comment function on this page will \
+                   also include information about when the comment was created and, if \
+                   you are not anonymous, the name of your chosen user name.</p> \
+				<p>&nbsp;</p> \
+				<h2>Right to information, cancellation, blocking</h2> \
+				<p>At any time you have the right to free information about your stored \
+                   personal data, their origin and recipient and the purpose of the data \
+                   processing and a right to correct, block or delete this data. \
+                   For further information on personal data you can contact us at any time \
+                   at the address given in the imprint.</p> \
+			</div>');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link},~{})">
+    <title th:text="${'InnoSensr - ' + #strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}">InnoSensr</title>
+    <!--
+    <title th:text="${'OpenReq!Live - ' + #strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}">OpenReq</title>
+    -->
+    <link href="/css/mvp.css?v=3" rel="stylesheet" media="screen" />
+    <link href="/css/openreq-mvp.css?v=3" rel="stylesheet" media="screen" />
+    <link href="/css/jquery-ui.min.css" rel="stylesheet" media="screen" />
+    <link href="/css/mdl-jquery-modal-dialog.css" rel="stylesheet" media="screen" />
+    <link href="/css/fontawesome-stars-o.css" rel="stylesheet" media="screen" />
+    <link href="/css/barrating.css" rel="stylesheet" media="screen" />
+    <link href="/css/summernote.css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,true,true)"></div>
+<div id="or-tab-navigation-bar">
+    <div class="container">
+        <ul class="tabs tabs-fixed-width">
+            <li class="or-tab-requirements tab col">
+                <a class="or-container active" href="#container-requirements">Requirements</a>
+            </li>
+            <li class="or-tab-dependencies tab col">
+                <a class="or-container" href="#container-dependencies">Dependencies</a>
+            </li>
+            <li class="or-tab-statistics tab col" style="display:none;">
+                <a class="or-container" href="#container-statistics">Statistics</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="or-unsaved-changes-notification-bar" class="navbar or-unsaved-changes-notification-bar">
+    <div class="container">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You have unsaved changes!
+    </div>
+</div>
+<div id="container-requirements">
+    <div class="maincontainer">
+        <div class="container" id="or-project-details-container">
+            <div class="row" style="margin-top:5px;">
+                <div class="col-sm-11 col-xs-11">
+                    <textarea id="or-project-description" rows="3" class="materialize-textarea form-control or-editable-form-textarea-field or-project-description or-form-field-disabled" name="or-project-description" th:text="${project.description}"></textarea>
+                </div>
+                <div class="col-sm-1 col-xs-1">
+                    <a id="or-form-edit-project-description" href="#"><i class="material-icons dp48">edit</i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ripple-wrap"><div class="ripple"></div></div>
+    <div th:insert="fragments/basictemplate :: content(~{::#content})">
+        <div id="content" class="container">
+            <h3>Unassigned Requirements</h3>
+            <ul class="or-requirement-list collapsible" data-collapsible="expandable">
+                <li id="or-project-unassigned-requirements-container">
+                    <div class="collapsible-header" style="cursor:auto;">
+                        <table id="or-project-unassigned-requirements" class="or-project-requirement-table" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th class="or-requirement-move" style="width:40px;"></th>
+                                <th style="width:40px;">ID</th>
+                                <th style="width:auto;">Title</th>
+                                <th class="or-requirement-description or-mobile-invisible">Description</th>
+                                <th class="or-requirement-status or-mobile-invisible">Status</th>
+                                <th class="or-requirement-social-popularity"></th>
+                                <!-- <th class="or-requirement-message"></th> -->
+                                <th class="or-requirement-normal-evaluation">Utility</th>
+                                <th class="or-requirement-basic-evaluation">Utility</th>
+                                <th class="or-requirement-advanced-evaluation">Utility</th>
+                                <th class="or-requirement-assigned-stakeholder"></th>
+                                <th class="or-requirement-quality"></th>
+                                <th class="or-requirement-delete" style="width:40px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="or-add-requirement-button-container">
+                            <a id="or-add-unassigned-requirement-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Requirement</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <p>&nbsp;</p>
+            <h3>Releases</h3>
+            <form id="or-project-release-requirement-form" autocomplete="off" action="#" method="post">
+                <ul class="or-release-list collapsible" data-collapsible="expandable">
+                    <li id="or-no-release-found-placeholder">
+                        <div class="collapsible-header" style="cursor:auto;"><i class="material-icons" style="color:#dad6c1;">info</i>Click on the "+" button to add a release.</div>
+                    </li>
+                </ul>
+                <p>&nbsp;</p>
+                <div class="center" id="or-save-button-container" style="display:none;">
+                    <a id="or-save-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">backup</i>Save</a>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="fixed-action-btn vertical">
+        <a id="or-add-release-button" class="btn-floating btn-large waves-effect waves-light orange darken-4 z-depth-3" href="#" data-toggle="tooltip" data-placement="left" title="Click to add a new release.">
+            <i class="material-icons">add</i>
+        </a>
+    </div>
+    <div class="tap-target" data-activates="or-add-release-button">
+        <div class="tap-target-content">
+            <h5>Add release</h5>
+            <p>Click here to add a new release!</p>
+        </div>
+    </div>
+</div>
+<div id="container-dependencies">
+    <div class="maincontainer">
+        <div class="container">
+            <div class="or-consistency-check-message or-consistency-check-success-message or-icon-alert alert alert-success" role="alert">
+                <i class="material-icons dp48">verified_user</i> <div><b>Congratulations!</b> The data model is consistent.</div>
+            </div>
+            <div class="or-consistency-check-message or-consistency-check-error-message or-icon-alert alert alert-danger" role="alert">
+                <i class="material-icons dp48">error</i> <div><b>Error:</b> note that your requirements model is inconsistent..</div>
+            </div>
+            <div class="or-consistency-check-message or-consistency-check-service-unavailable-message or-icon-alert alert alert-danger" role="alert">
+                <i class="material-icons dp48">error</i> <div><b>Error!</b> The consistency check service is not available! Please contact the administrator of this system.</div>
+            </div>
+            <h3>New Dependencies</h3>
+            <ul class="or-requirement-list collapsible" data-collapsible="expandable">
+                <li>
+                    <div class="collapsible-header" style="cursor:auto;">
+                        <div class="or-create-dependency-row or-dependency-row row">
+                            <div class="col s5 or-dependency-left"></div>
+                            <div class="col s2 or-dependency-middle">
+                                <div id="or-dependency-type-icon" class="dropdown-button or-dependency-type material-icons dp48" data-activates="or-dependency-type-menu-dropdown" data-beloworigin="true" data-type="REQUIRES">arrow_forward</div>
+                            </div>
+                            <div class="col s5 or-dependency-right"></div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="or-add-dependency-button">
+                        <a class="or-add-dependency-button-link waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Dependency</a>
+                        <a class="or-import-dependency-button-link waves-effect waves-light btn blue darken-3"><i class="material-icons left">library_add</i> Import Recommendations</a>
+                    </div>
+                </li>
+            </ul>
+            <h3>Dependencies</h3>
+            <ul class="collapsible" data-collapsible="expandable">
+                <li id="or-no-dependency-found-placeholder">
+                    <div class="collapsible-header" style="cursor:auto;">
+                        <i class="material-icons" style="color:#dad6c1;">info</i> No dependency existps yet.
+                    </div>
+                </li>
+                <li class="or-dependency-list"></li>
+            </ul>
+            <p>&nbsp;</p>
+            <div class="center">
+                <a id="or-check-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">refresh</i>Check consistency</a>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="container-statistics">
+    <div class="maincontainer">
+        <div class="container">
+            <h3>Coherence of Dependencies</h3>
+            <div>
+                <iframe id="iframe-depenency-wheel" src="about:blank" frameBorder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<ul id="or-menu-dropdown" class="dropdown-content">
+  <li id="or-share-menu-button"><a class="or-share-button" href="#"><i class="material-icons">share</i>Share Project</a></li>
+  <li><a id="or-assessment-scheme-button" href="#"><i class="material-icons">assessment</i>Specify Rating Dimensions</a></li>
+  <li><a id="or-import-requirements-twitter-button" href="#"><i class="material-icons">open_in_browser</i>Import Requirements from Twitter</a></li>
+  <li><a id="or-move-requirements-button" href="#"><i class="material-icons">drag_handle</i>Move Requirements</a></li>
+  <li><a id="or-delete-requirements-button" href="#"><i class="material-icons">delete</i>Delete Requirements</a></li>
+  <li><a id="or-project-settings-button" href="#"><i class="material-icons">settings</i>Project Settings</a></li>
+  <!-- poll, equalizer, insert_chart, rate_review, star, star_border, insert_chart, featured_play_list, list, view_list, format_list_numbered, assignment, comment -->
+</ul>
+<ul id="or-dependency-type-menu-dropdown" class="dropdown-content" style="width:80px;">
+  <li><a id="or-dependency-type-menu-requires" class="or-dependency-type-menu-item" href="#"><i class="material-icons">arrow_forward</i>Requires</a></li>
+  <li><a id="or-dependency-type-menu-excludes" class="or-dependency-type-menu-item" href="#"><i class="material-icons">compare_arrows</i>Excludes</a></li>
+</ul>
+<div style="display:none;">
+    <svg class="or-requirement-icon" width="265px" height="398px" viewBox="0 0 265 398" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink">
+        <defs>
+            <rect id="path-1" x="0" y="0" width="265" height="398" rx="29"></rect>
+        </defs>
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g transform="translate(-64.000000, -95.000000)">
+                <g transform="translate(64.000000, 95.000000)">
+                    <g >
+                        <use class="or-requirement-icon-rectangle" fill="#DF4F4F" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        <rect stroke="#181818" stroke-width="1" x="0.5" y="0.5" width="264" height="397" rx="29"></rect>
+                    </g>
+                    <circle fill="#FFFFFF" fill-rule="evenodd" cx="29.5" cy="32.5" r="12.5"></circle>
+                    <path d="M1,265.0 L263.833119,265.0 L263.833119,368 C263.833119,384.016258 250.849377,397 234.833119,397 L30,397 C13.9837423,397 1,384.016258 1,368 L1,313.314896 Z" fill="#FCFCFC" fill-rule="evenodd"></path>
+                    <text text-anchor="middle" font-family="Verdana, Helvetica Neue, Helvetica, Roboto-Bold, Roboto" font-size="100" fill="#525252">
+                        <tspan class="or-requirement-icon-id-label" x="132.5" y="367">99</tspan>
+                    </text>
+                    <text text-anchor="middle" font-family="Helvetica Neue, Helvetica, Verdana, Roboto-Bold, Roboto" font-size="210" fill="#FFFFFF">
+                        <tspan class="or-requirement-icon-label" x="132.5" y="220">R</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </svg>
+    <svg class="or-requirement-icon2" width="351px" height="719px" viewBox="0 0 351 719" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink">
+        <defs></defs>
+        <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="Group" transform="translate(175.424727, 371.000000) rotate(90.000000) translate(-175.424727, -371.000000) translate(-152.575273, 224.500000)">
+                <path d="M485.386009,292.86255 L21.4240955,292.86255 C9.82611575,292.86255 0.424095498,283.460529 0.424095498,271.86255 L0.424095498,201.570739 C2.09014432,201.722274 3.77760113,201.799703 5.48314252,201.799703 C35.9381188,201.799703 60.6267551,177.111067 60.6267551,146.65609 C60.6267551,116.201114 35.9381188,91.5124779 5.48314252,91.5124779 C3.77760113,91.5124779 2.09014432,91.5899071 0.424095498,91.7414422 L0.424095498,21.4496314 C0.424095498,9.85165168 9.82611575,0.449631427 21.4240955,0.449631427 L485.386009,0.449631427 L485.386009,24.0023367 L515.740291,24.0023367 L515.740291,0.449631427 L634.064781,0.449631427 C645.66276,0.449631427 655.064781,9.85165168 655.064781,21.4496314 L655.064781,91.5124779 C624.609804,91.5124779 599.921168,116.201114 599.921168,146.65609 C599.921168,177.111067 624.609804,201.799703 655.064781,201.799703 L655.064781,271.86255 C655.064781,283.460529 645.66276,292.86255 634.064781,292.86255 L515.740291,292.86255 L515.740291,274.481438 L485.386009,274.481438 L485.386009,292.86255 Z M485.386009,52.8037855 L485.386009,97.0507557 L515.740291,97.0507557 L515.740291,52.8037855 L485.386009,52.8037855 Z M485.386009,126.748819 L485.386009,170.995789 L515.740291,170.995789 L515.740291,126.748819 L485.386009,126.748819 Z M485.386009,200.338262 L485.386009,244.585232 L515.740291,244.585232 L515.740291,200.338262 L485.386009,200.338262 Z" id="Combined-Shape" fill="#D8D8D8"></path>
+                <g id="Line" transform="translate(91.000000, 45.000000)" stroke="#979797" stroke-linecap="square" stroke-width="7">
+                    <path d="M0.108957904,3.5 L52.8339132,3.5"></path>
+                    <path d="M0.108957904,120.5 L52.8339132,120.5" id="Line-Copy-8"></path>
+                    <path d="M0.108957904,102.5 L52.8339132,102.5" id="Line-Copy-7"></path>
+                    <path d="M0.108957904,154.5 L52.8339132,154.5" id="Line-Copy-11"></path>
+                    <path d="M0.108957904,21.5 L52.8339132,21.5" id="Line-Copy"></path>
+                    <path d="M0.108957904,133.5 L52.8339132,133.5" id="Line-Copy-10"></path>
+                    <path d="M0.108957904,128.5 L52.8339132,128.5" id="Line-Copy-9"></path>
+                    <path d="M0.108957904,84.5 L52.8339132,84.5" id="Line-Copy-6"></path>
+                    <path d="M0.108957904,41.5 L52.8339132,41.5" id="Line-Copy-2"></path>
+                    <path d="M0.108957904,45.5 L52.8339132,45.5" id="Line-Copy-3"></path>
+                    <path d="M0.108957904,62.5 L52.8339132,62.5" id="Line-Copy-4"></path>
+                    <path d="M0.108957904,66.5 L52.8339132,66.5" id="Line-Copy-5"></path>
+                    <path d="M0.108957904,174.5 L52.8339132,174.5" id="Line-Copy-15"></path>
+                    <path d="M0.108957904,178.5 L52.8339132,178.5" id="Line-Copy-14"></path>
+                    <path d="M0.108957904,195.5 L52.8339132,195.5" id="Line-Copy-13"></path>
+                    <path d="M0.108957904,199.5 L52.8339132,199.5" id="Line-Copy-12"></path>
+                </g>
+            </g>
+        </g>
+    </svg>
+</div>
+<div id="or-animation-overlay" style="display:none;">
+    <div class="sk-cube-grid">
+        <div class="sk-cube sk-cube1"></div>
+        <div class="sk-cube sk-cube2"></div>
+        <div class="sk-cube sk-cube3"></div>
+        <div class="sk-cube sk-cube4"></div>
+        <div class="sk-cube sk-cube5"></div>
+        <div class="sk-cube sk-cube6"></div>
+        <div class="sk-cube sk-cube7"></div>
+        <div class="sk-cube sk-cube8"></div>
+        <div class="sk-cube sk-cube9"></div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-navbar-content-container">
+        <div id="or-navbar-project-name-container">
+            <input id="or-project-name" type="text" name="or-project-name" th:value="${project.name}" />
+        </div>
+        <div id="or-visibility-button-container">
+            <div id="or-visibility-button-private-container" class="or-visibility-button-container" style="display:none;">
+                <a id="or-visibility-button-private" class="or-visibility-button" href="#" data-toggle="tooltip" data-placement="bottom" title="This project is a private project. Click to make it public.">Private</a>
+            </div>
+            <div id="or-visibility-button-public-container" class="or-visibility-button-container" style="display:inline-block;">
+                <a id="or-visibility-button-public" class="or-visibility-button" href="#" data-toggle="tooltip" data-placement="bottom" title="This project is a public project. Click and log in to make it private.">Public</a>
+            </div>
+        </div>
+        <div id="or-share-button-container" th:if="${project.visibilityPrivate}" data-toggle="tooltip" data-placement="bottom" title="Click to share with others">
+            <a class="or-share-button" href="#">
+                <span class="material-icons">share</span>
+            </a>
+        </div>
+        <div id="or-notification-button-container" data-toggle="tooltip" data-placement="bottom" title="Inconsistent model: The requirement 7 is in conflict with requirement 16!">
+            <a class="or-notification-button" href="#"><span class="material-icons">notifications</span></a>
+            <span class="or-badge">1</span>
+        </div>
+        <div id="or-fullscreen-button-container">
+            <a id="or-fullscreen-button" href="#" data-toggle="tooltip" data-placement="bottom" title="Enter Fullscreen">
+                <span class="material-icons">fullscreen</span>
+            </a>
+        </div>
+        <div id="or-menu-button-container">
+            <a id="or-menu-button" class="dropdown-button" data-activates="or-menu-dropdown" data-beloworigin="true" href="#">
+                <span class="material-icons">more_vert</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+	<div class="or-shared-users-container">
+		<h2>Participants:</h2>
+		<table class="or-shared-users-table striped">
+		  <tbody>
+		  	<tr class="or-invite-user-loading-animation">
+		  		<td colspan="3">
+					<div class="spinner">
+					  <div class="bounce1"></div>
+					  <div class="bounce2"></div>
+					  <div class="bounce3"></div>
+					</div>
+		  		</td>
+		  	</tr>
+		  </tbody>
+		</table>
+		<hr />
+		<div class="or-invite-users-form">
+			<h2>Invite persons:</h2>
+			<div class="or-input-submit-row row">
+	    			<div class="col-sm-9">
+	    				<input class="or-search-user" placeholder="Enter name or email address..." />
+	    			</div>
+	    			<div class="col-sm-3">
+					<a class="or-complete-action-btn or-invite-user-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">send</i> Invite</a>
+	    			</div>
+			</div>
+			<div class="ia-table-section ia-wide">
+			</div>
+		</div>
+	</div>
+</div>
+<div style="display:none;">
+	<div class="or-rating-attribute-container">
+        <!--
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s6"><a href="#test1">Requirement Rating</a></li>
+                    <li class="tab col s6"><a class="active" href="#test2">Stakeholder Rating</a></li>
+                </ul>
+            </div>
+        </div>
+        -->
+        <div class="or-rating-scheme">
+            <h2>Specify weights of requirement rating dimensions</h2>
+            <div class="alert alert-warning">
+              <strong>Note:</strong> Please make sure that the sum of all weights is 1.
+            </div>
+            <table class="or-rating-attribute-table striped">
+              <tbody>
+              </tbody>
+            </table>
+        </div>
+        <div class="or-stakeholder-rating-scheme">
+            <h2>Specify weights of stakeholder assessment dimensions</h2>
+            <div class="alert alert-warning">
+                <strong>Note:</strong> Please make sure that the sum of all weights is 1.
+            </div>
+            <table class="or-stakeholder-assessment-rating-attribute-table striped">
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-rating-selection-container">
+        <h2>Please select:</h2>
+        <div style="text-align:center;">
+            <a class="or-rating-self-vote waves-effect waves-light btn"><i class="material-icons left">rate_review</i> I Vote</a>
+        </div>
+        <p>&nbsp;</p>
+        <div style="text-align:center;">
+            <a class="or-rating-delegate-vote waves-effect waves-light btn"><i class="material-icons left">forward</i> Other Stakeholders should vote</a>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div style="display:none;">
+	<div class="or-basic-rating-container">
+		<h1>Evaluation of Requirement</h1>
+        <h2 class="or-basic-rating-subtitle"></h2>
+		<div class="or-basic-rating-area"></div>
+		<table class="or-rating-overview-table striped">
+          <thead>
+          	<tr>
+          	</tr>
+          </thead>
+		  <tbody>
+		  </tbody>
+		</table>
+		<div class="or-rating-anonymous-username-area">
+          <p>&nbsp;</p>
+          <div>Please enter your name: <input type="text" class="or-rating-anonymous-username form-control" placeholder="Your name" /></div>
+        </div>
+	</div>
+</div>
+<div style="display:none;">
+	<div class="or-rating-container">
+        <h1>Evaluation of Requirement</h1>
+        <h2 class="or-basic-rating-subtitle"></h2>
+		<div class="alert alert-warning" style="font-size:16px;">
+		  <b>Note:</b> Please keep in mind that high profit leads to high utility value.
+		  Furthermore, a low risk as well as a low effort leads to a high utility value.
+		</div>
+        <div class="or-stakeholder-delegate-container">
+            <table class="or-stakeholder-delegate-table striped">
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+		<table class="or-rating-table striped">
+		  <tbody>
+		  </tbody>
+		</table>
+		<table class="or-rating-overview-table striped">
+          <thead>
+          	<tr>
+          	</tr>
+          </thead>
+		  <tbody>
+		  </tbody>
+		</table>
+		<div class="or-rating-anonymous-username-area">
+          <p>&nbsp;</p>
+          <div>Please enter your name: <input type="text" class="or-rating-anonymous-username form-control" placeholder="Your name" /></div>
+        </div>
+	</div>
+</div>
+<div style="display:none;">
+	<div class="or-assigned-stakeholders-container">
+		<h2>Proposed stakeholders:</h2>
+		<table class="or-assigned-stakeholders-table striped">
+            <thead>
+                <tr class="or-rating-specific-content">
+                    <th></th>
+                    <th></th>
+                    <th class="or-rate-stakeholder-attribute-appropriateness or-rate-stakeholder-attribute center" colspan="2"><i class="or-rating-attribute-icon material-icons left">fitness_center</i>Appropriateness</th>
+                    <th class="or-rate-stakeholder-attribute-availability or-rate-stakeholder-attribute center" colspan="2"><i class="or-rating-attribute-icon material-icons left">access_time</i>Availability</th>
+                    <th class="or-bottom-rating-border"></th>
+                    <th></th>
+                </tr>
+                <tr class="or-rating-specific-content">
+                    <th></th>
+                    <th></th>
+                    <th class="center or-left-rating-border">Your</th>
+                    <th class="center">Average</th>
+                    <th class="center or-left-rating-border">Your</th>
+                    <th class="center">Average</th>
+                    <th class="center or-left-rating-border">Result</th>
+                    <th class="or-left-rating-border"></th>
+                </tr>
+            </thead>
+			<tbody>
+                <tr class="or-assign-stakeholder-placeholder">
+                    <td colspan="8">No stakeholder assigned</td>
+                </tr>
+                <tr class="or-assign-stakeholder-loading-animation">
+                    <td colspan="8">
+                        <div class="spinner">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                    </td>
+                </tr>
+			</tbody>
+		</table>
+		<hr />
+		<div class="or-assign-stakeholders-form">
+			<h2>Assign stakeholders:</h2>
+			<div class="or-input-submit-row row">
+				<div class="col-sm-9">
+					<input class="or-search-user" placeholder="Enter name..." />
+				</div>
+				<div class="col-sm-3">
+					<a class="or-complete-action-btn or-assign-stakeholder-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">person_add</i> Assign</a>
+				</div>
+			</div>
+			<div class="ia-table-section ia-wide">
+			</div>
+		</div>
+	</div>
+</div>
+<div style="display:none;">
+    <div class="or-stakeholder-rating-container">
+        <h2>Please rate all given dimensions</h2>
+        <div class="alert alert-warning" style="font-size:16px;">
+            Evaluated Stakeholder: <span class="or-stakeholder-rating-name"></span>
+        </div>
+        <table class="or-stakeholder-rating-table striped">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-stakeholder-delegate-user-container">
+        <div class="or-delegate-users-form">
+            <h2>Delegate to user:</h2>
+            <div class="or-input-submit-row row">
+                <div class="col-sm-7">
+                    <input class="or-search-user" placeholder="Enter name or email address..." />
+                </div>
+                <div class="col-sm-5">
+                    <a class="or-complete-action-btn or-delegate-vote-user-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">send</i> Delegate</a>
+                </div>
+            </div>
+            <div class="ia-table-section ia-wide">
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-message-area-container">
+        <h1>Evaluation of Requirement</h1>
+        <h2 class="or-basic-rating-subtitle"></h2>
+        <h2 class="or-title">Your argument</h2>
+        <div>
+            <div class="or-new-message row">
+                <div class="col s12">
+                    <form style="background-color: #ececec;margin-bottom: 0; border-radius: 10px;">
+                        <div class="or-message-container-row row">
+                            <div class="input-field col s9">
+                                <i class="material-icons prefix">message</i>
+                                <textarea id="or-new-message-icon" class="or-new-message-textarea materialize-textarea" row="1" style="padding:0 !important;"></textarea>
+                                <label for="or-new-message-icon">Description of your argument</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <a class="or-message-assignment waves-effect waves-light btn blue darken-3" href="#">
+                                    <i class="material-icons left">send</i> Send
+                                </a>
+                            </div>
+                        </div>
+                        <div class="or-sentiment-row row" style="padding-bottom:20px;">
+                            <div class="col sm1"></div>
+                            <div class="or-sentiment-pro-area col sm2" data-toggle="tooltip" data-placement="left" title="A PRO argument is a positive argument for a selected dimension.">
+                                <input id="or-sentiment-pro" class="or-sentiment or-sentiment-pro" name="or-sentiment" type="radio" value="1" />
+                                <label for="or-sentiment-pro">Pro</label>
+                            </div>
+                            <div class="or-sentiment-con-area col sm2" data-toggle="tooltip" data-placement="left" title="A CON argument is a counterargument.">
+                                <input id="or-sentiment-con" class="or-sentiment or-sentiment-con" name="or-sentiment" type="radio" value="2" />
+                                <label for="or-sentiment-con">Con</label>
+                            </div>
+                            <div class="or-sentiment-neutral-area col sm2" data-toggle="tooltip" data-placement="left" title="The option NEUTRAL indicates that the argument is neither a PRO argument nor a counterargument.">
+                                <input id="or-sentiment-neutral" class="or-sentiment or-sentiment-neutral" name="or-sentiment" type="radio" value="0" />
+                                <label for="or-sentiment-neutral">Neutral</label>
+                            </div>
+                            <div class="col sm5"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="or-new-message-assignment row">
+                <div class="row">
+                    <div class="col s2"></div>
+                    <div class="col s8">
+                        <div class="alert alert-warning" style="font-size:16px;">
+                            <b>Note:</b> Your argument must be assigned to at least one of the following dimensions.
+                        </div>
+                        <div class="or-no-dimension-selected-error alert alert-danger" style="font-size:16px;display:none;">
+                            <b>Error:</b> You must select at least one dimension!
+                        </div>
+                    </div>
+                    <div class="col s2"></div>
+                </div>
+                <div class="row">
+                    <div class="col s3"></div>
+                    <div class="col s6">
+                        <ul class="or-select-dimension-menu or-select-menu dropdown-content active"></ul>
+                    </div>
+                    <div class="col s3"></div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <a class="or-message-submit waves-effect waves-light btn blue darken-3" href="#">
+                            <i class="material-icons left">send</i> Send
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="or-argument-list-row row">
+                <h2 class="or-title">Already given arguments</h2>
+                <div class="col s4">
+                    <h2 class="or-subtitle">Filter by:</h2>
+                    <ul class="or-filter-dimension-menu or-select-menu dropdown-content active"></ul>
+                    <ul class="or-filter-conflict-menu or-select-menu dropdown-content active">
+                        <li class="or-select-menu-item">
+                            <span>
+                                <input class="or-checkbox filled-in" type="checkbox" id="filter-conflicts">
+                                <label class="or-checkbox-label" for="filter-conflicts">Only conflicts</label>
+                                <i class="or-rating-attribute-icon material-icons" for="filter-conflicts">flash_on</i>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="or-message-container-area col s8">
+                    <div class="or-no-message-found-warning alert alert-warning" style="font-size:16px;text-align:center;">
+                        <i>No argument found.</i>
+                    </div>
+                    <div class="or-message-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="or-dependency-entity-container" style="display:none;">
+    <div class="collapsible-header" style="cursor:auto;">
+        <div class="or-dependency-row row or-dependency-entity">
+            <div class="col s4 or-dependency-left"></div>
+            <div class="col s2 or-dependency-middle">
+                <div class="or-dependency-type material-icons dp48">arrow_forward</div>
+            </div>
+            <div class="col s4 or-dependency-right"></div>
+            <div class="col s2 or-dependency-delete">
+                <a class="or-delete-dependency-button" href="#"><i class="material-icons right">delete</i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-iframe-container">
+        <iframe src="about:blank" width="100%" height="600px"></iframe>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-settings-container">
+        <h1>Settings</h1>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">Show Dependencies</div>
+            <div class="col-xs-6 col-md-6">
+                <div class="switch">
+                    <label>
+                        <input class="or-settings-show-dependencies-tab" type="checkbox" />
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">Show Statistics</div>
+            <div class="col-xs-6 col-md-6">
+                <div class="switch">
+                    <label>
+                        <input class="or-settings-show-statistics-tab" type="checkbox" />
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">Show Social Popularity Indicator</div>
+            <div class="col-xs-6 col-md-6">
+                <div class="switch">
+                    <label>
+                        <input class="or-settings-show-social-popularity-indicator" type="checkbox" />
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">Allow Stakeholder Assignment</div>
+            <div class="col-xs-6 col-md-6">
+                <div class="switch">
+                    <label>
+                        <input class="or-settings-show-stakeholder-assignment" type="checkbox" />
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">Include Ambiguity Analysis</div>
+            <div class="col-xs-6 col-md-6">
+                <div class="switch">
+                    <label>
+                        <input class="or-settings-show-ambiguity-analysis" type="checkbox" />
+                        <span class="lever"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6" style="height:25px;margin-top:10px;">Evaluation Mode</div>
+            <div class="col-xs-6 col-md-6 input-field" style="margin:0;">
+                <select class="or-evaluation-mode-field">
+                    <option value="BASIC">Basic (one-dim.)</option>
+                    <option value="NORMAL">Normal (multi-dim.)</option>
+                    <option value="ADVANCED">Advanced (arg.-based)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6" style="height:25px;margin-top:10px;">Twitter Channel</div>
+            <div class="col-xs-6 col-md-6 input-field" style="margin:0;">
+                <input class="or-settings-twitter-channel" type="text" style="margin:0;height:35px;" />
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-import-dependency-recommendations-container">
+        <h1>Recommended Dependencies</h1>
+        <div class="or-recommended-dependency-list-container">
+            <div class="or-no-dependency-placeholder-row row">
+                <div class="col-md-1 material-icons">info</div>
+                <div class="col-md-11 or-no-dependency-placeholder-row-text">No (further) dependencies found.</div>
+            </div>
+            <div class="or-dependency-row row"></div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script src="/js/moment-with-locales.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/jquery.ui.touch-punch.min.js"></script>
+<script src="/js/mvp.js?v=3"></script>
+<script src="/js/jquery.barrating.js"></script>
+<script type="text/javascript" src="/js/jquery.autocomplete.min.js"></script>
+<script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+<script type="text/javascript" src="/js/summernote.min.js"></script>
+<!--
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script src="/js/mdl-jquery-modal-dialog.js"></script>
+-->
+<script th:inline="javascript">
+	function handleTitle() {
+		if ($(".or-project-name").hasClass("or-form-field-disabled")) {
+			$(".or-project-name").removeClass("or-form-field-disabled");
+			$("#or-form-edit-project-name").hide();
+			$(".or-project-name").prop("disabled", false).focus();
+		} else {
+			$(".or-project-name").addClass("or-form-field-disabled");
+			$("#or-form-edit-project-name").show();
+			$(".or-project-name").prop("disabled", true);
+		}
+		return false;
+	}
+
+	function handleDescription() {
+		if ($(".or-project-description").hasClass("or-form-field-disabled")) {
+			$(".or-project-description").removeClass("or-form-field-disabled");
+			$(".or-project-description").prop("disabled", false).focus();
+			$("#or-form-edit-project-description").hide();
+		} else {
+			$(".or-project-description").addClass("or-form-field-disabled");
+			$(".or-project-description").prop("disabled", true);
+			$("#or-form-edit-project-description").show();
+		}
+		return false;
+	}
+
+    function resizeNavBar() {
+        var navbarRightWidth = $(".navbar-right").width();
+        $("#or-project-name").width(0);
+        var fullWidth = $(".navbar").width();
+        var additionalSpaceWidth = 0;
+
+        if (fullWidth <= 480) {
+            additionalSpaceWidth = 165;
+        }
+
+        if (navbarRightWidth > 0) {
+            $(".navbar-header")
+                .css("width", "-webkit-calc(100% - " + navbarRightWidth + "px)")
+                .css("width", "-moz-calc(100% - " + navbarRightWidth + "px)")
+                .css("width", "calc(100% - " + navbarRightWidth + "px)");
+        } else {
+            $(".navbar-header").width("100%");
+        }
+
+        var navbarWidth = $(".navbar-header").width();
+        var minMenuItemWidth = 320;
+        var buffer = 15;
+        $("#or-project-name").width(navbarWidth - minMenuItemWidth - buffer + additionalSpaceWidth);
+    }
+
+    $(document).ready(function() {
+        var projectID = [[${project.id}]];
+        var projectKey = [[${project.uniqueKey}]];
+        var currentUserID = [[${currentUserID}]];
+        var projectName = [[${#strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}]];
+        var projectDescription = [[${#strings.replace(#strings.escapeXml(project.description), '&#10;', ' ')}]];
+        var creatorUserID = [[${(project.creatorUser != null) ? project.creatorUser.id : 0}]];
+        var isPrivateProject = [[${project.visibilityPrivate}]];
+        var isReadOnlyProject = [[${projectSettings.readOnly}]];
+
+        var projectSettings = {
+            readOnly: [[${projectSettings.readOnly}]],
+            showDependencies: [[${projectSettings.showDependencies}]],
+            showStatistics: [[${projectSettings.showStatistics}]],
+            showSocialPopularityIndicator: [[${projectSettings.showSocialPopularityIndicator}]],
+            showStakeholderAssignment: [[${projectSettings.showStakeholderAssignment}]],
+            showAmbiguityAnalysis: [[${projectSettings.showAmbiguityAnalysis}]],
+            evaluationMode: [[${projectSettings.evaluationMode}]],
+            twitterChannel: [[${projectSettings.twitterChannel}]]
+        };
+
+        $("#or-navbar-content-container").hide();
+        var navbarContentContainerHtml = $(".or-navbar-content-container").html();
+        $(".or-navbar-content-container").remove();
+        $("#or-navbar-content-container").html(navbarContentContainerHtml);
+        resizeNavBar();
+        window.setTimeout(function () { $("#or-navbar-content-container").fadeIn(1000); }, 100);
+
+        $("#or-menu-button").dropdown({
+            inDuration: 300,
+            outDuration: 225,
+            constrainWidth: false,
+            hover: false,
+            gutter: 0,
+            belowOrigin: true,
+            alignment: 'left',
+            stopPropagation: false
+        });
+
+        var projectData = {
+            projectID: projectID,
+            projectKey: projectKey,
+            projectName: projectName,
+            projectDescription: projectDescription,
+            creatorUserID: creatorUserID,
+            isPrivateProject: isPrivateProject,
+            projectSettings: projectSettings
+        };
+
+        var userData = {
+            id: currentUserID,
+            userFirstName: [[${currentUser?.firstName}]],
+            userLastName: [[${currentUser?.lastName}]],
+            userEmail: [[${currentUser?.mailAddress}]]
+        };
+
+        let uiEventHandler = new UIEventHandler();
+		let uiManager = new UIManager(projectID, projectKey, uiEventHandler);
+		uiManager.showExplanationIfNecessary($('.tap-target'));
+		uiManager.updateVisibilityStatus(isPrivateProject);
+
+		let dataManager = new DataManager(projectID, projectData, currentUserID, userData, uiManager);
+		uiEventHandler.dataManager = dataManager;
+		uiManager.dataManager = dataManager;
+		dataManager.fetchAndShowRequirementsAndReleases();
+		uiManager.initialize();
+
+		$(".or-project-name").prop("disabled", true).focusout(handleTitle);
+		$(".or-project-description").prop("disabled", true).focusout(handleDescription);
+        $("ul.tabs").tabs();
+		$('[data-toggle="tooltip"]').tooltip();
+
+        if (isReadOnlyProject) {
+            $("#or-notification-button-container").hide();
+            $("#or-assessment-scheme-button").parent().hide();
+            $("#or-import-requirements-twitter-button").parent().hide();
+            $("#or-project-settings-button").parent().hide();
+            $(".fixed-action-btn").remove();
+
+            $("#or-project-name")
+                .prop("readonly", true)
+                .css("cursor", "not-allowed");
+		    $("#or-form-edit-project-description")
+                .css("color", "#d2d2d2")
+                .css("cursor", "default")
+                .click(function () {
+                    alert("You are not allowed to change the description of this project! This is a read-only project.");
+                    return false;
+                });
+        } else {
+            $("#or-form-edit-project-name").click(handleTitle);
+            $("#or-form-edit-project-description").click(handleDescription);
+        }
+
+        /*
+        window.onscroll = function() {myFunction()};
+
+        // Get the header
+        var header = document.getElementById("or-project-details-container");
+
+        // Get the offset position of the navbar
+        var sticky = header.offsetTop;
+
+        // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+        function myFunction() {
+            if (window.pageYOffset >= sticky) {
+                $("#or-project-details-container").slideUp();
+                $(".navbar-brand").fadeOut();
+                $(".navbar-header").append($("#or-project-name"));
+                //header.classList.add("sticky");
+            } else {
+                $(".navbar-brand").fadeIn();
+                $("#or-project-details-container").fadeIn();
+                header.classList.remove("sticky");
+            }
+        }
+        */
+
+        function enterFullscreen(element) {
+            if(element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if(element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if(element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if(element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            }
+        }
+
+        function exitFullscreen() {
+            if(document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if(document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if(document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+
+        window.addEventListener('resize', function(event) { resizeNavBar(); });
+        $("#or-fullscreen-button").click(function () {
+            $(this).blur();
+            if (!$(this).hasClass("or-fullscreen-mode")) {
+                $(this).fadeOut();
+				enterFullscreen(document.documentElement);
+                $(this).children(".material-icons").text("fullscreen_exit");
+                $(this).addClass("or-fullscreen-mode");
+                $(this).prop("title", "Exit Fullscreen");
+                $(this).fadeIn();
+            } else {
+                $(this).fadeOut();
+                exitFullscreen();
+                $(this).children(".material-icons").text("fullscreen");
+                $(this).removeClass("or-fullscreen-mode");
+                $(this).prop("title", "Enter Fullscreen");
+                $(this).fadeIn();
+			}
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link}, ~{::script})">
+	<title>InnoSensr - Optimal vs. Real Release Plan</title>
+	<link href="/css/chart.css" rel="stylesheet" media="screen" />
+    <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <script src="/js/statistics/Chart.js"></script>
+</head>
+
+<body>
+<div id="chart_placeholder"></div>
+<script src="/js/statistics/d3.v4.min.js"></script>
+<script src="/js/statistics/d3.dependencyWheel.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    var requirementsTitleMapping = [[${requirementsTitleMap}]];
+    var requirementsDescriptionMapping = [[${requirementsDescriptionMap}]];
+    var dependencyMapping = [[${dependenciesMap}]];
+    console.log(dependencyMapping);
+
+    var chart = d3.chart.dependencyWheel()
+        .width(900)    // also used for height, since the wheel is in a a square
+        .margin(180)   // used to display package names
+        .padding(0.03); // separating groups in the wheel
+
+    var matrixIds = Object.keys(requirementsTitleMapping);
+    var matrix = [];
+    var packageNames = [];
+    var requirementDescriptions = {};
+
+    for (var index in matrixIds) {
+        var matrixRow = [];
+        var rowID = matrixIds[index];
+        packageNames.push(requirementsTitleMapping[rowID]);
+        requirementDescriptions[requirementsTitleMapping[rowID]] = requirementsDescriptionMapping[rowID];
+        var targetIDs = dependencyMapping[rowID];
+        for (var innerIndex in matrixIds) {
+            if (targetIDs !== undefined) {
+                var colID = matrixIds[innerIndex];
+                matrixRow.push((targetIDs.indexOf(parseInt(colID)) != -1) ? 1 : 0);
+            } else {
+                matrixRow.push(0);
+            }
+        }
+        matrix.push(matrixRow);
+    }
+    console.log(matrix);
+
+    var data = {
+        matrix: matrix,
+        packageNames: packageNames
+    };
+    console.log(data);
+    d3.select('#chart_placeholder')
+        .datum(data)
+        .call(chart);
+
+    $(document).ready(function() {
+        $("g.group").children("text").each(function () {
+            var requirementName = $(this).text();
+            $(this).attr("data-toggle", "tooltip").attr("data-placement", "left").attr("title", requirementDescriptions[requirementName]);
+        });
+        $("[data-toggle=\"tooltip\"]").tooltip();
+    });
+</script>
+</body>
+</html>

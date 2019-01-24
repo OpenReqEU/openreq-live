@@ -1,0 +1,354 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+
+<div th:fragment="lableelement(Object, placeholder)">
+    <h3 style="display: none;">Poll.title</h3>
+    <h3  style="text-align: center;  " th:classappend="${decision.name.length() > 120 ? 'hideLongTexts':''}"
+         th:text=" ${placeholder}+' ' + ${decision.name}"></h3>
+
+
+    <div
+         th:if="${decision.decisionImage != null and decision.decisionImage != ''}">
+    <img class="myImg" style=" display: block ; margin-left: auto; margin-right: auto; "
+        th:id="${decision.decisionImage}"
+         th:src=" ${decision.decisionImage != null and decision.decisionImage != ''}?  ${decision.decisionImage} :''"
+         th:onclick="'javascript:enlargePic(\''+${decision.decisionImage}+'\');'" width="150px">
+    </div>
+
+</div>
+
+
+<div th:fragment="lableelementresult(Object, placeholder1)">
+    <h3 style="display: none;">Poll.title</h3>
+    <h3 style="text-align: center;  " th:classappend="${decisionWithRatings.decision.name.length() > 300 ? 'hideLongTexts':''}"
+    >[[${placeholder1}]] <a th:if="${decisionWithRatings.decision.allowResultSharing == true}"
+                                     th:href="'mailto:?subject=Status%20of%20' + ${decisionWithRatings.decision.name} + '&amp;body=Watch%20the%20intermediate%20result%20of%20' + ${decisionWithRatings.decision.name} + '.%20Use%20following%20Link:%20' + ${decisionWithRatings.decision.decisionLink.replace('openDecision','openSummary')}"
+    ><span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+
+    </a></h3>
+
+
+    <div class="col-md-12" style="text-align: right;">
+        <label style="line-height:55px"
+               th:if="${decisionWithRatings.decision.deadline != null} and !${decisionWithRatings.decision.closed} "
+               th:text="'Deadline ' + ${#dates.format(decisionWithRatings.decision.deadline, 'dd-MM-yy HH:mm')}"></label>
+
+    </div>
+
+    <div
+            th:if="${decision.decisionImage != null and decision.decisionImage != ''}">
+        <img class="myImg" style=" display: block ; margin-left: auto; margin-right: auto; " th:id="${decisionWithRatings.decision.decisionImage}"
+             th:src=" ${decisionWithRatings.decision.decisionImage != null and decisionWithRatings.decision.decisionImage != ''}?  ${decisionWithRatings.decision.decisionImage} :''"
+             th:onclick=" 'javascript:enlargePic(\''+${decisionWithRatings.decision.decisionImage}+'\');'"
+             width="150">
+    </div>
+
+</div>
+
+
+<div class="media" th:fragment="votingelement(Object, rowstat, selector )">
+    <div class="media-left media-middle ">
+        <!--<label style="font-size: 1.5em; width:1em;">
+            <input type="checkbox" name="myRadio" th:field="*{selectionsList[__${rowstat.index}__]}"
+                   th:value="${decision.solutions[__${rowstat.index}__].id}">
+        </label>-->
+
+        <div class="checkbox">
+            <label style="font-size: 2.5em">
+                <input type="checkbox" th:field="*{selectionsList[__${rowstat.index}__]}"
+                       th:value="${decision.solutions[__${rowstat.index}__].id}">
+                <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+            </label>
+
+
+        </div>
+
+       <!-- <div class="switchyesno">
+            <input id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no" type="checkbox"
+                   th:field="*{selectionsList[__${rowstat.index}__]}"
+                   th:value="${decision.solutions[__${rowstat.index}__].id}">
+            <label for="cmn-toggle-7" data-on="Yes" data-off="No"></label>
+
+        </div>-->
+
+
+
+
+
+    </div>
+    <div class="media-left media-middle" th:if="${decision.solutions[__${rowstat.index}__].solutionImage != null and decision.solutions[__${rowstat.index}__].solutionImage != ''}">
+
+        <img class="media-object myImg" th:id="${decision.solutions[__${rowstat.index}__].solutionImage}"
+             th:src=" ${decision.solutions[__${rowstat.index}__].solutionImage != null and decision.solutions[__${rowstat.index}__].solutionImage != ''}?  ${decision.solutions[__${rowstat.index}__].solutionImage} :''"
+             th:onclick="${decision.solutions[__${rowstat.index}__].solutionImage != null and decision.solutions[__${rowstat.index}__].solutionImage != ''}? 'javascript:enlargePic(\''+${decision.solutions[__${rowstat.index}__].solutionImage}+'\');':'' "
+             width="100">
+
+
+    </div>
+    <div class="media-body media-middle">
+        <!--<h4 class="media-heading" th:text="${title}">{Alternative.title}</h4>-->
+        <h4 th:classappend="${decision.solutions[__${rowstat.index}__].name.length() > 150 ? 'hideLongTexts':''}"
+            th:text="${decision.solutions[__${rowstat.index}__].name}"></h4>
+        <p th:classappend="${decision.solutions[__${rowstat.index}__].description.length() > 300 ? 'hideLongTexts':''}"
+           th:utext="${decision.solutions[__${rowstat.index}__].description}">{Alternative.description}</p>
+
+    </div>
+</div>
+
+<div class="row result" th:fragment="resultelement(Object, rowstat)">
+    <div class="col-md-8 col-sm-7 col-xs-8">
+        <div class="media">
+
+            <!--'../images/placeholderimage.svg'-->
+            <div class="media-left media-middle"
+                 th:if="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != null and decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != ''}">
+                <img class="media-object myImg"
+                     th:id="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage}"
+                     th:src=" ${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != null and decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != ''}?  ${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage} :'' "
+                     th:onclick="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != null and decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage != ''}? 'javascript:enlargePic(\''+${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.solutionImage}+'\');':''"
+                     width="100">
+            </div>
+            <div class="media-body media-middle">
+                <h4 th:classappend="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.name.length() > 150 ? 'hideLongTexts':''}"
+                    th:text="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.name}"></h4>
+                <p th:classappend="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.description.length() > 300 ? 'hideLongTexts':''}"
+                   th:utext="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.description}">
+                    {Alternative.description}</p>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-md-1 col-sm-1 col-xs-4">
+        <img th:if="${decisionWithRatings.decision.showTrophyForWinners and maxValue != null and maxValue == decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].summary}"
+             src="/images/pokal.svg" style="margin-left: auto; margin-right: auto;  display: block;" width="40">
+    </div>
+
+
+    <div class="col-md-3 col-sm-4 col-xs-12">
+        <div class="progress" style="margin: 10px;">
+            <div class="progress-bar" role="progressbar"
+                 th:aria-valuenow="${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].summary}"
+                 aria-valuemin="0" th:aria-valuemax="${maxValue}"
+                 th:style="'width: '+${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].summary * 100 / decisionWithRatings.decision.participations.size()}+'%;'">
+
+
+                <th:block th:if="!${decisionWithRatings.decision.isParticipantsMustEnterName()}">
+                    [[${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].summary} + ' / '+${decisionWithRatings.decision.participations.size()}]]
+                </th:block>
+
+
+                <th:block th:if="${decisionWithRatings.decision.isParticipantsMustEnterName()}">
+                <a class="dropdown-toggle" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="true" >[[${decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].summary} + ' / '+${decisionWithRatings.decision.participations.size()}]]<b class="caret"></b></a>
+                <ul th:if="!${T(com.selectionarts.Util.Utils).getParticipationNamesOfAlternative(decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.getId().toString(), decisionWithRatings.decision).isEmpty()}" class="dropdown-menu col-md-12 col-xs-12" style=" height: auto;
+                                                                                 max-height: 150px;
+                                                                                 overflow-x: hidden;" id="dropdownMenu">
+                    <li th:each="anItem : ${T(com.selectionarts.Util.Utils).getParticipationNamesOfAlternative(decisionWithRatings.solutionsWithSummary[__${rowstat.index}__].solution.getId().toString(), decisionWithRatings.decision)}"><a><span class="glyphicon glyphicon-user" aria-hidden="true"></span> [[${anItem}]]</a></li>
+
+                </ul>
+                </th:block>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<ul class="nav nav-pills tabsettings" th:fragment="createtabs(definition,settings)">
+    <li  th:classappend="!${decision.InSettings} ?  'active' : ''"><a href="#definition" data-toggle="pill" th:text="${definition}">Poll Definition</a></li>
+    <li th:classappend="${decision.InSettings} ?  'active' : ''"><a href="#settings" data-toggle="pill" th:text="${settings}">Advanced Settings</a></li>
+</ul>
+
+<!--/*@thymesVar id="decision" type="com.selectionarts.view.CreateDecision"*/-->
+<div th:fragment="createpollinformation(Fraction,decision,placeholder1)">
+    <row><h3 th:text="${Fraction}">Poll information</h3></row>
+
+    <row>
+        <div class="form-main-block col-md-12">
+            <div class="col-md-8 form-main-block-content">
+                <div class="form-main-block-text" style="display: none;">
+
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Poll Title">
+
+                </div>
+                <div class="form-main-block-text">
+
+                    <textarea th:field="*{question}" type="text" class="form-control" id="exampleInputEmail1"
+                              th:placeholder="${placeholder1}" maxlength="3000"
+                              onkeyup="checkCharLimit(this,'count_message1',3000)"
+                              onfocus="setCharLimiterActive('count_message1')"
+                              onblur="setCharLimiterActive('count_message1')" rows=4
+                              style="min-height: 150px;"></textarea>
+                    <h6 class="remaining" id="count_message1"></h6>
+                </div>
+                <div class="form-main-block-text">
+
+                    <input type="text" class="form-control deadline" placeholder="Poll Deadline" th:field="*{deadline}" th:readonly="readonly" maxlength="16" >
+
+                </div>
+            </div>
+
+            <div class="col-md-2 form-main-block-content">
+
+                <img class="img-rounded form-main-block-image "
+                     th:src="*{ decisionImage != null and decisionImage != ''}?  *{decisionImage} :'/images/placeholderimage.svg'"
+                     alt="Decision Images" width="150px"
+                     th:onclick="'javascript:document.getElementById(\''+'input_decisionimage'+'\').click();'">
+
+
+                <div class="fileinput fileinput-new" data-provides="fileinput" style="display: none;">
+                    <input th:id="'input_decisionimage'" type="file"
+                           name="file"
+                           th:onchange="'javascript:checkSize(this,\''+'decImage'+'\');'"
+                           accept="image/*"/>
+                </div>
+                <button type="submit" style="display: none;" class="btn btn-default" id="decImage"
+                        name="uploadImageForDecision" th:text="#{index.uploaddecisionimage}"></button>
+
+            </div>
+
+        </div>
+    </row>
+</div>
+
+
+<div th:fragment="createaltenative(Fraction,value,placeholder1)">
+    <row><h3 th:text="${Fraction}">Alternative information</h3></row>
+
+    <th:block th:replace="${value}"/>
+
+
+    <button type="submit" name="addAlternative"
+            class="btn  buttom-custom" th:text="${placeholder1}" th:onmousedown="'javascript:this.click()'">+Add new alternative
+    </button>
+</div>
+
+
+<div class="submissionblock col-md-12"
+     th:fragment="createaltenativeinformation(object,rowstat,placeholder1,placeholder2)">
+    <input type="hidden" th:field="*{alternativesList[__${rowStat.index}__].alternativeID}"/>
+    <input type="hidden" th:field="*{alternativesList[__${rowStat.index}__].alternativeImage}"/>
+
+    <div class="col-md-8 form-main-block-content">
+        <div class="form-main-block-text">
+            <input type="hidden" th:field="*{alternativesList[__${rowStat.index}__].creationDateMillies}"/>
+
+            <input type="text" th:field="*{alternativesList[__${rowStat.index}__].alternativeName}"
+                   class="form-control"
+                   maxlength="1000"
+                   th:onkeyup="'javascript:checkCharLimit(this,\''+'countName'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\',1000);'"
+                   th:onfocus="'javascript:setCharLimiterActive(\''+'countName'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+                   th:onblur="'javascript:setCharLimiterActive(\''+'countName'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+
+                   th:placeholder="${placeholder1}">
+
+            <h6 class="remaining" th:id="'countName' + *{alternativesList[__${rowStat.index}__].alternativeID}"></h6>
+        </div>
+        <div class="form-main-block-text">
+
+            <textarea rows="3" type="text" th:field="*{alternativesList[__${rowStat.index}__].alternativeDescription}"
+                      maxlength="5000"
+                      th:onkeyup="'javascript:checkCharLimit(this,\''+'countDescr'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\',5000);'"
+                      th:onfocus="'javascript:setCharLimiterActive(\''+'countDescr'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+                      th:onblur="'javascript:setCharLimiterActive(\''+'countDescr'+'\' + \''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+                      class="form-control" id="exampleInputEmail1"
+                      th:placeholder="${placeholder2}"></textarea>
+
+            <h6 class="remaining" th:id="'countDescr' + *{alternativesList[__${rowStat.index}__].alternativeID}"></h6>
+        </div>
+
+    </div>
+    <div class="col-md-2 form-main-block-content">
+
+        <img class="img-rounded form-main-block-image"
+             th:src="*{alternativesList[__${rowStat.index}__].alternativeImage != null and alternativesList[__${rowStat.index}__].alternativeImage != ''}?  *{alternativesList[__${rowStat.index}__].alternativeImage} :'/images/placeholderimage.svg'"
+             alt="Alternative Image" width="120"
+             th:onclick="'javascript:document.getElementById(\''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\').click();'">
+
+
+        <div class="fileinput fileinput-new" data-provides="fileinput" style="display: none;">
+            <input th:id="*{alternativesList[__${rowStat.index}__].alternativeID}" type="file"
+                   name="file"
+                   th:onchange="'javascript:checkSize(this,\''+'btn'+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+                   accept="image/*"/>
+        </div>
+
+
+        <button type="submit" style="display:none;"
+                th:id="'btn'+*{alternativesList[__${rowStat.index}__].alternativeID}"
+                th:onclick="'javascript:handleupload(\''+*{alternativesList[__${rowStat.index}__].alternativeID}+'\');'"
+                name="uploadImageForAlternative" th:text="#{index.uploadalternativeimage}"></button>
+
+    </div>
+    <div class="col-md-1 col-md-offset-1 form-main-block-content">
+        <div class="btn btn-block form-main-block-delete"
+             th:onclick="'javascript:document.getElementById(\''+'del'+*{alternativesList[__${rowStat.index}__].alternativeID}+'\').click();'">
+
+            <i class="fa fa-trash-o fa-4x " aria-hidden="true" style=""></i>
+        </div>
+
+        <button type="submit" style="display: none;"
+                th:id="'del'+*{alternativesList[__${rowStat.index}__].alternativeID}"
+                th:onclick="|document.getElementById('altToDelete').value='*{alternativesList[__${rowStat.index}__].alternativeID}'|"
+                th:value="*{alternativesList[__${rowStat.index}__].alternativeID}" name="deleteAlternative"></button>
+
+    </div>
+</div>
+
+
+<div th:fragment="createemailfield(id, placeholder1, placeholder2, placeholder3)">
+    <row>
+        <h3 th:text="${placeholder1}">Contact information</h3>
+        <p><i class="fa fa-info-circle fa-lg"></i>&emsp; [[${placeholder2}]]</p>
+
+    </row>
+    <row>
+        <div class="form-group">
+            <input type="text" class="form-control" id="exampleInputEmail1"
+                   th:field="*{mailAddressOfCreator}"
+                   th:placeholder="${placeholder3}"/>
+        </div>
+    </row>
+
+</div>
+
+<div th:fragment="createnamefieldvoting(id)">
+    <row>
+        <div class="form-group">
+            <input type="text" class="form-control" th:required="required"
+                   th:field="*{nameOfParticipant}"
+                   placeholder="Your Name"/>
+        </div>
+    </row>
+
+</div>
+
+
+<div th:fragment="settingsinformation(value)">
+    <row><h3>Settings</h3></row>
+
+
+    <th:block th:replace="${value}"/>
+
+
+</div>
+
+
+<div class="col-md-12 col-xs-12 col-sm-12" th:fragment="settingselement(id,text)">
+    <label class="switch col-md-2 col-xs-3 col-sm-3">
+        <input type="checkbox" th:field=${id}/>
+        <span class="slider round"></span>
+    </label>
+    <lable class="col-md-10 col-xs-9 col-sm-9" th:text="${text}">Settingstext</lable>
+</div>
+
+
+</body>
+</html>

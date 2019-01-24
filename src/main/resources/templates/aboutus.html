@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{}, ~{})">
+    <title>Choiclaweb</title>
+</head>
+
+<body>
+	<div th:replace="fragments/basictemplate :: header(true,false,false)"></div>
+	<div th:replace="fragments/basictemplate :: subtitle('About us','')"></div>
+	<div th:insert="fragments/basictemplate :: content(~{::#content})">
+	    <div id="content" class="container">
+	        <img src="/images/tulogo.png" width="300" style="height: auto;" class="img-responsive center-block">
+	        <p style="text-align: center; color:#777;" th:text="#{aboutus.developed}"></p>
+	        <p style="text-align: center;color:#777;" th:text="#{aboutus.aim}"></p>
+	    </div>
+	</div>
+	<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+</body>
+</html>
