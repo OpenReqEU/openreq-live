@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import eu.openreq.Util.CSVReader;
 import eu.openreq.Util.Constants;
+import eu.openreq.api.external.dto.export.ProjectDto;
+import eu.openreq.api.external.dto.export.ReleaseDto;
+import eu.openreq.api.external.dto.export.RequirementDto;
 import eu.openreq.dbo.*;
 import eu.openreq.repository.*;
 import eu.openreq.service.IPService;
@@ -334,6 +337,113 @@ public class ProjectController {
             return "NOT OK!";
         }
 		return "OK! Moved: " + croppedImage.getOriginalFilename() + " " + croppedImage.getSize();
+	}
+
+	@ResponseBody
+    @GetMapping("/project/{projectUniqueKey}/export")
+    public ProjectDto exportProject(@PathVariable(value="projectUniqueKey") String projectUniqueKey, Authentication authentication) {
+        ProjectDbo project = projectRepository.findOneByUniqueKey(projectUniqueKey);
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(project.getId());
+        projectDto.setName(project.getName());
+        projectDto.setDescription(project.getDescription());
+
+        // project settings
+        /*
+        Map<String, Object> projectSettingsData = new HashMap<>();
+        ProjectSettingsDbo projectSettings = project.getProjectSettings();
+        projectSettingsData.put("isReadOnly", projectSettings.isReadOnly());
+        projectSettingsData.put("isDependencyAnalysisProject", projectSettings.isDependencyAnalysisProject());
+        projectData.put("projectSettings", projectSettingsData);
+        */
+
+        List<RequirementDbo> unassignedRequirements = project.getRequirements().stream().filter(r -> r.getRelease() == null).collect(Collectors.toList());
+        List<RequirementDto> unassignedRequirementDtos = new ArrayList<>();
+        for (RequirementDbo unassignedRequirement : unassignedRequirements) {
+            RequirementDto requirementDto = new RequirementDto();
+            requirementDto.setId(unassignedRequirement.getId());
+            requirementDto.setTitle(unassignedRequirement.getTitle());
+            requirementDto.setDescription(unassignedRequirement.getDescription());
+            requirementDto.setProjectSpecificRequirementId(unassignedRequirement.getProjectSpecificRequirementId());
+            requirementDto.setReleaseID(0L);
+            unassignedRequirementDtos.add(requirementDto);
+        }
+        projectDto.setUnassignedRequirements(unassignedRequirementDtos);
+
+        List<ReleaseDto> releaseDtos = new ArrayList<>();
+        for (ReleaseDbo release : project.getSortedReleases()) {
+            ReleaseDto releaseDto = new ReleaseDto();
+            releaseDto.setId(release.getId());
+            releaseDto.setName(release.getName());
+            releaseDto.setDescription(release.getDescription());
+            releaseDto.setMaximumCapacity(release.getMaximumCapacity());
+            releaseDto.setEndDateTimestamp(release.getEndDate().getTime());
+            releaseDto.setVisible(release.isVisible());
+            releaseDto.setStatus(release.getStatus());
+            List<RequirementDto> requirementDtos = new ArrayList<>();
+
+            for (RequirementDbo requirement : release.getRequirements()) {
+                RequirementDto requirementDto = new RequirementDto();
+                requirementDto.setId(requirement.getId());
+                requirementDto.setTitle(requirement.getTitle());
+                requirementDto.setDescription(requirement.getDescription());
+                requirementDto.setProjectSpecificRequirementId(requirement.getProjectSpecificRequirementId());
+                requirementDto.setReleaseID(release.getId());
+                requirementDtos.add(requirementDto);
+            }
+            releaseDto.setRequirements(requirementDtos);
+            releaseDtos.add(releaseDto);
+        }
+        projectDto.setReleases(releaseDtos);
+        return projectDto;
+	}
+
+	@ResponseBody
+    @PostMapping("/project/{projectUniqueKey}/import")
+    public String importProject(@PathVariable(value="projectUniqueKey") String projectUniqueKey,
+                                @RequestBody ProjectDto projectDto, Authentication authentication) {
+        ProjectDbo project = projectRepository.findOneByUniqueKey(projectUniqueKey);
+        project.setName(projectDto.getName());
+        project.setDescription(projectDto.getDescription());
+
+        for (RequirementDto unassignedRequirementDto : projectDto.getUnassignedRequirements()) {
+            RequirementDbo requirement = new RequirementDbo();
+            requirement.setTitle(unassignedRequirementDto.getTitle());
+            requirement.setDescription(unassignedRequirementDto.getDescription());
+            requirement.setProjectSpecificRequirementId(unassignedRequirementDto.getProjectSpecificRequirementId());
+            requirement.setProject(project);
+            requirement.setRelease(null);
+            project.addRequirement(requirement);
+            requirementRepository.save(requirement);
+        }
+
+        for (ReleaseDto releaseDto : projectDto.getReleases()) {
+            ReleaseDbo release = new ReleaseDbo();
+            release.setName(releaseDto.getName());
+            release.setDescription(releaseDto.getDescription());
+            release.setMaximumCapacity(releaseDto.getMaximumCapacity());
+            release.setEndDate(new Date(releaseDto.getEndDateTimestamp()));
+            release.setVisible(releaseDto.isVisible());
+            release.setStatus(releaseDto.getStatus());
+            release.setProject(project);
+            releaseRepository.save(release);
+            project.addRelease(release);
+
+            for (RequirementDto requirementDto : releaseDto.getRequirements()) {
+                RequirementDbo requirement = new RequirementDbo();
+                requirement.setTitle(requirementDto.getTitle());
+                requirement.setDescription(requirementDto.getDescription());
+                requirement.setProjectSpecificRequirementId(requirementDto.getProjectSpecificRequirementId());
+                requirement.setProject(project);
+                requirement.setRelease(release);
+                release.addRequirement(requirement);
+                project.addRequirement(requirement);
+                requirementRepository.save(requirement);
+            }
+        }
+
+        projectRepository.save(project);
+        return "ok!";
 	}
 
     @RequestMapping("/project/list")

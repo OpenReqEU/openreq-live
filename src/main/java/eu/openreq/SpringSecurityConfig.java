@@ -63,6 +63,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/project/generatedependencyproject",
 						"/project/generatealloadstudyprojects",
 						"/project/upload",
+						"/project/**/export",
+						"/project/**/import",
 						"/project/**/checkconsistency.json",
 						"/project/**/user/list.json",
 						"/project/**/update.json",
