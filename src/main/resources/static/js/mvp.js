@@ -783,6 +783,8 @@ class DataManager {
 		var requirementDescription = $(reference).children("td").children("div.or-requirement-description").summernote("code");
 		var requirementStatus = $(reference).children("td.or-requirement-status").children("div").children("input.select-dropdown").val().toUpperCase();
 		requirementStatus = requirementStatus.replace(" ", "");
+        var requirementDescriptionStripped = requirementDescription.replace(/<\/?[^>]+(>|$)/g, "");
+        console.log(requirementDescriptionStripped);
 
 		if (requirementIDExists) {
 			var requirementID = parseInt($(reference).attr("id").split("-")[2]);
@@ -807,7 +809,7 @@ class DataManager {
 				}
 			}
 		} else {
-			if ((requirementTitle != "") || (requirementDescription != "")) {
+			if ((requirementTitle != "") || (requirementDescriptionStripped != "")) {
 				this.newRequirements.push({
                     title: requirementTitle,
                     description: requirementDescription,
@@ -815,7 +817,7 @@ class DataManager {
                     status: requirementStatus
 				});
 			}
-			if ((requirementTitle == "") && (requirementDescription != "") && allowAlerts) {
+			if ((requirementTitle == "") && (requirementDescriptionStripped != "") && allowAlerts) {
 				alert("Please enter a valid title for the requirement!");
 				requirementTitleSelector.focus();
 			}
