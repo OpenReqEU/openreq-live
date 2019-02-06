@@ -388,6 +388,7 @@ public class ProjectController {
                 requirementDto.setTitle(requirement.getTitle());
                 requirementDto.setDescription(requirement.getDescription());
                 requirementDto.setProjectSpecificRequirementId(requirement.getProjectSpecificRequirementId());
+                requirementDto.setStatus(requirement.getStatus());
                 requirementDto.setReleaseID(release.getId());
                 requirementDtos.add(requirementDto);
             }
@@ -434,6 +435,7 @@ public class ProjectController {
                 requirement.setTitle(requirementDto.getTitle());
                 requirement.setDescription(requirementDto.getDescription());
                 requirement.setProjectSpecificRequirementId(requirementDto.getProjectSpecificRequirementId());
+                requirement.setStatus(requirementDto.getStatus());
                 requirement.setProject(project);
                 requirement.setRelease(release);
                 release.addRequirement(requirement);
