@@ -13,13 +13,14 @@ public class IPService {
 
     private static final Logger logger = LoggerFactory.getLogger(IPService.class);
 
-    private static String hostName = "innosensr.com";
+    private static String hostName = "live.openreq.eu";
 
     @Autowired
     private Environment environment;
 
     public long getPort() {
-        return Long.parseLong(environment.getProperty("server.port"));
+        return 443;
+        /*return Long.parseLong(environment.getProperty("server.port"));*/
     }
 
     public String getHost() {
