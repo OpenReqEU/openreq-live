@@ -259,9 +259,6 @@ public class UserController {
                     "Please log out first before you try to register a new user account!");
         }
 
-        result.rejectValue("username", null, "The user registration has been temporarily " +
-                "disabled! Please contact the administrator to get further information on that.");
-
         UserDbo existing = userService.findByUsername(userRegistrationDbo.getUsername());
         if (existing != null) {
             result.rejectValue("username", null, "There is already an account registered with that username!");
