@@ -2511,7 +2511,31 @@ class UIEventHandler {
                 		    	  	draggedRequirementTableRow.css({ 'position' : '', 'left' : '', 'top' : '' });
                 		    	  	targetTbody.prepend(draggedRequirementTableRow);
                 		    	  	targetTbody.effect("highlight", {}, 3000);
-                		    	  	context.uiEventHandler.bindUIEvents();
+                                    $("div.or-requirement-description").summernote({
+                                        minHeight: 40,
+                                        maxHeight: 80,
+                                        airMode: true,
+                                        placeholder: 'Description',
+                                        callbacks: {
+                                            onFocus: function() {
+                                                $(this)
+                                                    .parent()
+                                                    .children(".note-editor")
+                                                    .children(".note-editing-area")
+                                                    .children(".note-editable")
+                                                    .addClass("or-description-active");
+                                            },
+                                            onBlur: function() {
+                                                $(this)
+                                                    .parent()
+                                                    .children(".note-editor")
+                                                    .children(".note-editing-area")
+                                                    .children(".note-editable")
+                                                    .removeClass("or-description-active");
+                                            }
+                                        }
+                                    });
+                                    context.uiEventHandler.bindUIEvents();
 
                 		    	  	// TODO: fix this...
                 		    	  	//       HACK/WORKAROUND: timeout necessary otherwise the dragged requirement will be
