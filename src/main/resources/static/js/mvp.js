@@ -553,6 +553,7 @@ class DataManager {
 		this.updatedReleases = [];
 		this.deletedReleases = [];
 		this.deletedRequirements = [];
+		this.ambiguityIssueData = [];
 	}
 
 	getRequirementsMap() {
@@ -1032,9 +1033,9 @@ class DataManager {
                     this.fetchReleases(function () {
                         this.fetchIssues(function () {
                             this.fetchRecommendedSimilarRequirements(function () {
-                                this.fetchAmbiguityIssues(function () {
+                                //this.fetchAmbiguityIssues(function () {
                                     this.showReleasesRequirementsAndIssues();
-                                }.bind(this));
+                                //}.bind(this));
                             }.bind(this));
                         }.bind(this));
                     }.bind(this));

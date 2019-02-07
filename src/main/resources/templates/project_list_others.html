@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns="https://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link}, ~{})">
+    <title>OpenReq!Live - Projects</title>
+    <link href="/css/pagination.css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+<div th:replace="fragments/basictemplate :: header(true,true,false)"></div>
+<div th:replace="fragments/basictemplate :: subtitle('Projects of other users','Projects created by other users to which I am not invited.')"></div>
+<div th:insert="fragments/basictemplate :: content(~{::#content})">
+    <div id="content" class="container">
+        <div class="row">
+            <div class="col s12" th:if="${#lists.isEmpty(allOtherProjects)}">
+                <div class="alert alert-warning" style="font-style:italic;">
+                    <span style="font-size:20px;">No projects of other users available!</span>
+                </div>
+            </div>
+            <div class="center">
+                <div class="pagination">
+                    <a th:if="${currentPageNumber} > 1" th:href="'?page=' + (${currentPageNumber} - 1)">&laquo;</a>
+                    <th:block th:each="i : ${#numbers.sequence( 1, numOfPages, 1)}">
+                        <a th:href="'?page=' + ${i}" th:text="${i}" th:if="${i} == ${currentPageNumber}" class="active"></a>
+                        <a th:href="'?page=' + ${i}" th:text="${i}" th:unless="${i} == ${currentPageNumber}"></a>
+                    </th:block>
+                    <a th:if="${currentPageNumber} < ${numOfPages}" th:href="'?page=' + (${currentPageNumber} + 1)">&raquo;</a>
+                </div>
+            </div>
+            <th:block th:each="project : ${allOtherProjects}">
+                <div th:id="'or-project-' + ${project.id}" th:data-project-key="${project.uniqueKey}" class="or-project-tile col-xs-6 col-sm-4 col-lg-4" th:attr="data-name=${project.name}">
+                    <div class="or-project-tile-card card hoverable">
+                        <div class="card-image">
+                            <div class="or-project-tile-card-thumbnail" th:style="'background-image:url(\'' + ${project.imagePath} + '\');'"></div>
+                        </div>
+                        <div class="or-project-tile-card-content card-content">
+                            <span class="or-project-tile-card-name card-title" th:text="${project.name}"></span>
+                            <p class="or-project-tile-card-description">
+                                <span th:text="${project.description}" style="display:none;"></span>
+                            </p>
+                            <p>Releases: <th:block th:text="${#lists.size(project.releases)}"></th:block>, Requirements: <th:block th:text="${#lists.size(project.requirements)}"></th:block></p>
+                            <p class="or-project-tile-card-date"><th:block th:text="${#dates.format(project.startDate, 'MMM yy')} + ' - ' + ${#dates.format(project.endDate, 'MMM yy')}"></th:block></p>
+                        </div>
+                        <div class="card-action">
+                            <a th:href="'/project/p/' + ${project.uniqueKey} + '/manage'"><i class="material-icons">edit</i></a>
+                            <span th:if="${project.creatorUser?.id == currentUser.id and !project.projectSettings.readOnly}" style="float:right;"><a href="#" style="color:#666666;font-size:18px;margin:0;" class="or-list-project-delete"><span class="glyphicon glyphicon-trash"></span></a></span>
+                            <span th:unless="${project.creatorUser?.id == currentUser.id}" style="float:right;"><a href="#" style="color:#666666;font-size:18px;margin:0;" class="or-list-project-leave"><span class="glyphicon glyphicon-share"></span></a></span>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+        <div class="center">
+            <div class="pagination">
+                <a th:if="${currentPageNumber} > 1" th:href="'?page=' + (${currentPageNumber} - 1)">&laquo;</a>
+                <th:block th:each="i : ${#numbers.sequence( 1, numOfPages, 1)}">
+                    <a th:href="'?page=' + ${i}" th:text="${i}" th:if="${i} == ${currentPageNumber}" class="active"></a>
+                    <a th:href="'?page=' + ${i}" th:text="${i}" th:unless="${i} == ${currentPageNumber}"></a>
+                </th:block>
+                <a th:if="${currentPageNumber} < ${numOfPages}" th:href="'?page=' + (${currentPageNumber} + 1)">&raquo;</a>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        <a href="/project/list">&gt; Back to my projects</a>
+        <p>&nbsp;</p>
+    </div>
+</div>
+<div id="or-modal-confirm-delete-project" class="modal">
+    <div class="modal-content">
+        <h4 id="or-modal-confirm-delete-title"></h4>
+        <p id="or-modal-confirm-delete-description"></p>
+    </div>
+    <div class="modal-footer">
+        <a id="or-list-project-confirmed-delete" data-project-id="" href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+</div>
+<div th:replace="fragments/basictemplate :: footer">&nbsp;</div>
+<script>
+    String.prototype.trimToLength = function(m) {
+        return (this.length > m)
+            ? jQuery.trim(this).substring(0, m).split(" ").slice(0, -1).join(" ") + "..."
+            : this;
+    };
+    $(document).ready(function() {
+        $(".or-project-tile-card-description").each(function () {
+            var truncatedText = $(this).children("span").text().trimToLength(175);
+            $(this).text(truncatedText);
+        });
+        $(".or-project-tile-card-name").each(function () {
+            $(this).text($(this).text().trimToLength(($(window).width() <= 480) ? 20 : 50));
+        });
+        $('.modal').modal();
+        $(".card-image, .card-content").click(function () {
+            var projectKey = $(this).parent(".card").parent(".or-project-tile").attr("data-project-key");
+            window.location = '/project/p/' + projectKey + '/manage';
+            return false;
+        });
+        $(".or-list-project-delete, .or-list-project-leave").click(function () {
+            var isDelete = $(this).hasClass("or-list-project-delete");
+            if (!isDelete) {
+                alert("Leaving projects is not supported by the first prototype!");
+                return false;
+            }
+            var div = $(this).parent("span").parent("div.card-action").parent("div.card").parent("div");
+            var projectID = parseInt(div.attr("id").split("-")[2]);
+            var projectName = div.attr("data-name");
+            if (confirm("Do you really want to delete the project '" + projectName + "'?")) {
+                div.hide();
+                window.location = '/project/' + projectID + '/delete';
+            }
+            /*
+            $("#or-modal-confirm-delete-title").text("Delete " + projectName);
+            $("#or-modal-confirm-delete-description").text("Do you really want to delete the project '" + projectName + "'?");
+            $('#or-modal-confirm-delete-project').modal('open');
+            */
+            return false;
+        });
+        $("#or-list-project-confirmed-delete").click(function () {
+            var projectID = parseInt($(this).attr("data-project-id"));
+            div.hide();
+            window.location = '/project/' + projectID + '/delete';
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

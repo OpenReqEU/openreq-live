@@ -73,22 +73,20 @@
 		</div>
     		<p>&nbsp;</p>
     		</th:block>
+        <div th:if="${isAdmin}">
+            <a href="/project/list/others?page=1">&gt; See all projects of other users</a>
+        </div>
         <div class="center">
     		<div>
 	    		<a class="waves-effect waves-light btn btn-primary" href="/project/generate" role="button">+ Create project</a>
     		</div>
-            <th:block th:if="${dependencyAnalysisProject != null}">
-                <p>&nbsp;</p>
-                <div>
-                    <a class="waves-effect waves-light btn btn-primary" th:href="'/project/' + ${dependencyAnalysisProject.uniqueKey} + '/requirement/pairs/welcome'" role="button">Start Dependency Detection Task</a>
-                </div>
-            </th:block>
             <th:block th:if="${isAdmin}">
                 <p>&nbsp;</p>
                 <div>
                     <a class="waves-effect waves-light btn btn-primary" href="/project/generatesportswatchproject" role="button">+ Create Sportwatch project</a>
                 </div>
                 <p>&nbsp;</p>
+                <!--
                 <div>
                     <a class="waves-effect waves-light btn btn-primary" href="/project/generatedependencyproject" role="button">+ Create Dependency project</a>
                 </div>
@@ -102,6 +100,7 @@
                 <div>
                     <a class="waves-effect waves-light btn btn-primary" href="/project/generateoadstudyproject/type/2" role="button">+ Create OAD Study project (advanced)</a>
                 </div>
+                -->
             </th:block>
         </div>
         <p>&nbsp;</p>

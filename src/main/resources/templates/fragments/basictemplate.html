@@ -37,6 +37,7 @@
     <script src="/js/bootstrap-datepicker.de.min.js"></script>
     <script src="/js/sweetalert2.all.min.js"></script>
     <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://api.openreq.eu/ri-logging/frontend/script"></script>
     <th:block th:replace="${scripts}" />
 </head>
 
@@ -262,15 +263,6 @@
            <div><a href="/aboutus" th:text="#{footer.needHelp}">Need help</a>&nbsp;|&nbsp;<a href="/privacypolicy">Privacy policy</a>&nbsp;|&nbsp;<a href="mailto:innosensr@gmail.com" th:text="#{footer.feedback}">Feedback</a></div>
         </div>
     </div>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128248883-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'UA-128248883-1');
-    </script>
 </div>
 
 </body>

@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static eu.openreq.dbo.ProjectSettingsDbo.EvaluationMode.ADVANCED;
 import static eu.openreq.dbo.ProjectSettingsDbo.EvaluationMode.BASIC;
 import static eu.openreq.dbo.ProjectSettingsDbo.EvaluationMode.NORMAL;
+import static java.util.Comparator.comparing;
 
 @Controller
 public class ProjectController {
@@ -489,14 +490,10 @@ public class ProjectController {
 				.sorted((p1, p2) -> Long.compare(p1.getCreatedDate().getTime(), p2.getCreatedDate().getTime()))
 				.collect(Collectors.toList());
 
-		ProjectDbo dependencyAnalysisProject = null;
-		if ((currentUser.getGroupNumber() != null) && (dependencyAnalysisProjects.size() > 0)) {
-		    dependencyAnalysisProject = dependencyAnalysisProjects.get(0);
-        }
-
 		List<ProjectDbo> allInvitedProjects = new ArrayList<>(allGuestUserInvitedProjects);
 		allInvitedProjects.addAll(allUserInvitedProjects);
 
+		/*
 		if (currentUser.isAdministrator()) {
             List<ProjectDbo> allOtherProjects = StreamSupport.stream(projectRepository.findAll().spliterator(), false)
                     .filter(p -> p.isVisible())
@@ -506,13 +503,81 @@ public class ProjectController {
                     .collect(Collectors.toList());
             allInvitedProjects.addAll(allOtherProjects);
         }
+        */
 
 		model.addAttribute("allCreatedProjects", allCreatedProjects);
 		model.addAttribute("allInvitedProjects", allInvitedProjects);
 		model.addAttribute("currentUser", currentUser);
 		model.addAttribute("isAdmin", currentUser.isAdministrator());
-		model.addAttribute("dependencyAnalysisProject", dependencyAnalysisProject);
 	    return "project_list";
+    }
+
+
+    @RequestMapping("/project/list/others")
+    public String projectListOthers(Model model,
+                                    @RequestParam(value="page", required=true) Integer page,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    Authentication authentication)
+    {
+        if ((authentication == null) || !authentication.isAuthenticated()) {
+            try {
+                response.sendRedirect("/");
+                return null;
+            } catch (IOException ex) {}
+            return "project_list";
+        }
+
+        User userInfo = (User) authentication.getPrincipal();
+        UserDbo currentUser = userRepository.findOneByUsername(userInfo.getUsername());
+
+        if (!currentUser.isAdministrator()) {
+            String errorMessage = Utils.generateErrorMessageAndSendEmail(request, currentUser, emailService);
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, errorMessage);
+        }
+
+        List<ProjectDbo> allCreatedProjects = currentUser.getCreatedProjects()
+                .stream()
+                .filter(p -> p.isVisible())
+                .filter(p -> ((p.getCreatorUser() != null) && (p.getCreatorUser().getId() == currentUser.getId())))
+                .sorted((p1, p2) -> Long.compare(p1.getCreatedDate().getTime(), p2.getCreatedDate().getTime()))
+                .collect(Collectors.toList());
+
+        List<ProjectDbo> allUserInvitedProjects = currentUser.getProjectUserParticipations()
+                .stream()
+                .map(p -> p.getProject())
+                .filter(p -> p.isVisible())
+                .sorted((p1, p2) -> Long.compare(p1.getCreatedDate().getTime(), p2.getCreatedDate().getTime()))
+                .collect(Collectors.toList());
+
+        List<ProjectDbo> allGuestUserInvitedProjects = projectGuestUserParticipationRepository.findByEmailAddress(currentUser.getMailAddress())
+                .stream()
+                .map(p -> p.getProject())
+                .filter(p -> p.isVisible())
+                .sorted((p1, p2) -> Long.compare(p1.getCreatedDate().getTime(), p2.getCreatedDate().getTime()))
+                .collect(Collectors.toList());
+
+        List<ProjectDbo> allOtherProjects = StreamSupport.stream(projectRepository.findAll().spliterator(), false)
+                .filter(p -> p.isVisible())
+                .filter(p -> !allCreatedProjects.contains(p))
+                .filter(p -> !allUserInvitedProjects.contains(p))
+                .filter(p -> !allGuestUserInvitedProjects.contains(p))
+                .sorted(comparing(ProjectDbo::getId).reversed())
+                .collect(Collectors.toList());
+
+        int itemsPerPage = 9;
+        int numOfPages = (int) Math.ceil(allOtherProjects.size() / ((float) itemsPerPage));
+        int currentPageNumber = Math.max(Math.min(page, numOfPages), 1);
+        int startIndex = (currentPageNumber-1)*itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, allOtherProjects.size());
+        allOtherProjects = allOtherProjects.subList(startIndex, endIndex);
+
+        model.addAttribute("allOtherProjects", allOtherProjects);
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("isAdmin", currentUser.isAdministrator());
+        model.addAttribute("currentPageNumber", currentPageNumber);
+        model.addAttribute("numOfPages", numOfPages);
+        return "project_list_others";
     }
 
 	@GetMapping("/project/p/{projectUniqueKey}/manage")
