@@ -50,6 +50,15 @@
     <div class="ripple-wrap"><div class="ripple"></div></div>
     <div th:insert="fragments/basictemplate :: content(~{::#content})">
         <div id="content" class="container">
+            <div class="or-filter-field input-field col s12">
+                <select id="show-releases-filter">
+                    <option value="0">All releases</option>
+                    <option value="1">Only future releases</option>
+                    <option value="2" selected="selected">Only recent releases</option>
+                    <option value="3">Only past releases</option>
+                </select>
+                <label>Visibility of releases:</label>
+            </div>
             <h3>Unassigned Requirements</h3>
             <ul class="or-requirement-list collapsible" data-collapsible="expandable">
                 <li id="or-project-unassigned-requirements-container">
@@ -82,7 +91,7 @@
                 </li>
             </ul>
             <p>&nbsp;</p>
-            <h3>Releases</h3>
+            <h3>Release Plan</h3>
             <form id="or-project-release-requirement-form" autocomplete="off" action="#" method="post">
                 <ul class="or-release-list collapsible" data-collapsible="expandable">
                     <li id="or-no-release-found-placeholder">
@@ -801,6 +810,7 @@
     }
 
     $(document).ready(function() {
+        $("#show-releases-filter").material_select();
         var projectID = [[${project.id}]];
         var projectKey = [[${project.uniqueKey}]];
         var currentUserID = [[${currentUserID}]];

@@ -12,6 +12,28 @@ input[type=text] {
     border-bottom: 1px solid #0000001f !important;
 }
 
+.or-filter-field {
+    width: 180px;
+    margin-right: 17px;
+    float: right;
+    margin-bottom: -35px;
+}
+
+.or-filter-field > label {
+    color: #808080;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.or-filter-field > .select-wrapper {
+    margin-top: 2px;
+}
+
+.or-filter-field > .select-wrapper > input.select-dropdown {
+    border: 1px #eaeaea solid;
+    padding-left: 15px;
+}
+
 .or-icon-alert > div {
     margin-top:-28px;
     margin-left:30px;
@@ -269,6 +291,7 @@ input[type=text] {
 
 h3 {
     text-transform: uppercase;
+    margin-bottom: 25px;
 }
 
 .swal2-content {

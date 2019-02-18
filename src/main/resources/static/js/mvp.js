@@ -540,6 +540,7 @@ class DataManager {
         this.stakeholderRatingAttributeData = [];
 		this.requirementData = [];
 		this.releaseData = [];
+		this.filteredReleaseData = [];
 		this.dependencyData = [];
 		this.issueData = [];
 		this.requirementMessages = {};
@@ -594,6 +595,14 @@ class DataManager {
 	fetchReleases(callback) {
 		$.getJSON(this.releaseUrl, function(data) {
 			this.releaseData = data;
+            var filterTextValue = $("#show-releases-filter").parent().children("input.select-dropdown").val();
+            var valueMap = {
+                "All releases": 0,
+                "Only future releases": 1,
+                "Only recent releases": 2,
+                "Only past releases": 3
+            };
+            this.filterReleases(valueMap[filterTextValue]);
 			callback();
 		}.bind(this));
 	}
@@ -709,7 +718,7 @@ class DataManager {
 
     hasChanges(allowAlerts) {
 		var collectedChanges = this.collectChanges(allowAlerts);
-		return (("projectName" in collectedChanges.updatedProjectData) || ("projectDescription" in collectedChanges.updatedProjectData)
+        return (("projectName" in collectedChanges.updatedProjectData) || ("projectDescription" in collectedChanges.updatedProjectData)
 				|| (collectedChanges.updatedRequirements.length > 0) || (collectedChanges.newRequirements.length > 0)
 				|| (collectedChanges.updatedReleases.length > 0) || (collectedChanges.newReleases.length > 0)
 				|| (collectedChanges.deletedReleases.length > 0) || (collectedChanges.deletedRequirements.length > 0)
@@ -736,12 +745,18 @@ class DataManager {
 		this.deletedReleases = [];
 		this.deletedRequirements = [];
 
-		for (var i in this.releaseData) {
-			this.releaseData[i].isStillPresent = false;
+		var filteredReleaseIDs = [];
+		for (var i in this.filteredReleaseData) {
+			this.filteredReleaseData[i].isStillPresent = false;
+            filteredReleaseIDs.push(this.filteredReleaseData[i].id);
 		}
 
 		for (var i in this.requirementData) {
-			this.requirementData[i].isStillPresent = false;
+		    if (filteredReleaseIDs.indexOf(this.requirementData.releaseID) == -1) {
+                this.requirementData[i].isStillPresent = true;
+            } else {
+			    this.requirementData[i].isStillPresent = false;
+            }
 		}
 
 		$(".or-project-requirement-table").children("tbody")
@@ -750,8 +765,8 @@ class DataManager {
 
 		$(".or-release").each(bindEach(this, "handleReleaseCheck", allowAlerts));
 
-		for (var i in this.releaseData) {
-			if (!this.releaseData[i].isStillPresent) {
+		for (var i in this.filteredReleaseData) {
+			if (!this.filteredReleaseData[i].isStillPresent) {
 				this.deletedReleases.push(this.releaseData[i]);
 			}
 		}
@@ -785,7 +800,6 @@ class DataManager {
 		var requirementStatus = $(reference).children("td.or-requirement-status").children("div").children("input.select-dropdown").val().toUpperCase();
 		requirementStatus = requirementStatus.replace(" ", "");
         var requirementDescriptionStripped = requirementDescription.replace(/<\/?[^>]+(>|$)/g, "");
-        console.log(requirementDescriptionStripped);
 
 		if (requirementIDExists) {
 			var requirementID = parseInt($(reference).attr("id").split("-")[2]);
@@ -875,6 +889,25 @@ class DataManager {
 		}
 	}
 
+    filterReleases(filterValue) {
+        var now = new Date();
+        if (filterValue == 0) {
+            this.filteredReleaseData = this.releaseData;
+        } else if (filterValue == 1) {
+            this.filteredReleaseData = this.releaseData.filter(r => r.endDateTimestamp > now.getTime());
+        } else if (filterValue == 2) {
+            var oneMonthAgo = new Date();
+            var threeMonthsLater = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth()-1);
+            threeMonthsLater.setMonth(threeMonthsLater.getMonth()+3);
+            this.filteredReleaseData = this
+                .releaseData
+                .filter(r => r.endDateTimestamp > oneMonthAgo.getTime() && r.endDateTimestamp < threeMonthsLater.getTime());
+        } else {
+            this.filteredReleaseData = this.releaseData.filter(r => r.endDateTimestamp < now.getTime());
+        }
+    }
+
     showReleasesRequirementsAndIssues() {
 		$(".or-requirement").remove();
 		$(".or-release").remove();
@@ -927,9 +960,8 @@ class DataManager {
 			);
 		}
 
-		var filteredRequirementData = [];
-		for (var i in this.releaseData) {
-			var releaseD = this.releaseData[i];
+		for (var i in this.filteredReleaseData) {
+			var releaseD = this.filteredReleaseData[i];
 			var releaseTableSelector = this.uiManager.addRelease(
 					releaseD.id,
 					releaseD.title,
@@ -943,7 +975,6 @@ class DataManager {
 				if (requirementD.releaseID != releaseD.id) {
 					continue;
 				}
-				filteredRequirementData.push(requirementD);
 				this.uiManager.addRequirementFormFields(
 					releaseTableSelector,
 					requirementD,
@@ -952,6 +983,18 @@ class DataManager {
 					false,
 					true
 				);
+			}
+		}
+
+        var filteredRequirementData = [];
+        for (var i in this.releaseData) {
+			var releaseD = this.releaseData[i];
+			for (var i in this.requirementData) {
+				var requirementD = this.requirementData[i];
+				if (requirementD.releaseID != releaseD.id) {
+					continue;
+				}
+				filteredRequirementData.push(requirementD);
 			}
 		}
 
@@ -2305,8 +2348,9 @@ class UIEventHandler {
 	bindUIEvents() {
 		var selector = $("#or-project-name, .or-project-description, .or-form-release-title-field, .or-form-release-description-field, .or-requirement-title, div.or-requirement-description");
 		selector.unbind("keyup").on("keyup", bindUIEvent(this, "unsavedChangesEvent"));
-        $(".or-requirement-status-field").unbind("change").on("change", bindUIEvent(this, "unsavedChangesEvent"));
-		$(".or-delete-button").unbind("click");
+        $(".or-requirement-status-field").unbind("change");
+        $("#show-releases-filter").unbind("change");
+        $(".or-delete-button").unbind("click");
 		$("#or-add-release-button").unbind("click");
         $("#or-add-unassigned-requirement-button").unbind("click");
 		$(".or-add-requirement-button").unbind("click");
@@ -2355,9 +2399,12 @@ class UIEventHandler {
         $("#or-add-release-button").click(bindUIEvent(this, "addReleaseClickEvent"));
         $("#or-add-unassigned-requirement-button").click(bindUIEvent(this, "addUnassignedRequirementClickEvent"));
 		$(".or-add-requirement-button").click(bindUIEvent(this, "addRequirementClickEvent"));
-		$("#or-save-button").on("click", bindUIEvent(this.uiManager, "save"));
+        $(".or-requirement-status-field").on("change", bindUIEvent(this, "unsavedChangesEvent"));
+        $("#show-releases-filter").on("change", bindUIEvent(this, "filterReleasesEvent"));
+        $("#or-save-button").on("click", bindUIEvent(this.uiManager, "save"));
 		$("#or-check-button").on("click", bindUIEvent(this.uiManager, "checkInconsistencies"));
 		$(".or-delete-release-button").click(bindUIEvent(this, "deleteReleaseEvent"));
+
 		if (!this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").bind("click", bindUIEvent(this, "editReleaseDescriptionEvent"));
         } else {
@@ -3154,6 +3201,21 @@ class UIEventHandler {
         $("#container-notification-center").show();
         $("#or-tab-navigation-bar").hide();
         this.bindUIEvents();
+    }
+
+    filterReleasesEvent(event, thisObj) {
+        var uiManager = this.uiManager;
+        var dataManager = uiManager.dataManager;
+        var filterTextValue = $(thisObj).parent().children("input.select-dropdown").val();
+        var valueMap = {
+            "All releases": 0,
+            "Only future releases": 1,
+            "Only recent releases": 2,
+            "Only past releases": 3
+        };
+        dataManager.filterReleases(valueMap[filterTextValue]);
+        dataManager.showReleasesRequirementsAndIssues();
+	    return false;
     }
 
     renderCommentListEvent(event, thisObj) {
