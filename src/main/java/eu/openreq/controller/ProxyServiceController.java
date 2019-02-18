@@ -68,8 +68,8 @@ public class ProxyServiceController {
     private EmailService emailService;
 
     private static final String SIEMENS_SERVICE_HOST = "169.254.6.175";
-//	private static final String TUG_SERVICE_HOST = "217.172.12.199";
-    private static final String TUG_SERVICE_HOST = "localhost";
+	private static final String TUG_SERVICE_HOST = "217.172.12.199";
+//    private static final String TUG_SERVICE_HOST = "localhost";
 //	private static final String SIEMENS_SERVICE_HOST = "192.168.178.23";
 //	private static final String SIEMENS_SERVICE_HOST = "172.20.10.9";
 	private static final String HELSINKI_SERVICE_HOST = "localhost";

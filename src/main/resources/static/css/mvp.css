@@ -324,7 +324,7 @@ h3 {
 		box-shadow: none;
 	}
 
-	.or-add-requirement-button-container {
+	.or-add-button-container {
 		border-top: none !important;
 	}
 
@@ -1283,7 +1283,7 @@ table.or-project-requirement-table > tbody > tr > td {
     display: block !important;
 }
 
-.or-add-requirement-button-container {
+.or-add-button-container {
 	text-align:center;
 	border-top:1px #EEEEEE solid;
 	margin-top:25px;
@@ -1291,12 +1291,12 @@ table.or-project-requirement-table > tbody > tr > td {
 	padding-bottom:15px;
 }
 
-.or-add-requirement-button-container > a {
+.or-add-button-container > a {
 	padding-left: 10px;
 	padding-right: 15px;
 }
 
-.or-add-requirement-button-container > a > i {
+.or-add-button-container > a > i {
 	margin-right: 0.3rem;
 }
 

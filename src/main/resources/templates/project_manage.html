@@ -75,7 +75,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <div class="or-add-requirement-button-container">
+                        <div class="or-add-button-container">
                             <a id="or-add-unassigned-requirement-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Requirement</a>
                         </div>
                     </div>
@@ -168,6 +168,44 @@
             <h3>Coherence of Dependencies</h3>
             <div>
                 <iframe id="iframe-depenency-wheel" src="about:blank" frameBorder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="container-notification-center" style="display:none;">
+    <div class="maincontainer">
+        <div class="container">
+            <h3>Notification Center</h3>
+            <div>
+                <ul class="or-requirement-list collapsible" data-collapsible="expandable">
+                    <li id="or-project-issue-container">
+                        <div class="collapsible-header" style="cursor:auto;">
+                            <table id="or-project-issues" class="or-project-requirement-table" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;">ID</th>
+                                        <th style="width:auto;">Title</th>
+                                        <th class="or-requirement-description">Description</th>
+                                        <th class="or-requirement-status">Status</th>
+                                        <th class="or-requirement-delete" style="width:40px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="or-issue">
+                                        <td>1</td>
+                                        <td>Title</td>
+                                        <td>Description</td>
+                                        <td>Status</td>
+                                        <td class="or-requirement-delete">testen</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="or-add-button-container">
+                                <a id="or-add-issue-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Issue</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

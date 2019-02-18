@@ -1591,7 +1591,7 @@ class UIManager {
 		var requirementsTableHead = $("<thead></thead>").append(theadRow);
 		requirementsTable.append(requirementsTableHead);
 		requirementsTable.append($("<tbody></tbody>"));
-		var addRequirementButtonContainer = $("<div></div>").addClass("or-add-requirement-button-container");
+		var addRequirementButtonContainer = $("<div></div>").addClass("or-add-button-container");
 		var addRequirementButton = $("<a></a>").addClass("or-add-requirement-button waves-effect waves-light btn blue darken-3")
                                                .append("<i class=\"material-icons left\">add</i> Add Requirement");
 		addRequirementButtonContainer.append(addRequirementButton);
@@ -2349,6 +2349,7 @@ class UIEventHandler {
         $(".or-import-dependency-button-link").unbind("click");
         $(".or-select-menu-item").unbind("click");
         $(".or-form-edit-release-description").unbind("click");
+        $("#or-notification-button-container").unbind("click");
 
         $(".or-delete-button").on("click", bindUIEvent(this, "deleteRequirementEvent"));
         $("#or-add-release-button").click(bindUIEvent(this, "addReleaseClickEvent"));
@@ -2409,6 +2410,7 @@ class UIEventHandler {
         $(".or-dependency-type-menu-item").bind("click", bindUIEvent(this, "changeDependencyTypeClickEvent"));
         $(".or-import-dependency-button-link").bind("click", bindUIEvent(this, "importRecommendedDependenciesClickEvent"));
         $(".or-select-menu-item").bind("click", bindUIEvent(this, "selectMenuItemEvent"));
+        $("#or-notification-button-container").bind("click", bindUIEvent(this, "openNotificationCenterEvent"));
 
         if (this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").css("color", "#d2d2d2").css("cursor", "default");
@@ -3126,6 +3128,31 @@ class UIEventHandler {
             this.renderCommentListEvent(event, thisObj);
         }
 
+        this.bindUIEvents();
+    }
+
+    openNotificationCenterEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var dataManager = this.uiManager.dataManager;
+        if ($("#container-notification-center").is(":visible")) {
+            $("#container-notification-center").hide();
+            $("#or-tab-navigation-bar").show();
+            $(".or-container").each(function() {
+                if ($(this).hasClass("active")) {
+                    var containerID = $(this).attr("href");
+                    $(containerID).show();
+                }
+            });
+            return false;
+        }
+        $(".or-container").each(function() {
+            if ($(this).hasClass("active")) {
+                var containerID = $(this).attr("href");
+                $(containerID).hide();
+            }
+        });
+        $("#container-notification-center").show();
+        $("#or-tab-navigation-bar").hide();
         this.bindUIEvents();
     }
 
@@ -5275,7 +5302,7 @@ class UIEventHandler {
 	addRequirementClickEvent(event, thisObj) {
 		this.disableMovingRequirementsEvent(event, thisObj);
 		this.disableDeletingRequirementsEvent(event, thisObj);
-		var tableSelector = $(thisObj).parent("div.or-add-requirement-button-container").parent("div").parent("div.collapsible-body").children("div").children("table.or-project-requirement-table");
+		var tableSelector = $(thisObj).parent("div.or-add-button-container").parent("div").parent("div.collapsible-body").children("div").children("table.or-project-requirement-table");
 		this.uiManager.addRequirementFormFields(tableSelector, null, this.dataManager.ratingAttributeData, true, true, true);
 		this.bindUIEvents();
 		return false;
