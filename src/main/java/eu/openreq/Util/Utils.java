@@ -37,7 +37,7 @@ public class Utils {
         return result;
     }
 
-    public static List<String> pullLinks(String text) {
+    public static List<String> extractLinks(String text) {
 		List<String> links = new ArrayList<>();
 		String regex = "\\(?\\b(http://|https://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
 		Pattern p = Pattern.compile(regex);
@@ -50,6 +50,19 @@ public class Utils {
 			links.add(urlStr);
 		}
 		return links;
+	}
+
+	// based on: https://stackoverflow.com/a/12950893
+	public static String removeURL(String text) {
+		String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+		Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(text);
+		int i = 0;
+		while (m.find()) {
+			text = text.replaceAll(m.group(i),"").trim();
+			i++;
+		}
+		return text;
 	}
 
 	public static long binomial(int n, int k) {

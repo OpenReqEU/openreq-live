@@ -165,8 +165,8 @@ public class ProxyServiceController {
 				continue;
 			}
 
-            String strippedDescription = Jsoup.parse(requirement.getDescription()).text();
-			RemoteSimilarRequirementsDto similarRequirementsDto = new RemoteSimilarRequirementsDto();
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            RemoteSimilarRequirementsDto similarRequirementsDto = new RemoteSimilarRequirementsDto();
 			similarRequirementsDto.setId(requirement.getId());
 			similarRequirementsDto.setTitle(requirement.getTitle());
 			similarRequirementsDto.setDescription(strippedDescription);
@@ -222,8 +222,8 @@ public class ProxyServiceController {
 				continue;
 			}
 
-            String strippedDescription = Jsoup.parse(requirement.getDescription()).text();
-			RemoteRequirementDependencyDto requirementDependenciesDto = new RemoteRequirementDependencyDto();
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            RemoteRequirementDependencyDto requirementDependenciesDto = new RemoteRequirementDependencyDto();
 			requirementDependenciesDto.setId(requirement.getId());
 			requirementDependenciesDto.setTitle(requirement.getTitle());
 			requirementDependenciesDto.setDescription(strippedDescription);
