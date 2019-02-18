@@ -52,17 +52,8 @@ public class Utils {
 		return links;
 	}
 
-	// based on: https://stackoverflow.com/a/12950893
 	public static String removeURL(String text) {
-		String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
-		Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(text);
-		int i = 0;
-		while (m.find()) {
-			text = text.replaceAll(m.group(i),"").trim();
-			i++;
-		}
-		return text;
+    	return text.replaceAll("http.*?\\s", " ");
 	}
 
 	public static long binomial(int n, int k) {
