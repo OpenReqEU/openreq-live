@@ -292,10 +292,40 @@ input[type=text] {
 h3 {
     text-transform: uppercase;
     margin-bottom: 25px;
+    letter-spacing: 2px;
+}
+
+h3 > .or-title-icon {
+    vertical-align: middle;
+    font-size: 40px;
+    padding-bottom: 4px;
 }
 
 .swal2-content {
     margin-top: -18px !important;
+}
+
+.or-issue-description > div > h3 {
+    margin: 10px 0px 0px 0px;
+    font-size: 16px;
+    font-weight: bolder;
+    letter-spacing: 0;
+    color: #737373;
+}
+
+.or-issue-description > div > p {
+    margin: 3px 0 10px 0;
+    font-size: 13px;
+    color: #6d6c6c;
+}
+
+.or-issue-failed {
+    color: #D32F2F !important;
+    background-color: #f7f7f7;
+}
+
+.or-title-icon {
+
 }
 
 .or-requirement-title, .or-requirement-description {
@@ -1067,8 +1097,12 @@ input.select-dropdown {
 
 table.or-project-requirement-table {}
 
-table.or-project-requirement-table > tbody > tr > td {
-    padding: 8px 5px;
+table.or-project-requirement-table > thead > tr > th {
+    font-weight: bolder;
+}
+
+table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-table > tbody > tr > td {
+    padding: 4px;
 }
 
 .navbar-default {
@@ -1277,8 +1311,8 @@ table.or-project-requirement-table > tbody > tr > td {
 }
 
 .or-form-release-title-field {
-	font-weight:bold !important;
-	text-transform:uppercase !important;
+	font-weight:bolder !important;
+	/*text-transform:uppercase !important;*/
 	font-size:130% !important;
 	width:100% !important;
 	height: auto !important;
