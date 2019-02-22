@@ -37,7 +37,7 @@ public class Utils {
         return result;
     }
 
-    public static List<String> pullLinks(String text) {
+    public static List<String> extractLinks(String text) {
 		List<String> links = new ArrayList<>();
 		String regex = "\\(?\\b(http://|https://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
 		Pattern p = Pattern.compile(regex);
@@ -50,6 +50,10 @@ public class Utils {
 			links.add(urlStr);
 		}
 		return links;
+	}
+
+	public static String removeURL(String text) {
+    	return text.replaceAll("http.*?\\s", " ");
 	}
 
 	public static long binomial(int n, int k) {

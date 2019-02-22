@@ -50,7 +50,7 @@
     <div class="ripple-wrap"><div class="ripple"></div></div>
     <div th:insert="fragments/basictemplate :: content(~{::#content})">
         <div id="content" class="container">
-            <h3>Unassigned Requirements</h3>
+            <h3><i class="or-title-icon material-icons">archive</i> Unassigned Requirements</h3>
             <ul class="or-requirement-list collapsible" data-collapsible="expandable">
                 <li id="or-project-unassigned-requirements-container">
                     <div class="collapsible-header" style="cursor:auto;">
@@ -75,14 +75,23 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <div class="or-add-requirement-button-container">
+                        <div class="or-add-button-container">
                             <a id="or-add-unassigned-requirement-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Requirement</a>
                         </div>
                     </div>
                 </li>
             </ul>
             <p>&nbsp;</p>
-            <h3>Releases</h3>
+            <div class="or-filter-field input-field col s12">
+                <select id="show-releases-filter">
+                    <option value="0">All releases</option>
+                    <option value="1">Only future releases</option>
+                    <option value="2" selected="selected">Only recent releases</option>
+                    <option value="3">Only past releases</option>
+                </select>
+                <label>Visibility of releases:</label>
+            </div>
+            <h3><i class="or-title-icon material-icons">move_to_inbox</i> Release Plan</h3>
             <form id="or-project-release-requirement-form" autocomplete="off" action="#" method="post">
                 <ul class="or-release-list collapsible" data-collapsible="expandable">
                     <li id="or-no-release-found-placeholder">
@@ -168,6 +177,36 @@
             <h3>Coherence of Dependencies</h3>
             <div>
                 <iframe id="iframe-depenency-wheel" src="about:blank" frameBorder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="container-notification-center" style="display:none;">
+    <div class="maincontainer">
+        <div class="container">
+            <h3><span class="or-title-icon material-icons">notifications</span> Notification Center</h3>
+            <div>
+                <ul class="or-requirement-list collapsible" data-collapsible="expandable">
+                    <li id="or-project-issue-container">
+                        <div class="collapsible-header" style="cursor:auto;">
+                            <table id="or-project-issues" class="or-project-issue-table" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;">ID</th>
+                                        <th style="width:auto;">Description</th>
+                                        <th class="or-requirement-priority">Priority</th>
+                                        <th class="or-requirement-delete" style="width:40px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="or-add-button-container" style="margin-top:0;">
+                            <a id="or-add-issue-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Issue</a>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -267,7 +306,7 @@
                 <span class="material-icons">share</span>
             </a>
         </div>
-        <div id="or-notification-button-container" data-toggle="tooltip" data-placement="bottom" title="Inconsistent model: The requirement 7 is in conflict with requirement 16!">
+        <div id="or-notification-button-container" data-toggle="tooltip" data-placement="bottom" title="Show notifications">
             <a class="or-notification-button" href="#"><span class="material-icons">notifications</span></a>
             <span class="or-badge">1</span>
         </div>
@@ -763,6 +802,7 @@
     }
 
     $(document).ready(function() {
+        $("#show-releases-filter").material_select();
         var projectID = [[${project.id}]];
         var projectKey = [[${project.uniqueKey}]];
         var currentUserID = [[${currentUserID}]];

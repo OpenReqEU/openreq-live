@@ -18,6 +18,7 @@ import eu.openreq.repository.UserRepository;
 import eu.openreq.remote.dto.helsinki.*;
 import eu.openreq.repository.DependencyRepository;
 import eu.openreq.service.EmailService;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +69,8 @@ public class ProxyServiceController {
     private EmailService emailService;
 
     private static final String SIEMENS_SERVICE_HOST = "169.254.6.175";
-//	private static final String TUG_SERVICE_HOST = "217.172.12.199";
-    private static final String TUG_SERVICE_HOST = "localhost";
+	private static final String TUG_SERVICE_HOST = "217.172.12.199";
+//    private static final String TUG_SERVICE_HOST = "localhost";
 //	private static final String SIEMENS_SERVICE_HOST = "192.168.178.23";
 //	private static final String SIEMENS_SERVICE_HOST = "172.20.10.9";
 	private static final String HELSINKI_SERVICE_HOST = "localhost";
@@ -164,10 +165,11 @@ public class ProxyServiceController {
 				continue;
 			}
 
-			RemoteSimilarRequirementsDto similarRequirementsDto = new RemoteSimilarRequirementsDto();
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            RemoteSimilarRequirementsDto similarRequirementsDto = new RemoteSimilarRequirementsDto();
 			similarRequirementsDto.setId(requirement.getId());
 			similarRequirementsDto.setTitle(requirement.getTitle());
-			similarRequirementsDto.setDescription(requirement.getDescription());
+			similarRequirementsDto.setDescription(strippedDescription);
 			List<String> comments = requirement.getUserComments()
 					.stream()
 					.map(c -> c.getTitle() + ((c.getText() != null && c.getText().length() > 0) ? " " + c.getText() : ""))
@@ -220,10 +222,11 @@ public class ProxyServiceController {
 				continue;
 			}
 
-			RemoteRequirementDependencyDto requirementDependenciesDto = new RemoteRequirementDependencyDto();
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            RemoteRequirementDependencyDto requirementDependenciesDto = new RemoteRequirementDependencyDto();
 			requirementDependenciesDto.setId(requirement.getId());
 			requirementDependenciesDto.setTitle(requirement.getTitle());
-			requirementDependenciesDto.setDescription(requirement.getDescription());
+			requirementDependenciesDto.setDescription(strippedDescription);
 			List<String> comments = requirement.getUserComments()
 					.stream()
 					.map(c -> c.getTitle() + ((c.getText() != null && c.getText().length() > 0) ? " " + c.getText() : ""))

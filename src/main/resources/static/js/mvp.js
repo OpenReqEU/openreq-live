@@ -540,6 +540,7 @@ class DataManager {
         this.stakeholderRatingAttributeData = [];
 		this.requirementData = [];
 		this.releaseData = [];
+		this.filteredReleaseData = [];
 		this.dependencyData = [];
 		this.issueData = [];
 		this.requirementMessages = {};
@@ -594,6 +595,14 @@ class DataManager {
 	fetchReleases(callback) {
 		$.getJSON(this.releaseUrl, function(data) {
 			this.releaseData = data;
+            var filterTextValue = $("#show-releases-filter").parent().children("input.select-dropdown").val();
+            var valueMap = {
+                "All releases": 0,
+                "Only future releases": 1,
+                "Only recent releases": 2,
+                "Only past releases": 3
+            };
+            this.filterReleases(valueMap[filterTextValue]);
 			callback();
 		}.bind(this));
 	}
@@ -709,10 +718,15 @@ class DataManager {
 
     hasChanges(allowAlerts) {
 		var collectedChanges = this.collectChanges(allowAlerts);
-		return (("projectName" in collectedChanges.updatedProjectData) || ("projectDescription" in collectedChanges.updatedProjectData)
-				|| (collectedChanges.updatedRequirements.length > 0) || (collectedChanges.newRequirements.length > 0)
-				|| (collectedChanges.updatedReleases.length > 0) || (collectedChanges.newReleases.length > 0)
-				|| (collectedChanges.deletedReleases.length > 0) || (collectedChanges.deletedRequirements.length > 0)
+		console.log(collectedChanges);
+        return (("projectName" in collectedChanges.updatedProjectData)
+            || ("projectDescription" in collectedChanges.updatedProjectData)
+            || (collectedChanges.updatedRequirements.length > 0)
+            || (collectedChanges.newRequirements.length > 0)
+            || (collectedChanges.updatedReleases.length > 0)
+            || (collectedChanges.newReleases.length > 0)
+            || (collectedChanges.deletedReleases.length > 0)
+            || (collectedChanges.deletedRequirements.length > 0)
 		);
 	}
 
@@ -736,12 +750,22 @@ class DataManager {
 		this.deletedReleases = [];
 		this.deletedRequirements = [];
 
-		for (var i in this.releaseData) {
-			this.releaseData[i].isStillPresent = false;
+		var filteredReleaseIDs = [];
+		for (var i in this.filteredReleaseData) {
+			this.filteredReleaseData[i].isStillPresent = false;
+            filteredReleaseIDs.push(this.filteredReleaseData[i].id);
 		}
 
 		for (var i in this.requirementData) {
-			this.requirementData[i].isStillPresent = false;
+		    console.log(filteredReleaseIDs);
+		    console.log(this.requirementData[i].releaseID);
+		    console.log(filteredReleaseIDs.indexOf(this.requirementData[i].releaseID));
+		    console.log("--------------------------------");
+		    if ((this.requirementData[i].releaseID > 0) && filteredReleaseIDs.indexOf(this.requirementData[i].releaseID) == -1) {
+                this.requirementData[i].isStillPresent = true;
+            } else {
+                this.requirementData[i].isStillPresent = false;
+            }
 		}
 
 		$(".or-project-requirement-table").children("tbody")
@@ -750,8 +774,8 @@ class DataManager {
 
 		$(".or-release").each(bindEach(this, "handleReleaseCheck", allowAlerts));
 
-		for (var i in this.releaseData) {
-			if (!this.releaseData[i].isStillPresent) {
+		for (var i in this.filteredReleaseData) {
+			if (!this.filteredReleaseData[i].isStillPresent) {
 				this.deletedReleases.push(this.releaseData[i]);
 			}
 		}
@@ -785,7 +809,6 @@ class DataManager {
 		var requirementStatus = $(reference).children("td.or-requirement-status").children("div").children("input.select-dropdown").val().toUpperCase();
 		requirementStatus = requirementStatus.replace(" ", "");
         var requirementDescriptionStripped = requirementDescription.replace(/<\/?[^>]+(>|$)/g, "");
-        console.log(requirementDescriptionStripped);
 
 		if (requirementIDExists) {
 			var requirementID = parseInt($(reference).attr("id").split("-")[2]);
@@ -875,6 +898,25 @@ class DataManager {
 		}
 	}
 
+    filterReleases(filterValue) {
+        var now = new Date();
+        if (filterValue == 0) {
+            this.filteredReleaseData = this.releaseData;
+        } else if (filterValue == 1) {
+            this.filteredReleaseData = this.releaseData.filter(r => r.endDateTimestamp > now.getTime());
+        } else if (filterValue == 2) {
+            var oneMonthAgo = new Date();
+            var threeMonthsLater = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth()-1);
+            threeMonthsLater.setMonth(threeMonthsLater.getMonth()+3);
+            this.filteredReleaseData = this
+                .releaseData
+                .filter(r => r.endDateTimestamp > oneMonthAgo.getTime() && r.endDateTimestamp < threeMonthsLater.getTime());
+        } else {
+            this.filteredReleaseData = this.releaseData.filter(r => r.endDateTimestamp < now.getTime());
+        }
+    }
+
     showReleasesRequirementsAndIssues() {
 		$(".or-requirement").remove();
 		$(".or-release").remove();
@@ -927,9 +969,8 @@ class DataManager {
 			);
 		}
 
-		var filteredRequirementData = [];
-		for (var i in this.releaseData) {
-			var releaseD = this.releaseData[i];
+		for (var i in this.filteredReleaseData) {
+			var releaseD = this.filteredReleaseData[i];
 			var releaseTableSelector = this.uiManager.addRelease(
 					releaseD.id,
 					releaseD.title,
@@ -943,7 +984,6 @@ class DataManager {
 				if (requirementD.releaseID != releaseD.id) {
 					continue;
 				}
-				filteredRequirementData.push(requirementD);
 				this.uiManager.addRequirementFormFields(
 					releaseTableSelector,
 					requirementD,
@@ -952,6 +992,18 @@ class DataManager {
 					false,
 					true
 				);
+			}
+		}
+
+        var filteredRequirementData = [];
+        for (var i in this.releaseData) {
+			var releaseD = this.releaseData[i];
+			for (var i in this.requirementData) {
+				var requirementD = this.requirementData[i];
+				if (requirementD.releaseID != releaseD.id) {
+					continue;
+				}
+				filteredRequirementData.push(requirementD);
 			}
 		}
 
@@ -1015,8 +1067,8 @@ class DataManager {
         }
     }
 
-	fetchAndShowRequirementsAndReleases() {
-		// updating the projectData necessary for refresh!
+	fetchAndShowRequirementsAndReleases(completeCallback) {
+        // updating the projectData necessary for refresh!
 		this.projectData = {
 			projectID: this.projectData.projectID,
 			projectKey: this.projectData.projectKey,
@@ -1035,6 +1087,9 @@ class DataManager {
                             this.fetchRecommendedSimilarRequirements(function () {
                                 //this.fetchAmbiguityIssues(function () {
                                     this.showReleasesRequirementsAndIssues();
+                                    if (completeCallback !== undefined) {
+                                        completeCallback();
+                                    }
                                 //}.bind(this));
                             }.bind(this));
                         }.bind(this));
@@ -1054,9 +1109,11 @@ class DataManager {
 
 var UINotificationType = {
     GLOBAL: 1,
-    REQUIREMENT: 2,
-    RELEASE: 3,
-    DEPENDENCY: 4
+    SERVICE_ISSUE: 2,
+    SERVICE_NOTIFICATION: 3,
+    REQUIREMENT: 4,
+    RELEASE: 5,
+    DEPENDENCY: 6
 };
 
 var UINotificationTag = {
@@ -1130,17 +1187,69 @@ class UINotificationCenter {
         var releaseNotificationMessages = {};
         var dependencyNotificationMessages = {};
 
+        console.log(this.notifications);
+        $("#or-project-issues > tbody").children().remove();
+        var messageCounter = 0;
+
         for (var notificationID in this.notifications) {
             var notification = this.notifications[notificationID];
 
             if (notification.type == UINotificationType.GLOBAL) {
                 globalNotificationMessages.push(notification.description);
+
+                ++messageCounter;
+                var tr = $("<tr></tr>");
+                var div = $("<div></div>");
+                div.append($("<h3></h3>").text("Issue"));
+                div.append($("<p></p>").text(notification.description));
+                tr.append($("<td></td>").text(messageCounter));
+                tr.append($("<td></td>").addClass("or-issue-description").append(div));
+                tr.append($("<td></td>").text("NORMAL"));
+                $("#or-project-issues > tbody").append(tr);
+
+            } else if (notification.type == UINotificationType.SERVICE_ISSUE) {
+                globalNotificationMessages.push(notification.description);
+
+                ++messageCounter;
+                var tr = $("<tr></tr>").addClass("or-issue-failed");
+                var div = $("<div></div>");
+                div.append($("<h3></h3>").text("Service failure" + (notification.hasTag() ? " " + notification.tags[0] : "")));
+                div.append($("<p></p>").text(notification.description));
+                tr.append($("<td></td>").text(messageCounter));
+                tr.append($("<td></td>").addClass("or-issue-description").append(div));
+                tr.append($("<td></td>").text("CRITICAL"));
+                $("#or-project-issues > tbody").append(tr);
+
+            } else if (notification.type == UINotificationType.SERVICE_NOTIFICATION) {
+                globalNotificationMessages.push(notification.description);
+
+                ++messageCounter;
+                var tr = $("<tr></tr>").addClass("or-issue-notification");
+                var div = $("<div></div>");
+                div.append($("<h3></h3>").text("Service Notification" + (notification.hasTag() ? " " + notification.tags[0] : "")));
+                div.append($("<p></p>").text(notification.description));
+                tr.append($("<td></td>").text(messageCounter));
+                tr.append($("<td></td>").addClass("or-issue-description").append(div));
+                tr.append($("<td></td>").text("NORMAL"));
+                $("#or-project-issues > tbody").append(tr);
+
             } else if (notification.type == UINotificationType.REQUIREMENT) {
                 var requirementID = notification.info.requirementID;
                 if (!(requirementID in requirementNotificationMessages)) {
                     requirementNotificationMessages[requirementID] = [];
                 }
                 requirementNotificationMessages[requirementID].push(notification.description);
+
+                ++messageCounter;
+                var tr = $("<tr></tr>");
+                var div = $("<div></div>");
+                div.append($("<h3></h3>").text("Similar requirements"));
+                div.append($("<p></p>").text(notification.description));
+                tr.append($("<td></td>").text(messageCounter));
+                tr.append($("<td></td>").addClass("or-issue-description").append(div));
+                tr.append($("<td></td>").text("NORMAL"));
+                $("#or-project-issues > tbody").append(tr);
+
             } else if (notification.type == UINotificationType.DEPENDENCY) {
                 var requirementIDX = notification.info.rx;
                 var requirementIDY = notification.info.ry;
@@ -1162,6 +1271,16 @@ class UINotificationCenter {
                 requirementNotificationMessages[requirementIDX].push(notification.description);
                 requirementNotificationMessages[requirementIDY].push(notification.description);
                 dependencyNotificationMessages[dependencyHTMLID].push(notification.description);
+
+                ++messageCounter;
+                var tr = $("<tr></tr>");
+                var div = $("<div></div>");
+                div.append($("<h3></h3>").text("Requirement interdependency"));
+                div.append($("<p></p>").text(notification.description));
+                tr.append($("<td></td>").text(messageCounter));
+                tr.append($("<td></td>").addClass("or-issue-description").append(div));
+                tr.append($("<td></td>").text("NORMAL"));
+                $("#or-project-issues > tbody").append(tr);
             } else if (notification.type == UINotificationType.RELEASE) {
                 var releaseID = notification.info.releaseID;
                 if (!(releaseID in releaseNotificationMessages)) {
@@ -1171,13 +1290,15 @@ class UINotificationCenter {
             }
         }
 
+        if (messageCounter > 0) {
+            $("#or-notification-button-container > .or-badge").text(messageCounter).show();
+        } else {
+            $("#or-notification-button-container > .or-badge").hide();
+        }
+
         // show global notifications
         $("#or-notification-button-container").hide();
         $("#or-notification-button-container").attr("style", "display: inline-block !important");
-        $("#or-notification-button-container").attr("title", globalNotificationMessages.join("\n"));
-        $("#or-notification-button-container").attr("data-toggle", "tooltip");
-        $("#or-notification-button-container").attr("data-placement", "bottom");
-        $("#or-notification-button-container > .or-badge").text(globalNotificationMessages.length);
 
         // show requirement notifications
         for (var requirementID in requirementNotificationMessages) {
@@ -1330,7 +1451,7 @@ class UIManager {
 
 	    if (issueData.error) {
             var notificationID = "or-global-consistency-error";
-            var notification = new UINotification(notificationID, UINotificationType.GLOBAL,
+            var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
                 "Consistency check error", "The consistency check service is not available! " +
                 "Please contact the administrator of this system.", [UINotificationTag.CONSISTENCY_CHECK]);
             this.notificationCenter.addNotification(notification);
@@ -1340,7 +1461,7 @@ class UIManager {
             }
         } else if (!issueData.consistent) {
             var notificationID = "or-global-consistency-error";
-            var notification = new UINotification(notificationID, UINotificationType.GLOBAL,
+            var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
                 "Data model inconsistent", "The data model is inconsistent! Please check all " +
                 "dependencies between the requirements and the effort estimation of the requirements with respect " +
                 "to the maximum capacity of the corresponding release.", [UINotificationTag.CONSISTENCY_CHECK]);
@@ -1396,7 +1517,7 @@ class UIManager {
             }
         } else if (issueData.consistent) {
             var notificationID = "or-global-consistency-success";
-            var notification = new UINotification(notificationID, UINotificationType.GLOBAL,
+            var notification = new UINotification(notificationID, UINotificationType.SERVICE_NOTIFICATION,
                 "Data model inconsistent", "Congratulations! The data model is consistent.",
                 [UINotificationTag.CONSISTENCY_CHECK]);
             this.notificationCenter.addNotification(notification);
@@ -1527,10 +1648,9 @@ class UIManager {
                                                        .attr("autocomplete", "off")
                                                        .val(releaseName)
                                                        .prop("disabled", true);
-		var editReleaseNameInputColumn = $("<div></div>").addClass("col-sm-6 or-form-edit-release-description-col").append(editReleaseNameInput);
+		var editReleaseNameInputColumn = $("<div></div>").addClass("col-sm-7 or-form-edit-release-description-col").append(editReleaseNameInput);
 		var editReleaseNameLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<i></i>").addClass("material-icons dp48").text("edit"));
 		var editReleaseDescriptionLinkColumn = $("<div></div>").addClass("col-sm-1 or-form-edit-release-description-link-col").append(editReleaseNameLink);
-		var releaseIconColumn = $("<div></div>").addClass("col-sm-1 or-mobile-invisible").append("<i class=\"or-big-icon material-icons\" style=\"color:darkred;\">move_to_inbox</i>"); // archive
 		var endDateField = $("<input />").attr("type", "hidden")
                                                .attr("name", "or-release-end-date[]")
                                                .addClass("datepicker or-form-release-end-date-field or-form-release-date-field")
@@ -1543,7 +1663,7 @@ class UIManager {
                                        .attr("href", "#")
                                        .append($("<i></i>").addClass("or-big-icon material-icons right").text("delete"));
 		var deleteColumn = $("<div></div>").addClass("col-sm-1").append(deleteButton);
-		editReleaseTitleRow.append(releaseIconColumn).append(editReleaseNameInputColumn).append(editReleaseDescriptionLinkColumn).append(dateColumn).append(deleteColumn);
+		editReleaseTitleRow.append(editReleaseNameInputColumn).append(editReleaseDescriptionLinkColumn).append(dateColumn).append(deleteColumn);
 		var content = $("<div></div>").addClass("collapsible-header or-ignore-click")
                                       .addClass("active")
                                       .append(editReleaseTitleRow);
@@ -1591,7 +1711,7 @@ class UIManager {
 		var requirementsTableHead = $("<thead></thead>").append(theadRow);
 		requirementsTable.append(requirementsTableHead);
 		requirementsTable.append($("<tbody></tbody>"));
-		var addRequirementButtonContainer = $("<div></div>").addClass("or-add-requirement-button-container");
+		var addRequirementButtonContainer = $("<div></div>").addClass("or-add-button-container");
 		var addRequirementButton = $("<a></a>").addClass("or-add-requirement-button waves-effect waves-light btn blue darken-3")
                                                .append("<i class=\"material-icons left\">add</i> Add Requirement");
 		addRequirementButtonContainer.append(addRequirementButton);
@@ -1605,7 +1725,7 @@ class UIManager {
             .append($("<span></span>").text("No requirements have been assigned to this release so far."))
             .hide();
 		body.append($("<div></div>")
-            .append(requirementsTitle)
+            //.append(requirementsTitle)
             .append(noRequirementsDiv)
             .append(requirementsTable)
             .append(addRequirementButtonContainer));
@@ -1975,13 +2095,12 @@ class UIManager {
 
 		var loadingAnimation = new LoadingAnimation();
 		var reference = this;
-		loadingAnimation.save(event, function () {
+		loadingAnimation.run(event, function () {
 			var dataManager = reference.dataManager;
 			reference.saveHandler.save(reference.dataManager.collectChanges(true), function (success) {
 				if (success) {
 				    uiManager.hideUnsavedChangesNotificationBar();
-					setTimeout(function () { $("#or-animation-overlay").fadeOut(); }, 700);
-					dataManager.fetchAndShowRequirementsAndReleases();
+					dataManager.fetchAndShowRequirementsAndReleases(function () { $("#or-animation-overlay").fadeOut(); });
 				}
 			}.bind(dataManager));
 		}.bind(reference));
@@ -2008,7 +2127,7 @@ class LoadingAnimation {
 		this.callback = null;
 	}
 
-	save(e, callback) {
+	run(e, callback) {
 		this.rippler.css("left", e.clientX + "px");
 		this.rippler.css("top", e.clientY + "px");
 		this.finish = false;
@@ -2305,8 +2424,9 @@ class UIEventHandler {
 	bindUIEvents() {
 		var selector = $("#or-project-name, .or-project-description, .or-form-release-title-field, .or-form-release-description-field, .or-requirement-title, div.or-requirement-description");
 		selector.unbind("keyup").on("keyup", bindUIEvent(this, "unsavedChangesEvent"));
-        $(".or-requirement-status-field").unbind("change").on("change", bindUIEvent(this, "unsavedChangesEvent"));
-		$(".or-delete-button").unbind("click");
+        $(".or-requirement-status-field").unbind("change");
+        $("#show-releases-filter").unbind("change");
+        $(".or-delete-button").unbind("click");
 		$("#or-add-release-button").unbind("click");
         $("#or-add-unassigned-requirement-button").unbind("click");
 		$(".or-add-requirement-button").unbind("click");
@@ -2349,14 +2469,18 @@ class UIEventHandler {
         $(".or-import-dependency-button-link").unbind("click");
         $(".or-select-menu-item").unbind("click");
         $(".or-form-edit-release-description").unbind("click");
+        $("#or-notification-button-container").unbind("click");
 
         $(".or-delete-button").on("click", bindUIEvent(this, "deleteRequirementEvent"));
         $("#or-add-release-button").click(bindUIEvent(this, "addReleaseClickEvent"));
         $("#or-add-unassigned-requirement-button").click(bindUIEvent(this, "addUnassignedRequirementClickEvent"));
 		$(".or-add-requirement-button").click(bindUIEvent(this, "addRequirementClickEvent"));
-		$("#or-save-button").on("click", bindUIEvent(this.uiManager, "save"));
+        $(".or-requirement-status-field").on("change", bindUIEvent(this, "unsavedChangesEvent"));
+        $("#show-releases-filter").on("change", bindUIEvent(this, "filterReleasesEvent"));
+        $("#or-save-button").on("click", bindUIEvent(this.uiManager, "save"));
 		$("#or-check-button").on("click", bindUIEvent(this.uiManager, "checkInconsistencies"));
 		$(".or-delete-release-button").click(bindUIEvent(this, "deleteReleaseEvent"));
+
 		if (!this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").bind("click", bindUIEvent(this, "editReleaseDescriptionEvent"));
         } else {
@@ -2409,6 +2533,7 @@ class UIEventHandler {
         $(".or-dependency-type-menu-item").bind("click", bindUIEvent(this, "changeDependencyTypeClickEvent"));
         $(".or-import-dependency-button-link").bind("click", bindUIEvent(this, "importRecommendedDependenciesClickEvent"));
         $(".or-select-menu-item").bind("click", bindUIEvent(this, "selectMenuItemEvent"));
+        $("#or-notification-button-container").bind("click", bindUIEvent(this, "openNotificationCenterEvent"));
 
         if (this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").css("color", "#d2d2d2").css("cursor", "default");
@@ -3127,6 +3252,58 @@ class UIEventHandler {
         }
 
         this.bindUIEvents();
+    }
+
+    openNotificationCenterEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var dataManager = this.uiManager.dataManager;
+        if ($("#container-notification-center").is(":visible")) {
+            $("#container-notification-center").hide();
+            var activeContainers = 0;
+            $(".or-container").each(function() {
+                if ($(this).hasClass("active")) {
+                    var containerID = $(this).attr("href");
+                    $(containerID).show();
+                    ++activeContainers;
+                }
+            });
+            console.log(activeContainers);
+            if (activeContainers > 1) {
+                $("#or-tab-navigation-bar").show();
+            }
+            return false;
+        }
+        $(".or-container").each(function() {
+            if ($(this).hasClass("active")) {
+                var containerID = $(this).attr("href");
+                $(containerID).hide();
+            }
+        });
+        $("#container-notification-center").show();
+        $("#or-tab-navigation-bar").hide();
+        this.uiManager.notificationCenter.render();
+        this.bindUIEvents();
+    }
+
+    filterReleasesEvent(event, thisObj) {
+        var uiManager = this.uiManager;
+        var dataManager = uiManager.dataManager;
+        var filterTextValue = $(thisObj).parent().children("input.select-dropdown").val();
+        var valueMap = {
+            "All releases": 0,
+            "Only future releases": 1,
+            "Only recent releases": 2,
+            "Only past releases": 3
+        };
+        dataManager.filterReleases(valueMap[filterTextValue]);
+
+        var loadingAnimation = new LoadingAnimation();
+        var reference = this;
+        loadingAnimation.run(event, function () {
+            reference.dataManager.showReleasesRequirementsAndIssues();
+            $("#or-animation-overlay").fadeOut();
+        }.bind(reference));
+	    return false;
     }
 
     renderCommentListEvent(event, thisObj) {
@@ -4737,12 +4914,12 @@ class UIEventHandler {
         dependencyEntityContainer.attr("id", "or-dependency-" + dependencyInfo.type + "-" + dependencyInfo.sourceRequirementID + "-" + dependencyInfo.targetRequirementID);
         dependencyEntityContainer.children(".or-dependency-left")
             .append($("<div></div>").addClass("or-dependency-title").text(dependencyInfo.sourceRequirementTitle))
-            .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.sourceRequirementDescription, 140)));
+            .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.sourceRequirementDescription.replace(/<\/?[^>]+(>|$)/g, ""), 140)));
         dependencyEntityContainer.children(".or-dependency-middle").children(".or-dependency-type")
             .text((dependencyInfo.type == "REQUIRES") ? "arrow_forward" : "compare_arrows");
         dependencyEntityContainer.children(".or-dependency-right")
             .append($("<div></div>").addClass("or-dependency-title").text(dependencyInfo.targetRequirementTitle))
-            .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.targetRequirementDescription, 140)));
+            .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.targetRequirementDescription.replace(/<\/?[^>]+(>|$)/g, ""), 140)));
         dependencyEntityContainer.children(".or-dependency-delete").children(".or-delete-dependency-button")
             .attr("data-dependency-source-id", dependencyInfo.sourceRequirementID)
             .attr("data-dependency-target-id", dependencyInfo.targetRequirementID)
@@ -4929,7 +5106,7 @@ class UIEventHandler {
                     row.append(checkBoxColumn);
 
                     var rxColumn = $("<div></div>").addClass("col-xs-4 col-md-4");
-                    rxColumn.text(requirementsMap[rx].title + " (#" + rx + ")");
+                    rxColumn.html(requirementsMap[rx].title + " (#" + rx + ")");
                     row.append(rxColumn);
 
                     var typeColumn = $("<div></div>").addClass("col-xs-2 col-md-2");
@@ -4940,7 +5117,7 @@ class UIEventHandler {
                     row.append(typeColumn);
 
                     var ryColumn = $("<div></div>").addClass("col-xs-5 col-md-5");
-                    ryColumn.text(requirementsMap[ry].title + " (#" + ry + ")");
+                    ryColumn.html(requirementsMap[ry].title + " (#" + ry + ")");
                     row.append(ryColumn);
 
                     listContainer.append(row);
@@ -5275,7 +5452,7 @@ class UIEventHandler {
 	addRequirementClickEvent(event, thisObj) {
 		this.disableMovingRequirementsEvent(event, thisObj);
 		this.disableDeletingRequirementsEvent(event, thisObj);
-		var tableSelector = $(thisObj).parent("div.or-add-requirement-button-container").parent("div").parent("div.collapsible-body").children("div").children("table.or-project-requirement-table");
+		var tableSelector = $(thisObj).parent("div.or-add-button-container").parent("div").parent("div.collapsible-body").children("div").children("table.or-project-requirement-table");
 		this.uiManager.addRequirementFormFields(tableSelector, null, this.dataManager.ratingAttributeData, true, true, true);
 		this.bindUIEvents();
 		return false;
