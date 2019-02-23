@@ -195,7 +195,7 @@
                                         <th style="width:40px;">ID</th>
                                         <th style="width:auto;">Description</th>
                                         <th class="or-requirement-priority">Priority</th>
-                                        <th class="or-requirement-delete" style="width:40px;"></th>
+                                        <th style="width:40px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -537,7 +537,44 @@
     </div>
 </div>
 <div style="display:none;">
-    <div class="or-message-area-container">
+    <div class="or-add-issue-container or-dialog-container">
+        <h1>Create new issue</h1>
+        <h2>Please provide all details of the new issue below.</h2>
+        <div class="or-issue-form-container">
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-issue-title-field">Title</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <input placeholder="Title" id="or-issue-title-field" type="text" class="or-issue-title-field validate" />
+                </div>
+            </div>
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-issue-description-field">Description</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <textarea id="or-issue-description-field" class="or-issue-description-field materialize-textarea" placeholder="Description"></textarea>
+                </div>
+            </div>
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-issue-priority-field">Priority</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <select id="or-issue-priority-field" class="or-issue-priority-field">
+                        <option value="CRITICAL">Critical</option>
+                        <option value="HIGH">High</option>
+                        <option value="NORMAL" selected="selected">Normal</option>
+                        <option value="LOW">Low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-message-area-container or-dialog-container">
         <h1>Evaluation of Requirement</h1>
         <h2 class="or-basic-rating-subtitle"></h2>
         <h2 class="or-title">Your argument</h2>
@@ -725,7 +762,7 @@
     </div>
 </div>
 <div style="display:none;">
-    <div class="or-import-dependency-recommendations-container">
+    <div class="or-import-dependency-recommendations-container or-dialog-container">
         <h1>Recommended Dependencies</h1>
         <div class="or-recommended-dependency-list-container">
             <div class="or-no-dependency-placeholder-row row">

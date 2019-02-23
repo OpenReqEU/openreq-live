@@ -12,6 +12,21 @@ input[type=text] {
     border-bottom: 1px solid #0000001f !important;
 }
 
+.or-dialog-container > h1 {
+    margin-bottom: 10px;
+}
+
+.or-dialog-container > h2 {
+    margin-top: 0px;
+    margin-bottom: 40px;
+    border-bottom: 1px #f7f7f7 solid;
+    padding-bottom: 15px;
+}
+
+.or-field-row > div > label {
+    margin-top: 15px;
+}
+
 .or-filter-field {
     width: 180px;
     margin-right: 17px;

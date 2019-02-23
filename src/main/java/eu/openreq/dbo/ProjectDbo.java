@@ -42,6 +42,10 @@ public class ProjectDbo {
 
 	@JsonIgnore
 	@OneToMany(mappedBy="project", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	private Set<IssueDbo> issues;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="project", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private List<RatingAttributeDbo> ratingAttributes;
 
 	@JsonIgnore
@@ -103,6 +107,7 @@ public class ProjectDbo {
 	public ProjectDbo() {
 		this.releases = new LinkedHashSet<>();
 		this.requirements = new LinkedHashSet<>();
+		this.issues = new LinkedHashSet<>();
 		this.ratingAttributes = new ArrayList<>();
 		this.stakeholderRatingAttributes = new LinkedHashSet<>();
 		this.lastProjectSpecificRequirementId = 0;
@@ -121,6 +126,7 @@ public class ProjectDbo {
 		this.endDate = endDate;
 		this.releases = new LinkedHashSet<>();
 		this.requirements = new LinkedHashSet<>();
+		this.issues = new LinkedHashSet<>();
 		this.ratingAttributes = new ArrayList<>();
 		this.stakeholderRatingAttributes = new LinkedHashSet<>();
 		this.lastProjectSpecificRequirementId = 0;
