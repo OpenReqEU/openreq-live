@@ -73,6 +73,27 @@ input[type=text] {
 	width: 700px;
 }
 
+.or-rating-attribute-select-box {
+    margin: 0 -7px 0 0;
+    padding-top: 10px;
+    padding-left: 15px;
+    border: 1px #eaeaea solid;
+    height: 40px;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.or-rating-attribute-select-box > span {
+    vertical-align: top;
+}
+
+.or-rating-attribute-icon-field > ul.dropdown-content {
+    top: -350px !important;
+    height: 350px !important;
+    width: 100% !important;
+}
+
 .or-rating-attribute-name-cell {
 	width: 100px;
 }
@@ -335,8 +356,15 @@ h3 > .or-title-icon {
 }
 
 .or-issue-failed {
-    color: #D32F2F !important;
     background-color: #f7f7f7;
+}
+
+.or-priority {
+    font-weight: bolder;
+}
+
+.or-priority-critical {
+    color: #D32F2F !important;
 }
 
 .or-title-icon {

@@ -610,11 +610,10 @@ public class RequirementController {
 
 		for (RatingAttributeDto ratingAttributeDto : ratingAttributeDtos) {
 			RatingAttributeDbo ratingAttribute = ratingAttributeRepository.findOne(ratingAttributeDto.getId());
-			if (ratingAttribute.getProject().getId() != project.getId()) {
+			if ((ratingAttribute == null) || (ratingAttribute.getProject().getId() != project.getId())) {
 				continue;
 			}
 
-			// TODO: extend... also call other setters once supported...
 			ratingAttribute.setWeight(ratingAttributeDto.getWeight());
 			ratingAttributeRepository.save(ratingAttribute);
 		}

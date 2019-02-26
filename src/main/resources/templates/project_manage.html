@@ -208,6 +208,11 @@
                     </li>
                 </ul>
             </div>
+            <div>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </div>
         </div>
     </div>
 </div>
@@ -368,19 +373,16 @@
         -->
         <div class="or-rating-scheme">
             <h2>Specify weights of requirement rating dimensions</h2>
-            <div class="alert alert-warning">
-              <strong>Note:</strong> Please make sure that the sum of all weights is 1.
-            </div>
             <table class="or-rating-attribute-table striped">
               <tbody>
               </tbody>
             </table>
+            <div class="or-add-button-container">
+                <a class="or-add-rating-attribute-button waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Dimension</a>
+            </div>
         </div>
         <div class="or-stakeholder-rating-scheme">
             <h2>Specify weights of stakeholder assessment dimensions</h2>
-            <div class="alert alert-warning">
-                <strong>Note:</strong> Please make sure that the sum of all weights is 1.
-            </div>
             <table class="or-stakeholder-assessment-rating-attribute-table striped">
                 <tbody>
                 </tbody>
@@ -568,6 +570,42 @@
                         <option value="NORMAL" selected="selected">Normal</option>
                         <option value="LOW">Low</option>
                     </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-add-rating-attribute-container or-dialog-container">
+        <h1>Create new rating dimension</h1>
+        <h2>Please provide all details of the new rating dimension.</h2>
+        <div class="or-issue-form-container">
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-issue-title-field">Title</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <input placeholder="Title" id="or-rating-attribute-title-field" type="text" class="or-rating-attribute-title-field validate" />
+                </div>
+            </div>
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-rating-attribute-description-field">Description</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <textarea id="or-rating-attribute-description-field" class="or-rating-attribute-description-field materialize-textarea" rows="2" placeholder="Description"></textarea>
+                </div>
+            </div>
+            <div class="or-field-row row">
+                <div class="col-sm-3 col-xs-3">
+                    <label for="or-rating-attribute-icon-field">Icon</label>
+                </div>
+                <div class="col-sm-9 col-xs-9">
+                    <div class="or-rating-attribute-icon-trigger-field select-wrapper">
+                        <span class="caret"></span>
+                        <div class="or-rating-attribute-select-box select-dropdown">Please select icon...</div>
+                    </div>
+                    <select id="or-rating-attribute-icon-field" class="or-rating-attribute-icon-field"></select>
                 </div>
             </div>
         </div>

@@ -27,6 +27,144 @@ var TOP_LEVEL_DOMAINS = [
 	'vu', 'wf', 'ws', 'xxx', 'ye', 'yt', 'yu', 'za', 'zm', 'zr', 'zw'
 ];
 
+var ICON_NAMES = [
+    'build', 'location_city', 'format_color_reset', 'donut_small', 'surround_sound',
+    'time_to_leave', 'flash_on', 'phone_forwarded', 'closed_caption', 'notifications_paused',
+    'video_library', 'keyboard_voice', 'thumbs_up_down', 'local_printshop', 'library_add',
+    'exposure_zero', 'my_location', 'cloud', 'notifications_none', 'featured_play_list',
+    'desktop_windows', 'chevron_left', 'local_hotel', 'remove_circle', 'domain',
+    'airline_seat_legroom_reduced', 'offline_pin', 'delete_forever', 'call', 'local_laundry_service',
+    'linked_camera', 'view_module', 'mail', 'cancel', 'cloud_off', 'panorama_vertical',
+    'settings_input_component', 'access_time', 'widgets', 'call_merge', 'group', 'blur_linear',
+    'remove_circle_outline', 'aspect_ratio', 'av_timer', 'clear', 'keyboard_arrow_left',
+    'open_in_new', 'near_me', 'restaurant_menu', 'short_text', 'show_chart', 'drag_handle',
+    'picture_in_picture_alt', 'find_in_page', 'lock_outline', 'play_arrow', 'folder',
+    'merge_type', 'stay_current_portrait', 'arrow_back', 'party_mode', 'format_indent_decrease',
+    'network_check', 'assignment', 'gps_off', 'toys', 'library_music', 'wb_auto', 'view_carousel',
+    'format_align_left', 'theaters', 'alarm_add', 'brightness_auto', 'voicemail', 'rotate_90_degrees_ccw',
+    'leak_remove', 'playlist_add_check', 'rounded_corner', 'zoom_out', 'undo', 'assignment_turned_in',
+    'screen_rotation', 'format_color_fill', 'grid_off', 'filter_1', 'pause_circle_filled', 'local_pharmacy', 'pin_drop',
+    'chat_bubble_outline', 'settings_system_daydream', 'perm_media', 'eject', 'headset_mic', 'child_care', 'list',
+    'swap_vertical_circle', 'camera_roll', 'directions', 'autorenew', 'local_parking', 'pages', 'plus_one',
+    'accessibility', 'phone_in_talk', 'gradient', 'nfc', 'screen_lock_portrait', 'skip_previous', 'trending_down',
+    'laptop_windows', 'gamepad', 'all_inclusive', 'filter_vintage', 'vignette', 'schedule', 'wifi_lock',
+    'photo_size_select_large', 'fiber_dvr', 'notifications_off', 'flash_auto', 'phone_missed', 'texture', 'tune',
+    'perm_identity', 'payment', 'queue', 'label_outline', 'crop_original', 'smoke_free', 'view_headline', 'shuffle',
+    'dns', 'lock', 'looks_one', 'more_horiz', 'border_color', 'code', 'place', 'crop_5_4', 'location_searching',
+    'phone_bluetooth_speaker', 'settings_cell', 'format_textdirection_r_to_l', 'invert_colors_off', 'favorite_border',
+    'brightness_high', 'report_problem', 'collections', 'hot_tub', 'fiber_new', 'access_alarm', 'bluetooth', 'edit',
+    'landscape', 'fiber_pin', 'tag_faces', 'traffic', 'system_update', 'call_received', 'low_priority',
+    'supervisor_account', 'zoom_in', 'subject', 'battery_alert', 'settings_input_hdmi', 'visibility_off',
+    'notifications', 'laptop', 'check_box_outline_blank', 'cake', 'reply', 'healing', 'first_page',
+    'signal_cellular_4_bar', 'help_outline', 'replay', 'hearing', 'error', 'local_shipping', 'photo_size_select_actual',
+    'battery_full', 'portable_wifi_off', 'print', 'directions_railway', 'done', 'control_point_duplicate',
+    'filter_b_and_w', 'gif', 'gesture', 'content_cut', 'pie_chart', 'store', 'data_usage', 'equalizer', 'compare',
+    'layers_clear', 'sim_card', 'navigation', 'record_voice_over', 'move_to_inbox', 'burst_mode', 'mouse',
+    'create_new_folder', 'announcement', 'forward_5', 'child_friendly', 'speaker', 'get_app', 'arrow_drop_down',
+    'trending_flat', 'fast_forward', 'format_underlined', 'watch', 'snooze', 'import_export', 'import_contacts',
+    'folder_open', 'assistant_photo', 'battery_unknown', 'error_outline', 'gps_not_fixed', 'call_split', 'iso',
+    'loyalty', 'network_locked', 'picture_in_picture', 'satellite', 'sim_card_alert', 'assignment_late', 'ring_volume',
+    'directions_car', 'filter_3', 'system_update_alt', 'border_top', 'lens', 'settings_overscan', 'panorama_horizontal',
+    'clear_all', 'local_phone', 'class', 'library_books', 'looks', 'audiotrack', 'sentiment_very_dissatisfied',
+    'not_interested', 'bubble_chart', 'blur_off', 'crop_7_5', 'fiber_manual_record', 'delete', 'notifications_active',
+    'text_fields', 'font_download', 'filter_9', 'airplay', 'accessible', 'phone_locked', 'swap_horiz', 'contact_mail',
+    'attach_money', 'layers', 'blur_circular', 'live_help', 'directions_subway', 'receipt', 'timelapse',
+    'event_available', 'hotel', 'live_tv', 'phonelink', 'screen_lock_landscape', 'forward', 'strikethrough_s',
+    'sentiment_dissatisfied', 'settings_input_svideo', 'text_format', 'sms_failed', 'train', 'check', 'dock', 'dialpad',
+    'person_add', 'backspace', 'attach_file', 'smoking_rooms', 'airline_seat_recline_normal', 'info',
+    'photo_size_select_small', 'security', 'exposure', 'chrome_reader_mode', 'usb', 'apps', 'business_center',
+    'assignment_return', 'airplanemode_inactive', 'favorite', 'stay_primary_landscape', 'pool', 'extension',
+    'airport_shuttle', 'local_pizza', 'switch_camera', 'movie', 'public', 'art_track', 'tablet_mac',
+    'play_circle_outline', 'photo_camera', 'directions_walk', 'leak_add', 'sort_by_alpha', 'settings', 'videocam',
+    'account_circle', 'bluetooth_searching', 'select_all', 'today', 'wb_iridescent', 'visibility', 'add_shopping_cart',
+    'ev_station', 'airline_seat_flat', 'border_outer', 'movie_creation', 'thumb_up', 'add_location', 'contacts', 'mic',
+    'location_off', 'local_play', 'flip', 'functions', 'settings_input_antenna', 'work', 'directions_boat',
+    'add_circle_outline', 'blur_on', 'local_hospital', 'looks_4', 'assistant', 'smartphone', 'camera', 'photo_filter',
+    'priority_high', 'format_align_right', 'format_paint', 'local_library', 'subscriptions', 'ac_unit',
+    'developer_board', 'help', 'keyboard_arrow_down', 'local_florist', 'gavel', 'arrow_drop_down_circle',
+    'arrow_drop_up', 'network_wifi', 'exposure_neg_2', 'do_not_disturb_off', 'ondemand_video', 'looks_3', 'opacity',
+    'restore', 'filter_8', 'settings_power', 'flight_land', 'grid_on', 'call_to_action', 'wc', 'wb_incandescent',
+    'add_a_photo', 'alarm_off', 'shopping_cart', 'image_aspect_ratio', 'signal_wifi_4_bar', 'view_week', 'drafts',
+    'folder_shared', 'highlight_off', 'room', 'alarm', 'phone_android', 'touch_app', 'android',
+    'settings_input_composite', 'fingerprint', 'brightness_medium', 'looks_6', 'golf_course', 'insert_chart',
+    'keyboard_backspace', 'local_dining', 'navigate_next', 'local_convenience_store', 'wallpaper', 'kitchen',
+    'account_box', 'format_color_text', 'battery_std', 'brightness_2', 'nature', 'photo_album', 'mood', 'play_for_work',
+    'add_alert', 'filter_5', 'tonality', 'add_to_queue', 'unfold_less', 'power_settings_new', 'wifi_tethering',
+    'note_add', 'indeterminate_check_box', 'format_shapes', 'markunread_mailbox', 'update', 'hourglass_empty',
+    'cloud_queue', 'thumb_down', 'dehaze', 'tab', 'add_alarm', 'spa', 'signal_cellular_no_sim', 'home', 'access_alarms',
+    'view_list', 'perm_camera_mic', 'volume_down', 'polymer', 'adb', 'keyboard', 'directions_run', 'hdr_weak',
+    'photo_library', 'restore_page', 'portrait', 'flight', 'mail_outline', 'lock_open', 'call_missed_outgoing', 'games',
+    'inbox', 'recent_actors', 'radio', 'filter', 'title', 'directions_transit', 'unarchive', 'nature_people',
+    'local_airport', 'room_service', 'contact_phone', 'local_gas_station', 'tablet_android', 'pageview', 'g_translate',
+    'http', 'speaker_phone', 'view_array', 'center_focus_weak', 'mode_comment', 'expand_more', 'picture_as_pdf',
+    'vertical_align_center', 'format_italic', 'explore', 'file_download', 'insert_link', 'format_line_spacing',
+    'cloud_circle', 'rate_review', 'format_align_justify', 'event_busy', 'chevron_right', 'local_post_office',
+    'border_clear', 'border_vertical', 'perm_scan_wifi', 'pregnant_woman', 'brush', 'next_week', 'mic_off', 'slideshow',
+    'trending_up', 'rotate_left', 'phonelink_setup', 'comment', 'exit_to_app', '3d_rotation', 'crop_din',
+    'featured_video', 'border_right', 'star_border', 'cached', 'important_devices', 'format_indent_increase',
+    'file_upload', 'filter_drama', 'arrow_upward', 'photo', 'poll', 'format_size', 'change_history', 'navigate_before',
+    'call_made', 'linear_scale', 'grade', 'hdr_strong', 'settings_bluetooth', 'gps_fixed', 'stay_primary_portrait',
+    'screen_share', 'verified_user', 'sync_problem', 'headset', 'local_see', 'line_style', 'perm_contact_calendar',
+    'check_circle', 'pets', 'speaker_notes_off', 'call_end', 'assignment_returned', 'screen_lock_rotation',
+    'sentiment_very_satisfied', 'location_disabled', 'replay_5', 'insert_drive_file', 'toll', 'explicit', 'replay_10',
+    'feedback', 'language', 'filter_2', 'turned_in', 'credit_card', 'local_atm', 'view_stream', 'timer', 'video_call',
+    'grain', 'bluetooth_audio', 'web', 'rowing', 'transfer_within_a_station', 'border_horizontal', 'donut_large',
+    'phone_paused', 'image', 'swap_calls', 'local_grocery_store', 'tv', 'exposure_plus_1', 'settings_ethernet',
+    'switch_video', 'style', 'do_not_disturb', 'play_circle_filled', 'timeline', 'local_activity', 'lightbulb_outline',
+    'crop_3_2', 'computer', 'filter_list', 'colorize', 'local_offer', 'highlight', 'repeat', 'directions_bus',
+    'format_list_bulleted', 'publish', 'message', 'location_on', 'border_all', 'videocam_off', 'refresh',
+    'slow_motion_video', 'rss_feed', 'brightness_low', 'wb_cloudy', 'looks_two', 'store_mall_directory', 'view_comfy',
+    'developer_mode', 'playlist_add', 'people', 'motorcycle', 'shop', 'transform', 'copyright', 'tab_unselected',
+    'money_off', 'branding_watermark', 'local_movies', 'search', 'line_weight', 'settings_voice', 'beenhere', 'palette',
+    'scanner', 'local_cafe', 'signal_cellular_null', 'local_mall', 'adjust', 'people_outline', 'phone',
+    'remove_shopping_cart', 'local_taxi', 'add_circle', 'sd_card', 'looks_5', 'playlist_play', 'tram', 'translate',
+    'star_half', 'mic_none', 'laptop_chromebook', 'create', 'multiline_chart', 'perm_phone_msg', 'all_out',
+    'new_releases', 'warning', 'person_pin', 'camera_alt', 'card_giftcard', 'devices_other', 'arrow_downward', 'loupe',
+    'keyboard_hide', 'brightness_6', 'more_vert', 'textsms', 'pie_chart_outlined', 'border_left',
+    'perm_device_information', 'speaker_group', 'fast_rewind', 'airline_seat_flat_angled', 'sync', 'drive_eta',
+    'vertical_align_bottom', 'check_box', 'wrap_text', 'delete_sweep', 'personal_video', 'zoom_out_map',
+    'settings_remote', 'shop_two', 'hd', 'fitness_center', 'subdirectory_arrow_right', 'pan_tool',
+    'signal_cellular_off', 'video_label', 'book', 'filter_4', 'replay_30', 'turned_in_not', 'movie_filter',
+    'format_bold', 'no_sim', 'crop_portrait', 'phonelink_erase', 'folder_special', 'wb_sunny', 'format_align_center',
+    'mood_bad', 'compare_arrows', 'confirmation_number', 'album', 'queue_music', 'keyboard_tab', 'sentiment_satisfied',
+    'person_outline', 'filter_tilt_shift', 'web_asset', 'insert_invitation', 'subtitles', 'content_paste', 'straighten',
+    'keyboard_return', 'chat', 'sentiment_neutral', 'block', 'space_bar', 'expand_less', 'bug_report', 'view_column',
+    'invert_colors', 'mode_edit', 'timer_off', 'toc', 'insert_emoticon', 'exposure_neg_1', 'flare', 'keyboard_arrow_up',
+    'remove_red_eye', 'email', 'phonelink_ring', 'music_video', 'no_encryption', 'crop_landscape', 'cast_connected',
+    'date_range', 'add_to_photos', 'airplanemode_active', 'event', 'add_box', 'memory', 'dvr', 'map',
+    'airline_seat_legroom_extra', 'details', 'forum', 'archive', 'euro_symbol', 'edit_location', 'history',
+    'tap_and_play', 'event_note', 'bluetooth_disabled', 'keyboard_arrow_right', 'terrain', 'directions_bike',
+    'card_travel', 'chat_bubble', 'share', 'stars', 'stay_current_landscape', 'filter_frames', 'view_compact',
+    'description', 'volume_off', 'do_not_disturb_alt', 'alarm_on', 'filter_hdr', 'router', 'brightness_1', 'spellcheck',
+    'school', 'subway', 'business', 'filter_6', 'flip_to_back', 'local_drink', 'power_input', 'local_bar', 'done_all',
+    'format_clear', 'timer_10', 'arrow_forward', 'devices', 'more', 'phonelink_lock', 'streetview', 'bookmark', 'wifi',
+    'label', 'input', 'local_car_wash', 'keyboard_capslock', 'monetization_on', 'content_copy', 'restaurant',
+    'cloud_upload', 'report', 'insert_photo', 'repeat_one', 'dialer_sip', 'pause', 'info_outline', 'person', 'power',
+    'forward_30', 'group_work', 'signal_cellular_connected_no_internet_4_bar', 'flight_takeoff', 'remove_from_queue',
+    'https', 'brightness_7', 'menu', 'stop_screen_share', 'track_changes', 'view_quilt', 'sms', 'fiber_smart_record',
+    'settings_applications', 'event_seat', 'panorama_fish_eye', 'skip_next', 'flash_off', 'crop_free', 'volume_mute',
+    'last_page', 'link', 'attachment', 'person_pin_circle', 'assignment_ind', 'storage', 'crop_16_9', 'laptop_mac',
+    'fullscreen_exit', 'whatshot', 'bluetooth_connected', 'border_inner', 'crop', 'device_hub', 'face', 'high_quality',
+    'settings_phone', 'subdirectory_arrow_left', 'tablet', 'airline_seat_individual_suite', 'do_not_disturb_on',
+    'airline_seat_recline_extra', 'cloud_download', 'reply_all', 'rotate_right', 'camera_front', 'color_lens',
+    'panorama', 'beach_access', 'filter_center_focus', 'assessment', 'call_missed', 'swap_vert', 'format_list_numbered',
+    'casino', 'find_replace', 'format_textdirection_l_to_r', 'monochrome_photos', 'insert_comment', 'forward_10',
+    'vertical_align_top', 'desktop_mac', 'signal_wifi_off', 'speaker_notes', 'present_to_all', 'queue_play_next',
+    'collections_bookmark', 'crop_rotate', 'add', 'control_point', 'brightness_5', 'vpn_key', 'flip_to_front',
+    'network_cell', 'question_answer', 'shopping_basket', 'disc_full', 'sort', 'camera_enhance', 'center_focus_strong',
+    'phone_iphone', 'format_quote', 'rv_hookup', 'videogame_asset', 'free_breakfast', 'filter_7', 'open_with',
+    'airline_seat_legroom_normal', 'format_strikethrough', 'loop', 'sd_storage', 'vpn_lock', 'voice_chat', 'volume_up',
+    'weekend', 'cast', 'signal_wifi_4_bar_lock', 'markunread', 'query_builder', 'mms', 'music_note',
+    'radio_button_unchecked', 'camera_rear', 'remove', 'redeem', 'timer_3', 'filter_9_plus', 'vibration', 'unfold_more',
+    'bookmark_border', 'brightness_4', 'save', 'close', 'send', 'exposure_plus_2', 'crop_square', 'launch',
+    'account_balance', 'flag', 'hourglass_full', 'group_add', 'border_style', 'brightness_3', 'perm_data_setting',
+    'youtube_searched_for', 'phonelink_off', 'battery_charging_full', 'broken_image', 'backup', 'view_agenda',
+    'hdr_off', 'border_bottom', 'radio_button_checked', 'sync_disabled', 'cloud_done', 'redo', 'hdr_on',
+    'settings_brightness', 'graphic_eq', 'pause_circle_outline', 'dashboard', 'settings_backup_restore',
+    'account_balance_wallet', 'filter_none', 'fullscreen', 'watch_later', 'reorder', 'card_membership', 'view_day',
+    'star', 'open_in_browser', 'stop', 'enhanced_encryption', 'note', 'panorama_wide_angle'
+];
+
 function bindUIEvent(toObject, methodName) {
     return function(event) { toObject[methodName](event, this); return false; }
 }
@@ -108,6 +246,20 @@ function isArrowKey(key) {
 
 function isEnterKey(key) {
     return (key == 13);
+}
+
+// based on: https://stackoverflow.com/a/5200010
+function bySortedValue(obj, callback, context) {
+    var tuples = [];
+
+    for (var key in obj) tuples.push([key, obj[key]]);
+
+    tuples.sort(function(a, b) {
+        return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0
+    });
+
+    var length = tuples.length;
+    while (length--) callback.call(context, tuples[length][0], tuples[length][1]);
 }
 
 function computeUserLiquidDemocracyDelegationImportance(ratingBackwardDelegations, userID) {
@@ -1128,6 +1280,13 @@ var UINotificationTag = {
     ISSUE: 3
 };
 
+var NotificationPriority = {
+    CRITICAL: 1,
+    HIGH: 2,
+    NORMAL: 3,
+    LOW: 4
+};
+
 class UINotification {
 
     constructor(id, type, title, description, tags, info) {
@@ -1197,30 +1356,52 @@ class UINotificationCenter {
 
         console.log(this.notifications);
         $("#or-project-issues > tbody").children().remove();
-        this.messageCounter = 0;
+        var notificationIDs = {};
 
         for (var notificationID in this.notifications) {
             var notification = this.notifications[notificationID];
+            if (notification.type == UINotificationType.GLOBAL) {
+                notificationIDs[notificationID] = NotificationPriority.NORMAL;
+            } else if (notification.type == UINotificationType.ISSUE) {
+                notificationIDs[notificationID] = NotificationPriority[notification.info.priority];
+            } else if (notification.type == UINotificationType.SERVICE_ISSUE) {
+                notificationIDs[notificationID] = NotificationPriority.CRITICAL;
+            } else if (notification.type == UINotificationType.SERVICE_NOTIFICATION) {
+                notificationIDs[notificationID] = NotificationPriority.NORMAL;
+            } else if (notification.type == UINotificationType.REQUIREMENT) {
+                notificationIDs[notificationID] = NotificationPriority.NORMAL;
+            } else if (notification.type == UINotificationType.DEPENDENCY) {
+                notificationIDs[notificationID] = NotificationPriority.NORMAL;
+            } else if (notification.type == UINotificationType.RELEASE) {
+                notificationIDs[notificationID] = NotificationPriority.NORMAL;
+            }
+        }
+
+        this.messageCounter = 0;
+        var notificationCenter = this;
+        var uiEventHandler = this.uiEventHandler;
+
+        bySortedValue(notificationIDs, function(notificationID, priority) {
+            var notification = notificationCenter.notifications[notificationID];
+            ++notificationCenter.messageCounter;
 
             if (notification.type == UINotificationType.GLOBAL) {
-                ++this.messageCounter;
-                this.uiEventHandler.addIssueRow("Issue", notification.description, this.messageCounter, "NORMAL", null, null);
-
+                uiEventHandler.addIssueRow("Issue", notification.description, notificationCenter.messageCounter,
+                    priority, null);
             } else if (notification.type == UINotificationType.ISSUE) {
-                ++this.messageCounter;
                 var issueData = notification.info;
-                this.uiEventHandler.addIssueRow(notification.title, notification.description, this.messageCounter,
-                    issueData.priority, null, issueData.id);
+                uiEventHandler.addIssueRow(notification.title, notification.description,
+                    notificationCenter.messageCounter, priority, null, issueData.id);
 
             } else if (notification.type == UINotificationType.SERVICE_ISSUE) {
-                ++this.messageCounter;
                 var title = "Service failure" + (notification.hasTag() ? " " + notification.tags[0] : "");
-                this.uiEventHandler.addIssueRow(title, notification.description, this.messageCounter, "CRITICAL", "or-issue-failed", null);
+                uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
+                    priority, null);
 
             } else if (notification.type == UINotificationType.SERVICE_NOTIFICATION) {
-                ++this.messageCounter;
                 var title = "Service Notification" + (notification.hasTag() ? " " + notification.tags[0] : "");
-                this.uiEventHandler.addIssueRow(title, notification.description, this.messageCounter, "NORMAL", "or-issue-notification", null);
+                uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
+                    priority, null);
 
             } else if (notification.type == UINotificationType.REQUIREMENT) {
                 var requirementID = notification.info.requirementID;
@@ -1229,9 +1410,9 @@ class UINotificationCenter {
                 }
                 requirementNotificationMessages[requirementID].push(notification.description);
 
-                ++this.messageCounter;
                 var title = "Similar requirements";
-                this.uiEventHandler.addIssueRow(title, notification.description, this.messageCounter, "NORMAL", null, null);
+                uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
+                    priority, null);
 
             } else if (notification.type == UINotificationType.DEPENDENCY) {
                 var requirementIDX = notification.info.rx;
@@ -1255,9 +1436,9 @@ class UINotificationCenter {
                 requirementNotificationMessages[requirementIDY].push(notification.description);
                 dependencyNotificationMessages[dependencyHTMLID].push(notification.description);
 
-                ++this.messageCounter;
                 var title = "Requirement interdependency";
-                this.uiEventHandler.addIssueRow(title, notification.description, this.messageCounter, "NORMAL", null, null);
+                uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
+                    priority, null);
 
             } else if (notification.type == UINotificationType.RELEASE) {
                 var releaseID = notification.info.releaseID;
@@ -1266,11 +1447,13 @@ class UINotificationCenter {
                 }
                 releaseNotificationMessages[releaseID] = notification.description;
 
-                ++this.messageCounter;
                 var title = "Release notification";
-                this.uiEventHandler.addIssueRow(title, notification.description, this.messageCounter, "NORMAL", null, null);
+                uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
+                    priority, null);
+            } else {
+                --notificationCenter.messageCounter;
             }
-        }
+        });
 
         if (this.messageCounter > 0) {
             $("#or-notification-button-container > .or-badge").text(this.messageCounter).show();
@@ -2438,6 +2621,7 @@ class UIEventHandler {
         $(".or-requirement-basic-evaluation").unbind("click");
 		$(".or-requirement-normal-evaluation").unbind("click");
 		$(".or-requirement-advanced-evaluation").unbind("click");
+        $(".or-delete-rating-attribute-button").unbind("click");
         $(".or-rating-self-vote").unbind("click");
         $(".or-rating-delegate-vote").unbind("click");
         $(".or-delegate-vote-user-btn").unbind("click");
@@ -2467,6 +2651,7 @@ class UIEventHandler {
         $(".or-form-edit-release-description").unbind("click");
         $("#or-notification-button-container").unbind("click");
         $("#or-add-issue-button").unbind("click");
+        $(".or-add-rating-attribute-button").unbind("click");
 
         $(".or-delete-button").on("click", bindUIEvent(this, "deleteRequirementEvent"));
         $(".or-delete-issue-button").on("click", bindUIEvent(this, "deleteIssueEvent"));
@@ -2505,6 +2690,7 @@ class UIEventHandler {
         $(".or-requirement-basic-evaluation").on("click", bindUIEvent(this, "basicRequirementEvaluationEvent"));
         $(".or-requirement-normal-evaluation").on("click", bindUIEvent(this, "rateEvent"));
         $(".or-requirement-advanced-evaluation").on("click", bindUIEvent(this, "messageClickEvent"));
+        $(".or-delete-rating-attribute-button").on("click", bindUIEvent(this, "deleteRatingAttributeClickEvent"));
         $(".or-rating-self-vote").on("click", bindUIEvent(this, "rateEvent"));
         $(".or-rating-delegate-vote").on("click", bindUIEvent(this, "rateDelegateEvent"));
         $(".or-delegate-vote-user-btn").on("click", bindUIEvent(this, "rateDelegateClickEvent"));
@@ -2533,6 +2719,7 @@ class UIEventHandler {
         $(".or-select-menu-item").bind("click", bindUIEvent(this, "selectMenuItemEvent"));
         $("#or-notification-button-container").bind("click", bindUIEvent(this, "openNotificationCenterEvent"));
         $("#or-add-issue-button").bind("click", bindUIEvent(this, "addIssueEvent"));
+        $(".or-add-rating-attribute-button").bind("click", bindUIEvent(this, "addRatingAttributeEvent"));
 
         if (this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").css("color", "#d2d2d2").css("cursor", "default");
@@ -3019,17 +3206,21 @@ class UIEventHandler {
         return tr;
     }
 
-    addIssueRow(title, description, messageCounter, priority, cssClass, deleteIssueID) {
+    addIssueRow(title, description, messageCounter, priority, deleteIssueID) {
         var tr = $("<tr></tr>");
-        if (cssClass != null) {
-            tr.addClass(cssClass);
-        }
         var div = $("<div></div>");
+        var priorityRow = $("<td></td>")
+            .addClass("or-priority")
+            .text(Object.keys(NotificationPriority).filter(function(key) { return NotificationPriority[key] == priority })[0]);
+        if (priority == NotificationPriority.CRITICAL) {
+            tr.addClass("or-issue-failed");
+            priorityRow.addClass("or-priority-critical");
+        }
         div.append($("<h3></h3>").text(title));
         div.append($("<p></p>").text(description));
         tr.append($("<td></td>").text(messageCounter));
         tr.append($("<td></td>").addClass("or-issue-description").append(div));
-        tr.append($("<td></td>").text(priority));
+        tr.append(priorityRow);
         var td = $("<td></td>");
         if (deleteIssueID != null) {
             var deleteLink = $("<a></a>").addClass("or-delete-issue-button btn-floating btn-small waves-effect waves-light red lighten-2");
@@ -3332,6 +3523,102 @@ class UIEventHandler {
         $(".swal2-popup").css("width", "600px");
         $(".or-issue-title-field").focus();
         return false;
+    }
+
+    addRatingAttributeEvent(event, thisObj) {
+        var uiEventHandler = this;
+        var addRatingAttributeContainer = $(".or-add-rating-attribute-container");
+        var addRatingAttributeContainerContent = addRatingAttributeContainer.wrap('<p/>').parent().html();
+        addRatingAttributeContainer.unwrap();
+
+        swal({
+            html: '<div class="or-rating-attribute-container-area">' + addRatingAttributeContainerContent + '</div>',
+            customClass: "or-modal-wide",
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            cancelButtonText: "Cancel"
+        }).then(function (result) {
+            if (("value" in result) && result.value) {
+                return uiEventHandler.saveRatingAttributeEvent(event, thisObj);
+            }
+            return true;
+        });
+
+        for (var i in ICON_NAMES) {
+            var option = $("<option></option>").attr("value", ICON_NAMES[i])
+                .html("<span class=\"material-icons\">" + ICON_NAMES[i] + "</span> " + ICON_NAMES[i]);
+            $("select.or-rating-attribute-icon-field").append(option);
+        }
+
+        $("select.or-rating-attribute-icon-field").last().material_select();
+        $("span.caret").text("");
+        $(".or-rating-attribute-icon-field > input.select-dropdown").last().hide();
+        $(".or-rating-attribute-icon-field > .caret").last().hide();
+        $(".or-rating-attribute-icon-trigger-field").last().unbind("click");
+        $(".or-rating-attribute-icon-trigger-field").last().on("click", function () {
+            $(".or-rating-attribute-icon-field > input.select-dropdown").last().click();
+            $(".or-rating-attribute-icon-field > ul.dropdown-content > li").on("click", function() {
+                $(".or-rating-attribute-select-box").last().html($(this).html());
+                $(".or-rating-attribute-select-box").last().attr("data-icon", $(this).children("span").children("span.material-icons").text());
+                $(".or-rating-attribute-icon-field > input.select-dropdown").last().click();
+                //$(".or-rating-attribute-icon-field > ul.dropdown-content").hide();
+            });
+        });
+        $(".swal2-popup").css("width", "600px");
+        $(".or-issue-title-field").focus();
+	    return false;
+    }
+
+    saveRatingAttributeEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var name = $(".or-rating-attribute-title-field").last().val();
+        var description = $(".or-rating-attribute-description-field").last().val();
+        var iconName = $(".or-rating-attribute-select-box").last().attr("data-icon");
+        var ratingAttributeData = {
+            name: name,
+            description: description,
+            iconName: iconName,
+            minValue: 1,
+            maxValue: 5,
+            interval: 1,
+            weight: 1.0
+        };
+
+        if (name.length == 0) {
+            alert("Please enter a title!");
+            this.addRatingAttributeEvent(event, thisObj);
+            return false;
+        }
+
+        if (description.length == 0) {
+            alert("Please enter a description!");
+            this.addRatingAttributeEvent(event, thisObj);
+            return false;
+        }
+
+        var jsonifiedString = JSON.stringify(ratingAttributeData);
+        var uiEventHandler = this;
+        var dataManager = this.dataManager;
+
+        $.ajax("/project/" + projectID + "/rating/attribute/create.json", {
+            'data': jsonifiedString,
+            'type': 'POST',
+            'contentType': 'application/json',
+            'processData': false,
+            'success': function (result) {
+                if (result.error == true) {
+                    swal("Error", result.errorMessage, "error");
+                    return false;
+                }
+
+                ratingAttributeData.id = result.attributeID;
+                dataManager.ratingAttributeData.push(ratingAttributeData);
+                uiEventHandler.specifyAssessmentSchemeEvent(event, thisObj);
+                uiEventHandler.bindUIEvents();
+            }
+        });
+	    return true;
     }
 
     saveIssueEvent(event, thisObj) {
@@ -4051,6 +4338,29 @@ class UIEventHandler {
 		return false;
 	}
 
+    deleteRatingAttributeClickEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var ratingAttributeID = parseInt($(thisObj).attr("data-rating-attribute-id"));
+
+        var uiEventHandler = this;
+        var ratingAttributeRow = $(thisObj).parent("td").parent("tr");
+        $.ajax("/project/" + projectID + "/rating/attribute/" + ratingAttributeID + "/delete.json", {
+            'type': 'GET',
+            'contentType': 'application/json',
+            'processData': false,
+            'success': function (result) {
+                if (result.error == true) {
+                    swal("Error", result.errorMessage, "error");
+                    return false;
+                }
+
+                ratingAttributeRow.fadeOut();
+                uiEventHandler.bindUIEvents();
+            }
+        });
+	    return false;
+    }
+
 	rateEvent(event, thisObj, forceShowRatingTable) {
         var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
         //var requirementID = parseInt($(".or-rating-self-vote").attr("data-requirement-id"));
@@ -4072,6 +4382,7 @@ class UIEventHandler {
 		    showRatingTable = false;
         }
 
+		var extendedModalWidth = false;
 		if (showRatingTable) {
 			ratingTable.show();
 			ratingOverviewTable.hide();
@@ -4191,7 +4502,8 @@ class UIEventHandler {
 				tr.append($("<td></td>").addClass("center").text((average != null) ? average.toFixed(2) : "-"));
 			}
 			tbody.append(tr);
-		}
+            extendedModalWidth = true;
+        }
 
         var isVoteDelegated = ((requirement.yourRatingDelegation != null) && (Object.keys(requirement.yourRatingDelegation).length > 0));
 		if (isVoteDelegated) {
@@ -4226,6 +4538,14 @@ class UIEventHandler {
             }
             return true;
         });
+
+		if (extendedModalWidth) {
+            if (dataManager.ratingAttributeData.length >= 5) {
+                $(".swal2-popup").css("width", "800px");
+            } else if (dataManager.ratingAttributeData.length > 3) {
+                $(".swal2-popup").css("width", "600px");
+            }
+        }
 
 		$(".or-rating-edit").on("click", function () {
 			uiEventHandler.rateEvent(event, thisObj, true);
@@ -4841,6 +5161,8 @@ class UIEventHandler {
         var uiEventHandler = this;
         var isPrivateProject = this.uiManager.dataManager.projectData.isPrivateProject;
         $(".or-stakeholder-rating-scheme").hide();
+        var dataManager = this.dataManager;
+        console.log(dataManager.ratingAttributeData);
 
         $.getJSON("/project/" + projectID + "/requirement/rating/attribute/list.json", function (result) {
 			var tbody = $(".or-rating-attribute-table > tbody");
@@ -4853,10 +5175,14 @@ class UIEventHandler {
 				var ratingAttributeNameColumn = $("<td></td>").addClass("or-rating-attribute-name-cell").append(ratingAttriuteIcon).append(" " + ratingAttribute.name);
 				var ratingAttributeDescriptionColumn = $("<td></td>").addClass("or-rating-attribute-description-cell").append(ratingAttribute.description);
 				var ratingAttributeValueColumn = $("<td></td>").addClass("or-rating-attribute-value-cell").append(ratingAttributeValueField);
+				var deleteRatingAttributeButton = $("<a></a>").addClass("or-delete-rating-attribute-button btn-floating btn-small waves-effect waves-light red lighten-2");
+				deleteRatingAttributeButton.attr("data-rating-attribute-id", ratingAttribute.id);
+				deleteRatingAttributeButton.append($("<i></i>").addClass("material-icons").text("delete"));
 
 				tr.append(ratingAttributeNameColumn);
 				tr.append(ratingAttributeDescriptionColumn);
 				tr.append(ratingAttributeValueColumn);
+				tr.append($("<td></td>").append(deleteRatingAttributeButton));
 				tbody.append(tr);
 			}
 
@@ -4865,6 +5191,8 @@ class UIEventHandler {
                 return;
             }
 
+            uiEventHandler.specifyAssessmentSchemeEventCallback();
+			/*
             $.getJSON("/project/" + projectID + "/requirement/stakeholder/rating/attribute/list.json", function (result) {
                 var tbody = $(".or-stakeholder-assessment-rating-attribute-table > tbody");
                 tbody.children("tr").remove();
@@ -4886,6 +5214,7 @@ class UIEventHandler {
                 $(".or-stakeholder-rating-scheme").show();
                 uiEventHandler.specifyAssessmentSchemeEventCallback();
             });
+            */
 		});
 		return false;
 	}
@@ -4912,6 +5241,7 @@ class UIEventHandler {
             }
         });
         $(".or-rating-attribute-table:last > tbody > tr:first > td.or-rating-attribute-value-cell > input").focus();
+        uiEventHandler.bindUIEvents();
     }
 
 	saveAssessmentSchemeEvent(event, thisObj) {
@@ -4932,13 +5262,6 @@ class UIEventHandler {
 			attributeData.weight = parseFloat($(this).val());
 			newRatingAttributeData.push(attributeData);
 		});
-		var sum = newRatingAttributeData.map(d => d.weight).reduce((pv, cv) => pv+cv, 0);
-		if (sum != 1.0) {
-			swal("Error", "The sum of all weights yields " + sum.toFixed(1) + " but should be 1.0!", "error").then(function (result) {
-				this.specifyAssessmentSchemeEvent(event, thisObj);
-            }.bind(this));
-			return false;
-		}
 
 		$.ajax("/project/" + projectID + "/requirement/rating/attribute/update.json", {
 		    'data': JSON.stringify(newRatingAttributeData),
@@ -4971,14 +5294,6 @@ class UIEventHandler {
         });
 
         if (newStakeholderRatingAttributeData.length == 0) {
-            return false;
-        }
-
-        var stakeholderWeightSum = newStakeholderRatingAttributeData.map(d => d.weight).reduce((pv, cv) => pv+cv, 0);
-        if (stakeholderWeightSum != 1.0) {
-            swal("Error", "The sum of all weights yields " + stakeholderWeightSum.toFixed(2) + " but should be 1.0!", "error").then(function (result) {
-                this.specifyAssessmentSchemeEvent(event, thisObj);
-            }.bind(this));
             return false;
         }
 
@@ -5148,7 +5463,6 @@ class UIEventHandler {
                 uiEventHandler.bindUIEvents();
             }
         });
-
         return false;
     }
 
