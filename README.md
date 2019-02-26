@@ -38,6 +38,12 @@ Once the server is running, open your browser and call the following URL to see 
 http://localhost:9001/swagger-ui.html
 ```
 
+The API documentation of our online service can be found here:
+
+```
+https://live.openreq.eu/swagger-ui.html
+```
+
 ### Notes for developers
 None.
 
