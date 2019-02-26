@@ -15,7 +15,12 @@ import javax.persistence.*;
 })
 public class DependencyDbo {
 
-    public enum Type { REQUIRES, EXCLUDES }
+    public enum Type {
+        IMPLIES,
+        REQUIRES,
+        EXCLUDES,
+        INCOMPATIBLE
+    }
 
     @JsonIgnore
     @EmbeddedId

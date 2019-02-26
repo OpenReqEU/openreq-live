@@ -5340,11 +5340,17 @@ class UIEventHandler {
         var dependencyEntityContainer = $("#or-dependency-entity-container > .collapsible-header > .or-dependency-entity");
         dependencyEntityContainer = dependencyEntityContainer.clone();
         dependencyEntityContainer.attr("id", "or-dependency-" + dependencyInfo.type + "-" + dependencyInfo.sourceRequirementID + "-" + dependencyInfo.targetRequirementID);
+        var dependencySignMap = {
+            IMPLIES: "&ge;",
+            REQUIRES: "&gt;",
+            EXCLUDES: "x",
+            INCOMPATIBLE: "&ne;"
+        };
         dependencyEntityContainer.children(".or-dependency-left")
             .append($("<div></div>").addClass("or-dependency-title").text(dependencyInfo.sourceRequirementTitle))
             .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.sourceRequirementDescription.replace(/<\/?[^>]+(>|$)/g, ""), 140)));
         dependencyEntityContainer.children(".or-dependency-middle").children(".or-dependency-type")
-            .text((dependencyInfo.type == "REQUIRES") ? "arrow_forward" : "compare_arrows");
+            .html(dependencySignMap[dependencyInfo.type]);
         dependencyEntityContainer.children(".or-dependency-right")
             .append($("<div></div>").addClass("or-dependency-title").text(dependencyInfo.targetRequirementTitle))
             .append($("<div></div>").addClass("or-dependency-description").text(truncate(dependencyInfo.targetRequirementDescription.replace(/<\/?[^>]+(>|$)/g, ""), 140)));
@@ -5470,14 +5476,22 @@ class UIEventHandler {
         $(".dropdown-button").dropdown("close");
 
 	    var dependencyTypeID = $(thisObj).attr("id");
-        if (dependencyTypeID == "or-dependency-type-menu-requires") {
+	    if (dependencyTypeID == "or-dependency-type-menu-implies") {
+            $("#or-dependency-type-icon")
+                .attr("data-type", "IMPLIES")
+                .html("&ge;");
+        } else if (dependencyTypeID == "or-dependency-type-menu-requires") {
             $("#or-dependency-type-icon")
 				.attr("data-type", "REQUIRES")
-				.text("arrow_forward");
-        } else {
+				.html("&gt;");
+        } else if (dependencyTypeID == "or-dependency-type-menu-excludes") {
             $("#or-dependency-type-icon")
                 .attr("data-type", "EXCLUDES")
-				.text("compare_arrows");
+                .html("x");
+        } else if (dependencyTypeID == "or-dependency-type-menu-incompatible") {
+            $("#or-dependency-type-icon")
+                .attr("data-type", "INCOMPATIBLE")
+                .html("&ne;");
         }
 	    return false;
     }

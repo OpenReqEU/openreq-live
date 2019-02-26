@@ -56,7 +56,8 @@ input[type=text] {
 
 .alert > .material-icons, .alert > span {
     vertical-align: middle;
-    margin-left: 10px;
+    margin-left: 0px;
+    margin-top: -14px;
 }
 
 .or-release-empty {
@@ -298,8 +299,11 @@ input[type=text] {
     background-color: #a18e79;
     color: #fefcf8;
     margin-top: 3px;
-    padding: 6px;
     cursor: pointer;
+    width: 40px;
+    padding: 0px 4px 4px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .or-dependency-title {

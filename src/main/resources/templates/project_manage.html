@@ -138,7 +138,7 @@
                         <div class="or-create-dependency-row or-dependency-row row">
                             <div class="col s5 or-dependency-left"></div>
                             <div class="col s2 or-dependency-middle">
-                                <div id="or-dependency-type-icon" class="dropdown-button or-dependency-type material-icons dp48" data-activates="or-dependency-type-menu-dropdown" data-beloworigin="true" data-type="REQUIRES">arrow_forward</div>
+                                <div id="or-dependency-type-icon" class="dropdown-button or-dependency-type dp48" data-activates="or-dependency-type-menu-dropdown" data-beloworigin="true" data-type="REQUIRES">&gt;</div>
                             </div>
                             <div class="col s5 or-dependency-right"></div>
                         </div>
@@ -226,8 +226,10 @@
   <!-- poll, equalizer, insert_chart, rate_review, star, star_border, insert_chart, featured_play_list, list, view_list, format_list_numbered, assignment, comment -->
 </ul>
 <ul id="or-dependency-type-menu-dropdown" class="dropdown-content" style="width:80px;">
-  <li><a id="or-dependency-type-menu-requires" class="or-dependency-type-menu-item" href="#"><i class="material-icons">arrow_forward</i>Requires</a></li>
-  <li><a id="or-dependency-type-menu-excludes" class="or-dependency-type-menu-item" href="#"><i class="material-icons">compare_arrows</i>Excludes</a></li>
+  <li><a id="or-dependency-type-menu-implies" class="or-dependency-type-menu-item" href="#"><span>&ge;</span> Implies</a></li>
+  <li><a id="or-dependency-type-menu-requires" class="or-dependency-type-menu-item" href="#"><span>&gt;</span> Requires</a></li>
+  <li><a id="or-dependency-type-menu-excludes" class="or-dependency-type-menu-item" href="#"><span>x</span> Excludes</a></li>
+  <li><a id="or-dependency-type-menu-incompatible" class="or-dependency-type-menu-item" href="#"><span>&ne;</span> Incompatible</a></li>
 </ul>
 <div style="display:none;">
     <svg class="or-requirement-icon" width="265px" height="398px" viewBox="0 0 265 398" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink">
@@ -709,7 +711,7 @@
         <div class="or-dependency-row row or-dependency-entity">
             <div class="col s4 or-dependency-left"></div>
             <div class="col s2 or-dependency-middle">
-                <div class="or-dependency-type material-icons dp48">arrow_forward</div>
+                <div class="or-dependency-type dp48">&gt;</div>
             </div>
             <div class="col s4 or-dependency-right"></div>
             <div class="col s2 or-dependency-delete">
