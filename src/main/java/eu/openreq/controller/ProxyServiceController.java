@@ -442,16 +442,16 @@ public class ProxyServiceController {
 		headers.setAll(map);
 
         final CheckConsistencyRequest checkConsistencyRequest = getCheckConsistencyRequestDto(project);
-
+        //uploadDataCheckForConsistencyAndDoDiagnosis
+        //consistencyCheckAndDiagnosis
         final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "models/projects/uploadDataCheckForConsistencyAndDoDiagnosis";
-        //final String url = "https://openreq.esl.eng.it/uh/mulperi/projects/checkForConsistencyAndDoDiagnosis/projects/checkForConsistencyAndDoDiagnosis";
+        final HttpEntity<CheckConsistencyRequest> request1 = new HttpEntity<>(checkConsistencyRequest, headers);
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-        //restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
 
         try {
             String jsonReq = mapper.writeValueAsString(checkConsistencyRequest);
             System.out.println(jsonReq);
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request1, String.class);
 
             String body = responseEntity.getBody();
             System.out.println(body);
@@ -481,7 +481,7 @@ public class ProxyServiceController {
             //result.put("explanation", response.getResponse().getDiagnosis());
         } catch (HttpMessageNotReadableException exception) {
             try {
-                ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request, String.class);
+                ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request1, String.class);
                 result.put("error", true);
                 result.put("errorMessage", responseEntity.getBody());
             } catch (Exception innerException) {
@@ -493,7 +493,7 @@ public class ProxyServiceController {
             result.put("errorMessage", exception.getMessage());
         } catch (Exception exception) {
             result.put("error", true);
-            result.put("errorMessage", "The Helsinki service crashed! Please try again!");
+            result.put("errorMessage", "Ups something unexpected has happened! Please try again!");
         }
         return result;
     }
@@ -550,14 +550,14 @@ public class ProxyServiceController {
             }
         });
 
-        //long releaseCounter = 1;
+        long releaseCounter = 1;
         for (ReleaseDbo release : sortedReleases) {
             if (!release.isVisible()) {
                 continue;
             }
 
             List<String> requirementsPerRelease = new ArrayList<>();
-            Release releaseDto = new Release(release.getId(), release.getStatus(),
+            Release releaseDto = new Release(releaseCounter++, release.getStatus(),
                     release.getMaximumCapacity(),
                     release.getCreatedDate());
             for (RequirementDbo requirement : release.getRequirements()) {
