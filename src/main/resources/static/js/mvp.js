@@ -5552,8 +5552,8 @@ class UIEventHandler {
 
                     var typeColumn = $("<div></div>").addClass("col-xs-2 col-md-2");
                     var swapIcon = $("<div></div>")
-                        .addClass("or-dependency-type or-dependency-swap-direction material-icons dp48")
-                        .text("arrow_forward");
+                        .addClass("or-dependency-type or-dependency-swap-direction dp48")
+                        .html("&gt;");
                     typeColumn.append(swapIcon);
                     row.append(typeColumn);
 
