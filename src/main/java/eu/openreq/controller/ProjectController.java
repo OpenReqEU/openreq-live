@@ -377,7 +377,7 @@ public class ProjectController {
             releaseDto.setId(release.getId());
             releaseDto.setName(release.getName());
             releaseDto.setDescription(release.getDescription());
-            releaseDto.setMaximumCapacity(release.getMaximumCapacity());
+            releaseDto.setMaximumCapacity(release.getCapacity());
             releaseDto.setEndDateTimestamp(release.getEndDate().getTime());
             releaseDto.setVisible(release.isVisible());
             releaseDto.setStatus(release.getStatus());
@@ -423,7 +423,7 @@ public class ProjectController {
             ReleaseDbo release = new ReleaseDbo();
             release.setName(releaseDto.getName());
             release.setDescription(releaseDto.getDescription());
-            release.setMaximumCapacity(releaseDto.getMaximumCapacity());
+            release.setCapacity(releaseDto.getMaximumCapacity());
             release.setEndDate(new Date(releaseDto.getEndDateTimestamp()));
             release.setVisible(releaseDto.isVisible());
             release.setStatus(releaseDto.getStatus());

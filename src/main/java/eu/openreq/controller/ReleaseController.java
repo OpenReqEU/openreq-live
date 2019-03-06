@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import eu.openreq.api.internal.dto.ReleaseDto;
 import eu.openreq.dbo.ReleaseDbo.Status;
@@ -76,7 +75,7 @@ public class ReleaseController {
 			release.setName(releaseDto.getName());
 			release.setDescription(releaseDto.getDescription());
 			release.setEndDate(endDate);
-			release.setMaximumCapacity(0);
+			release.setCapacity(releaseDto.getCapacity());
 			release.setProject(project);
 			release.setVisible(true);
 			project.addRelease(release);
@@ -134,13 +133,18 @@ public class ReleaseController {
                 release.logReleaseUpdate(ActionType.DESCRIPTION_CHANGED, currentUser);
             }
 
+			if (release.getCapacity() != releaseDto.getCapacity()) {
+                release.setCapacity(releaseDto.getCapacity());
+                release.logReleaseUpdate(ActionType.CAPACITY_CHANGED, currentUser);
+            }
+
             if (release.getEndDate().getTime() != endDate.getTime()) {
                 release.setEndDate(endDate);
                 release.logReleaseUpdate(ActionType.DEADLINE_CHANGED, currentUser);
             }
 
             // TODO: support maximum capacity:
-			//release.setMaximumCapacity();
+			//release.setCapacity();
 
 			release.setVisible(true);
 			releaseRepository.save(release);
@@ -225,6 +229,7 @@ public class ReleaseController {
 			releaseData.put("id", release.getId());
 			releaseData.put("title", release.getName());
 			releaseData.put("description", release.getDescription());
+			releaseData.put("capacity", release.getCapacity());
 			releaseData.put("status", release.getStatus());
 	        String humanFriendlyEndDate = humanFriendlyDateFormat.format(release.getEndDate());
 			releaseData.put("endDateTimestamp", release.getEndDate().getTime());

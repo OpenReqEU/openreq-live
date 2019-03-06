@@ -29,9 +29,9 @@ public class SwaggerConfig {
                 .title("InnoSensr. Web API")
                 .description("Manage your requirements with ease.")
                 .version("v0.2")
-                .termsOfServiceUrl("http://terms-of-services.url")
-                .license("MIT License")
-                .licenseUrl("https://opensource.org/licenses/MIT")
+                //.termsOfServiceUrl("http://terms-of-services.url")
+                .license("Eclipse Public License - v 2.0")
+                .licenseUrl("https://www.eclipse.org/legal/epl-2.0/")
                 .build();
     }
 

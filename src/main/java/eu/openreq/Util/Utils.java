@@ -403,12 +403,12 @@ public class Utils {
 //	        ReleaseDbo release4 = new ReleaseDbo("Release #4", "-", p2_start, p2_end, 420, project2);
 //	        ReleaseDbo release5 = new ReleaseDbo("Release #5", "-", p2_start, p2_end, 350, project2);
 //	        ReleaseDbo release6 = new ReleaseDbo("Release #6", "-", p3_start, p3_end, 90, project3);
-	        release1.setMaximumCapacity(100);
-	        release2.setMaximumCapacity(120);
-	        release3.setMaximumCapacity(60);
-//	        release4.setMaximumCapacity(70);
-//	        release5.setMaximumCapacity(75);
-//	        release6.setMaximumCapacity(105);
+	        release1.setCapacity(100);
+	        release2.setCapacity(120);
+	        release3.setCapacity(60);
+//	        release4.setCapacity(70);
+//	        release5.setCapacity(75);
+//	        release6.setCapacity(105);
 
 	        release2.setStatus(Status.COMPLETED);
 //	        release4.setStatus(Status.COMPLETED);

@@ -38,8 +38,8 @@ public class ReleaseDbo {
 	@Column(name = "description", columnDefinition="text", nullable=false)
 	private String description;
 
-	@Column(name = "maximumCapacity", nullable=false)
-	private int maximumCapacity;
+	@Column(name = "capacity", nullable=false)
+	private int capacity;
 
 	@Column(name = "end_date", nullable=false)
 	private Date endDate;
@@ -72,7 +72,7 @@ public class ReleaseDbo {
 	public ReleaseDbo() {
 		this.name = null;
 		this.description = null;
-		this.maximumCapacity = 0;
+		this.capacity = 0;
 		this.endDate = null;
 		this.visible = true;
 		this.project = null;
@@ -81,10 +81,10 @@ public class ReleaseDbo {
 		this.status = Status.NEW;
 	}
 
-	public ReleaseDbo(String name, String description, Date endDate, int maximumCapacity, ProjectDbo project) {
+	public ReleaseDbo(String name, String description, Date endDate, int capacity, ProjectDbo project) {
 		this.name = name;
 		this.description = description;
-		this.maximumCapacity = maximumCapacity;
+		this.capacity = capacity;
 		this.endDate = endDate;
 		this.visible = true;
 		this.project = project;
