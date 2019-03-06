@@ -229,4 +229,8 @@ public class ProjectDbo {
 		return this.getId() == ((ProjectDbo) obj).getId();
 	}
 
+	public List<RequirementDbo> getUnassignedRequirements() {
+		return  getRequirements().stream().filter(x -> x.getRelease() == null && x.isVisible()).collect(Collectors.toList());
+	}
+
 }
