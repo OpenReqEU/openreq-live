@@ -328,7 +328,6 @@ public class ProxyServiceController {
                 continue;
             }
 
-            // TODO: compute effort based on MAUT, scale and convert to int!
             int effort = 0;
             Requirement requirementDto = getRequirementDtoFromDbo(requirement);
             requirements.add(requirementDto);
@@ -342,23 +341,13 @@ public class ProxyServiceController {
                     continue;
                 }
 
-                dependencies.add(new Dependency(dependency.getType() == DependencyDbo.Type.EXCLUDES ?
-                        Dependency.DependencyType.INCOMPATIBLE : Dependency.DependencyType.REQUIRES,
+                dependencies.add(new Dependency(dependency.getType(),
                         dependency.getSourceRequirement().getId(),
                         dependency.getTargetRequirement().getId(),
                         dependency.getCreatedDate()));
-                /*
-                DependencyDto dependencyDto = new DependencyDto(
-                    dependency.getType(),
-                    Long.toString(dependency.getSourceRequirement().getId()),
-                    Long.toString(dependency.getTargetRequirement().getId())
-                );
-                requestCheckConsistencyDTO.addDependency(dependencyDto);
-                */
             }
         }
 
-        //	Map<Long, Long> releaseIDMap = new HashMap<>();
         List<ReleaseDbo> sortedReleases = new ArrayList<>(project.getReleases());
         Collections.sort(sortedReleases, new Comparator<ReleaseDbo>() {
             public int compare(ReleaseDbo r1, ReleaseDbo r2) {
@@ -371,7 +360,6 @@ public class ProxyServiceController {
             if (!release.isVisible()) {
                 continue;
             }
-
             List<String> requirementsPerRelease = new ArrayList<>();
             Release releaseDto = new Release(releaseCounter++, release.getStatus(),
                     release.getMaximumCapacity(),
