@@ -36,7 +36,7 @@ public class OptimalReleasePlanCalculator {
         this.sortedReleases = new LinkedList<>();
         for (ReleaseDbo sourceRelease : sortedReleases) {
             ReleaseDbo targetRelease = new ReleaseDbo(sourceRelease.getName(), sourceRelease.getDescription(),
-                    sourceRelease.getEndDate(), sourceRelease.getMaximumCapacity(), sourceRelease.getProject());
+                    sourceRelease.getEndDate(), sourceRelease.getCapacity(), sourceRelease.getProject());
             targetRelease.setRequirements(new LinkedHashSet<>());
             this.sortedReleases.add(targetRelease);
         }
@@ -77,7 +77,7 @@ public class OptimalReleasePlanCalculator {
 
                 long dependencyCount = dependencies.stream().filter(d -> d.getType() == DependencyDbo.Type.REQUIRES).count();
 
-                if (dependencyCount == 0 && (computeConsumedReleaseCapacity(release) + effortOfRequirement) > release.getMaximumCapacity()) {
+                if (dependencyCount == 0 && (computeConsumedReleaseCapacity(release) + effortOfRequirement) > release.getCapacity()) {
                     previousReleases.add(release);
                     furtherReleases.remove(release);
                     checkedReleasesCount++;
@@ -354,7 +354,7 @@ public class OptimalReleasePlanCalculator {
     private boolean addToRelease(ReleaseDbo release, RequirementDbo requirement, PlanningListContainer listContainer) {
         float effortOfRequirement = requirementEffortMap.get(requirement.getId());
         double newCapacity = computeConsumedReleaseCapacity(release) + effortOfRequirement;
-        if (newCapacity > release.getMaximumCapacity()) {
+        if (newCapacity > release.getCapacity()) {
             return false;
         }
 

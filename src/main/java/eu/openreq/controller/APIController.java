@@ -317,7 +317,7 @@ public class APIController {
         releaseProperties.put("release_date", endDateProperty);
 
         Map<String, Object> capacityProperty  = new LinkedHashMap<>();
-        capacityProperty.put("description", release.getMaximumCapacity());
+        capacityProperty.put("description", release.getCapacity());
         capacityProperty.put("type", "integer");
         releaseProperties.put("capacity", capacityProperty);
 

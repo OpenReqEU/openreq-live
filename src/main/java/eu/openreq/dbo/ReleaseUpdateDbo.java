@@ -11,7 +11,7 @@ import java.util.Date;
 @Table(name = "or_release_update")
 public class ReleaseUpdateDbo {
 
-    public enum ActionType { NAME_CHANGED, DESCRIPTION_CHANGED, STATUS_CHANGED, DEADLINE_CHANGED, DELETED }
+    public enum ActionType { NAME_CHANGED, DESCRIPTION_CHANGED, STATUS_CHANGED, DEADLINE_CHANGED, DELETED, CAPACITY_CHANGED }
 
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")

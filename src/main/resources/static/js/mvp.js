@@ -607,10 +607,8 @@ function showArgumentMAUTScore(inconsistencyLabel, requirement, requirementComme
         var observedConflicts = {};
         var attributeConflicts = {};
 
-        console.log(conflicts);
         for (var i in conflicts) {
             var conflictData = conflicts[i];
-            console.log(conflictData);
             var key = conflictData.userA.id + "-" + conflictData.userB.id + "-" + conflictData.ratingAttributeID;
             var reverseKey = conflictData.userB.id + "-" + conflictData.userA.id + "-" + conflictData.ratingAttributeID;
             if (key in observedConflicts || reverseKey in observedConflicts) {
@@ -685,7 +683,7 @@ class DataManager {
 		this.releaseUrl = "/project/" + projectID + "/release/list.json";
 		this.issueUrl = "/project/" + projectID + "/issue/list.json";
 		this.consistencyCheckUrl = "/project/" + projectData.projectKey + "/checkconsistency.json";
-		this.ambiguityIssueUrl = "http://217.172.12.199:9799/check-all-count";
+		this.ambiguityIssueUrl = "https://api.openreq.eu/prs-improving-requirements-quality/check-quality";
 		this.similarRequirementsRecommendationUrl = "/project/" + projectID + "/requirement/recommend/similar";
 		this.projectData = projectData;
 		this.currentUserID = currentUserID;
@@ -777,6 +775,7 @@ class DataManager {
 	        return;
         }
 
+	    /*
         var requirements = [];
 	    for (var idx in this.requirementData) {
 	        var r = this.requirementData[idx];
@@ -808,6 +807,21 @@ class DataManager {
                 "status": r.status.toLowerCase()
             });
         }
+        */
+
+        var requirements = [];
+	    for (var idx in this.requirementData) {
+	        var r = this.requirementData[idx];
+            var description = r.description.replace(/<\/?[^>]+(>|$)/g, "");
+            if (description == "") {
+                continue;
+            }
+
+            requirements.push({
+                "id": r.id,
+                "text": description
+            });
+        }
 
         if (requirements.length == 0) {
             callback();
@@ -827,7 +841,7 @@ class DataManager {
             "error": function () {
             	this.ambiguityIssueData = [];
                 callback();
-			}
+			}.bind(this)
         });
 	}
 
@@ -875,7 +889,6 @@ class DataManager {
 
     hasChanges(allowAlerts) {
 		var collectedChanges = this.collectChanges(allowAlerts);
-		console.log(collectedChanges);
         return (("projectName" in collectedChanges.updatedProjectData)
             || ("projectDescription" in collectedChanges.updatedProjectData)
             || (collectedChanges.updatedRequirements.length > 0)
@@ -914,10 +927,6 @@ class DataManager {
 		}
 
 		for (var i in this.requirementData) {
-		    console.log(filteredReleaseIDs);
-		    console.log(this.requirementData[i].releaseID);
-		    console.log(filteredReleaseIDs.indexOf(this.requirementData[i].releaseID));
-		    console.log("--------------------------------");
 		    if ((this.requirementData[i].releaseID > 0) && filteredReleaseIDs.indexOf(this.requirementData[i].releaseID) == -1) {
                 this.requirementData[i].isStillPresent = true;
             } else {
@@ -1010,6 +1019,10 @@ class DataManager {
                                                .children(".or-release-title-row")
                                                .children(".or-form-edit-release-description-col")
                                                .children(".or-form-release-title-field");
+        var releaseCapacitySelector = $(reference).children(".collapsible-header")
+                                                  .children(".or-release-title-row")
+                                                  .children(".or-form-edit-release-capacity-col")
+                                                  .children(".or-form-release-capacity-field");
 		var releaseDateColumn = $(reference).children(".collapsible-header")
                                             .children(".or-release-title-row")
                                             .children(".or-form-edit-release-date-col");
@@ -1020,6 +1033,7 @@ class DataManager {
                                              .children("div.or-form-edit-release-description-col")
                                              .children(".or-form-release-description-field")
                                              .val();
+        var releaseCapacity = parseInt(releaseCapacitySelector.val());
 		var releaseEndDateParts = releaseDateColumn.children(".or-form-release-end-date-field").val().split("-");
         var releaseEndDate = new Date(releaseEndDateParts[0], (Number(releaseEndDateParts[1]) - 1), releaseEndDateParts[2], 0, 0, 0, 0);
 		var releaseID = parseInt($(reference).attr("id").split("-")[2]);
@@ -1033,18 +1047,38 @@ class DataManager {
 
 				this.releaseData[i].isStillPresent = true;
 
-				if ((existingReleaseData.title != releaseTitle) || (existingReleaseData.description != releaseDescription) ||
-					(existingReleaseData.endDateTimestamp != releaseEndDate.getTime()))
+				if ((existingReleaseData.title != releaseTitle) ||
+                    (existingReleaseData.description != releaseDescription) ||
+                    (existingReleaseData.capacity != releaseCapacity) ||
+                    (existingReleaseData.endDateTimestamp != releaseEndDate.getTime()))
 				{
-					this.updatedReleases.push({ id: releaseID, name: releaseTitle, description: releaseDescription, endDateTimestamp: releaseEndDate.getTime() });
+					this.updatedReleases.push({
+                        id: releaseID,
+                        name: releaseTitle,
+                        description: releaseDescription,
+                        capacity: releaseCapacity,
+                        endDateTimestamp: releaseEndDate.getTime()
+					});
 				}
 			}
 		} else {
 			releaseTitle = (releaseTitle != "") ? releaseTitle : "Unnamed release";
 			if ((releaseTitle != "") || (releaseDescription != "")) {
-				this.newReleases.push({ name: releaseTitle, description: releaseDescription, newReleaseID: releaseID, endDateTimestamp: releaseEndDate.getTime() });
+				this.newReleases.push({
+                    name: releaseTitle,
+                    description: releaseDescription,
+                    capacity: releaseCapacity,
+                    newReleaseID: releaseID,
+                    endDateTimestamp: releaseEndDate.getTime()
+				});
 			} else {
-				this.ignoredNewReleases.push({ name: releaseTitle, description: releaseDescription, newReleaseID: releaseID, endDateTimestamp: releaseEndDate.getTime() });
+				this.ignoredNewReleases.push({
+                    name: releaseTitle,
+                    description: releaseDescription,
+                    capacity: releaseCapacity,
+                    newReleaseID: releaseID,
+                    endDateTimestamp: releaseEndDate.getTime()
+				});
 				this.ignoredNewReleaseNumbers.push(releaseID);
 			}
 
@@ -1132,6 +1166,7 @@ class DataManager {
 					releaseD.id,
 					releaseD.title,
 					releaseD.description,
+					releaseD.capacity,
 					releaseD.endDateTimestamp,
 					releaseD.humanFriendlyEndDate,
 					false
@@ -1242,12 +1277,12 @@ class DataManager {
                     this.fetchReleases(function () {
                         this.fetchIssues(function () {
                             this.fetchRecommendedSimilarRequirements(function () {
-                                //this.fetchAmbiguityIssues(function () {
+                                this.fetchAmbiguityIssues(function () {
                                     this.showReleasesRequirementsAndIssues();
                                     if (completeCallback !== undefined) {
                                         completeCallback();
                                     }
-                                //}.bind(this));
+                                }.bind(this));
                             }.bind(this));
                         }.bind(this));
                     }.bind(this));
@@ -1354,7 +1389,6 @@ class UINotificationCenter {
         var releaseNotificationMessages = {};
         var dependencyNotificationMessages = {};
 
-        console.log(this.notifications);
         $("#or-project-issues > tbody").children().remove();
         var notificationIDs = {};
 
@@ -1576,9 +1610,10 @@ class UIManager {
         }
 
         if (projectSettings.showAmbiguityAnalysis) {
-            $(".or-requirement-quality").show();
+            $(".or-requirement-quality-link").show();
         } else {
-            $(".or-requirement-quality").hide();
+            $(".or-requirement-quality-link").hide();
+            $(".note-editor").removeClass("or-requirement-ambiguity-highlight");
         }
 
         $(".or-requirement-basic-evaluation").hide();
@@ -1709,15 +1744,24 @@ class UIManager {
 
     showAmbiguityIssues() {
         var ambiguityIssueData = this.dataManager.ambiguityIssueData;
+        console.log(ambiguityIssueData);
         for (var requirementID in ambiguityIssueData) {
-            var numberOfIssues = Object.values(ambiguityIssueData[requirementID]).reduce((s1, s2) => s1 + s2);
+            var requirementIssues = ambiguityIssueData[requirementID];
+            var numberOfIssues = requirementIssues.length;
             if (numberOfIssues > 0) {
-                var link = $("#or-requirement-quality-link-" + requirementID);
-                link.show();
-                var badge = link.children(".or-badge");
-                badge.text(numberOfIssues);
+                var qualityIcon = $("<span></span>")
+                    .addClass("or-badge or-badge-requirement-quality-icon or-requirement-quality-link")
+                    .attr("data-requirement-id", requirementID)
+                    .attr("data-toggle", "tooltip")
+                    .attr("data-placement", "bottom")
+                    .attr("title", "Click to show textual ambiguities")
+                    .text(numberOfIssues);
+                $("#or-requirement-" + requirementID + " > td.or-requirement-description > .note-editor")
+                    .addClass("or-requirement-ambiguity-highlight")
+                    .prepend(qualityIcon);
             }
         }
+        this.uiEventHandler.bindUIEvents();
     }
 
     showSimilarRequirementRecommendations() {
@@ -1802,7 +1846,7 @@ class UIManager {
 		}
 	}
 
-	addRelease(releaseID, releaseName, releaseDescription, endDateTimestamp, humanFriendlyEndDate, highlight) {
+	addRelease(releaseID, releaseName, releaseDescription, capacity, endDateTimestamp, humanFriendlyEndDate, highlight) {
 		$(".ui-tooltip").hide();
 		++this.newReleaseCounter;
 		var endDate = new Date(endDateTimestamp);
@@ -1826,22 +1870,38 @@ class UIManager {
                                                        .attr("autocomplete", "off")
                                                        .val(releaseName)
                                                        .prop("disabled", true);
-		var editReleaseNameInputColumn = $("<div></div>").addClass("col-sm-7 or-form-edit-release-description-col").append(editReleaseNameInput);
+		var editReleaseCapacityInput = $("<input />").addClass("form-control or-form-release-capacity-field")
+                                                       .attr("type", "number")
+                                                       .attr("min", "0")
+                                                       .attr("max", "10000")
+                                                       .attr("step", "10")
+                                                       .attr("name", "or-release-capacity[]")
+                                                       .attr("autocomplete", "off")
+                                                       .val(capacity);
+		var editReleaseNameInputColumn = $("<div></div>").addClass("col-sm-6 or-form-edit-release-description-col").append(editReleaseNameInput);
 		var editReleaseNameLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<i></i>").addClass("material-icons dp48").text("edit"));
 		var editReleaseDescriptionLinkColumn = $("<div></div>").addClass("col-sm-1 or-form-edit-release-description-link-col").append(editReleaseNameLink);
+        var capacityColumn = $("<div></div>").addClass("col-sm-2 or-form-edit-release-capacity-col")
+            .append($("<label></label>").text("Capacity"))
+            .append(editReleaseCapacityInput);
 		var endDateField = $("<input />").attr("type", "hidden")
                                                .attr("name", "or-release-end-date[]")
                                                .addClass("datepicker or-form-release-end-date-field or-form-release-date-field")
                                                .attr("data-initial-value", formatDate(endDate))
                                                .val(formatDate(endDate));
-		var dateColumn = $("<div></div>").addClass("col-sm-3 or-form-edit-release-date-col")
+		var dateColumn = $("<div></div>").addClass("col-sm-2 or-form-edit-release-date-col")
                                          .append(dateLabel)
                                          .append(endDateField);
 		var deleteButton = $("<a></a>").addClass("or-delete-release-button")
                                        .attr("href", "#")
                                        .append($("<i></i>").addClass("or-big-icon material-icons right").text("delete"));
 		var deleteColumn = $("<div></div>").addClass("col-sm-1").append(deleteButton);
-		editReleaseTitleRow.append(editReleaseNameInputColumn).append(editReleaseDescriptionLinkColumn).append(dateColumn).append(deleteColumn);
+		editReleaseTitleRow
+            .append(editReleaseNameInputColumn)
+            .append(editReleaseDescriptionLinkColumn)
+            .append(capacityColumn)
+            .append(dateColumn)
+            .append(deleteColumn);
 		var content = $("<div></div>").addClass("collapsible-header or-ignore-click")
                                       .addClass("active")
                                       .append(editReleaseTitleRow);
@@ -1881,7 +1941,6 @@ class UIManager {
                 .append($("<th></th>").addClass("or-requirement-normal-evaluation").text("Utility"))
                 .append($("<th></th>").addClass("or-requirement-advanced-evaluation").text("Utility"))
                 .append($("<th></th>").addClass("or-requirement-assigned-stakeholder"))
-                .append($("<th></th>").addClass("or-requirement-quality"))
                 .append(thRequirementDeleteCol);
 		if (this.uiEventHandler.isMoveable) { thRequirementMoveCol.show(); } else { thRequirementMoveCol.hide(); }
 		if (this.uiEventHandler.isDeleteable) { thRequirementDeleteCol.show(); } else { thRequirementDeleteCol.hide(); }
@@ -2180,29 +2239,6 @@ class UIManager {
 
         tr.append(td);
 
-        td = $("<td></td>").addClass("or-requirement-quality");
-        if (requirementID > 0) {
-            var requirementQualityIconArea = $("<span></span>");
-            var icon = $("<i></i>")
-                .addClass("material-icons right")
-                .text("playlist_add_check");
-            requirementQualityIconArea.append(icon);
-            var requirementQualityArea = $("<div></div>")
-                .attr("id", "or-requirement-quality-link-" + requirementID)
-                .attr("data-requirement-id", requirementID)
-                .addClass("or-requirement-quality-link");
-            requirementQualityArea
-                .append(requirementQualityIconArea)
-                .append($("<span></span>").addClass("or-badge or-badge-requirement-quality-icon"))
-                .css("height", "25px")
-                .attr("data-toggle", "tooltip")
-                .attr("data-placement", "bottom")
-                .attr("title", "Click to show textual ambiguities")
-                .hide();
-            td.append(requirementQualityArea);
-        }
-        tr.append(td);
-
         td = $("<td></td>").addClass("or-requirement-delete");
 		td.append($("<a class=\"or-delete-button btn-floating btn-small waves-effect waves-light red lighten-2\"><i class=\"material-icons\">delete</i></a>"));
         if (this.uiEventHandler.isDeleteable) { td.show(); } else { td.hide(); }
@@ -2264,6 +2300,7 @@ class UIManager {
             }).barrating("readonly", true);
         }
         this.showVisiblePanelsAndViews();
+        return tr;
     }
 
 	save(event, thisObj) {
@@ -2652,6 +2689,8 @@ class UIEventHandler {
         $("#or-notification-button-container").unbind("click");
         $("#or-add-issue-button").unbind("click");
         $(".or-add-rating-attribute-button").unbind("click");
+        $(".or-tweets-category-container").unbind("click");
+        $(".or-import-requirement-button").unbind("click");
 
         $(".or-delete-button").on("click", bindUIEvent(this, "deleteRequirementEvent"));
         $(".or-delete-issue-button").on("click", bindUIEvent(this, "deleteIssueEvent"));
@@ -2720,6 +2759,8 @@ class UIEventHandler {
         $("#or-notification-button-container").bind("click", bindUIEvent(this, "openNotificationCenterEvent"));
         $("#or-add-issue-button").bind("click", bindUIEvent(this, "addIssueEvent"));
         $(".or-add-rating-attribute-button").bind("click", bindUIEvent(this, "addRatingAttributeEvent"));
+        $(".or-tweets-category-container").bind("click", bindUIEvent(this, "showTweetsContainerEvent"));
+        $(".or-import-requirement-button").bind("click", bindUIEvent(this, "importTwitterRequirementEvent"));
 
         if (this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").css("color", "#d2d2d2").css("cursor", "default");
@@ -3567,6 +3608,33 @@ class UIEventHandler {
         });
         $(".swal2-popup").css("width", "600px");
         $(".or-issue-title-field").focus();
+	    return false;
+    }
+
+    showTweetsContainerEvent(event, thisObj) {
+        $(".or-tweets-navigation-container > .tabs > .tab > .or-tweets-category-container").each(function () {
+            var containerClass = $(this).attr("href").replace("#", ".");
+            console.log(containerClass);
+            $(this).removeClass("active");
+            $(containerClass).hide();
+        });
+        var containerClass = $(thisObj).attr("href").replace("#", ".");
+        $(thisObj).addClass("active");
+        $(containerClass).fadeIn();
+        this.bindUIEvents();
+	    return false;
+    }
+
+    importTwitterRequirementEvent(event, thisObj) {
+	    var tweetID = $(thisObj).attr("data-tweet-id");
+	    var requirementText = $(thisObj).parent("td").parent("tr").children("td.or-tweet-message").text();
+	    console.log(tweetID + ": " + requirementText);
+	    var tr = this.uiManager.addRequirementFormFields($("#or-project-unassigned-requirements"),
+            null, [], false, false, true);
+	    tr.children("td").children(".or-requirement-title").val("[" + tweetID + "] Imported from Twitter");
+	    tr.children("td.or-requirement-description").children(".or-requirement-description").summernote("code", requirementText);
+        this.bindUIEvents();
+        this.uiManager.showUnsavedChangesNotificationIfNecessary();
 	    return false;
     }
 
@@ -5623,24 +5691,51 @@ class UIEventHandler {
         $(".dropdown-button").dropdown("close");
 	    var projectKey = this.uiManager.projectKey;
 	    var projectSettings = this.uiManager.dataManager.projectData.projectSettings;
-        var twitterChannel = (projectSettings.twitterChannel != "") ? projectSettings.twitterChannel.replace("#", "") : "FitbitSupport";
-        var url = "http://217.172.12.199:9703/hitec/orchestration/twitter/?twitterChannel="
-            + twitterChannel + "&showSentiment=false&projectKey=" + projectKey;
+        var twitterChannel = (projectSettings.twitterChannel != "") ? projectSettings.twitterChannel.replace("#", "").replace("@", "") : "FitbitSupport";
+        var categoryClasses = ["inquiry", "problem_report", "irrelevant"];
 
-        $(".or-iframe-container > iframe").attr("src", url).height("800");
-        var iframeContainer = $(".or-iframe-container");
-        var iframeContainerContent = iframeContainer.wrap('<p/>').parent().html();
-        iframeContainer.unwrap();
+        for (var i in categoryClasses) {
+            var url = "https://api.openreq.eu/ri-storage-twitter/account_name/" + twitterChannel
+                + "/class/" + categoryClasses[i];
+            var htmlClass = ".container-tweets-" + categoryClasses[i] + " > .or-tweets-table > tbody";
+            var data = [];
+            $.ajax(url, {
+                "type": "GET",
+                "contentType": "application/json",
+                "processData": false,
+                "async": false,
+                "success": function (d) { data = d }
+            });
+            $(htmlClass).children().remove();
+            var prefix = categoryClasses[i].charAt(0).toUpperCase();
+            for (var i in data) {
+                var requirementCandidateText = data[i].text.replace("@" + twitterChannel, "");
+                var addRequirementCandidateButton = $("<a></a>")
+                    .addClass("or-import-requirement-button waves-effect waves-light btn blue darken-3")
+                    .html("<i class=\"material-icons left\">add</i> Add")
+                    .attr("data-tweet-id", prefix + (parseInt(i) + 1));
+                var tr = $("<tr></tr>")
+                    .addClass("or-requirement-candidate")
+                    .append($("<td></td>").html("<b>" + prefix + (parseInt(i) + 1) + "</b>"))
+                    .append($("<td></td>").addClass("or-tweet-message").text(requirementCandidateText))
+                    .append($("<td></td>").append(addRequirementCandidateButton));
+                $(htmlClass).append(tr);
+            }
+        }
+
+        var tweetsContainer = $(".or-tweets-container");
+        var tweetsContainerContent = tweetsContainer.wrap('<p/>').parent().html();
+        tweetsContainer.unwrap();
 
         swal({
-            html: iframeContainerContent,
+            html: tweetsContainerContent,
             showCancelButton: false,
             confirmButtonText: "Close"
-        }).then(function (result) {
-            window.location = "/project/p/" + projectKey + "/manage";
-            return true;
-        }.bind(this));
-        $(".swal2-popup").css("width", "1200px");
+        });
+        $(".swal2-popup").css("width", "900px");
+        $(".or-tweets-view").hide();
+        $(".container-tweets-inquiry").show();
+        this.bindUIEvents();
         return false;
     }
 
@@ -5756,7 +5851,34 @@ class UIEventHandler {
                             swal("Error", data.errorMessage, "error");
                             return false;
                         }
+
                         swal({title: "Saved!", text: "The settings have been saved.", type: "success", timer: 800, showCancelButton: false, showConfirmButton: false});
+                        this.uiManager.showVisiblePanelsAndViews();
+                    }.bind(this)
+                });
+
+                var twitterChannel = projectSettings.twitterChannel.replace("@", "").replace("#", "");
+                var url = "https://api.openreq.eu/ri-orchestration-twitter/hitec/orchestration/twitter/observe" +
+                    "/tweet/account/" + twitterChannel + "/interval/2h/lang/en";
+                $.ajax(url, {
+                    "data": jsonifiedString,
+                    "type": "POST",
+                    "contentType": "application/json",
+                    "processData": false,
+                    "success": function (data) {
+                        if (!data.status) {
+                            swal("Error", data.message, "error");
+                            return false;
+                        }
+
+                        swal({
+                            title: "Twitter Service installed!",
+                            text: "The Twitter service has been installed. It will run every 2 hours.",
+                            type: "success",
+                            timer: 2000,
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        });
                         this.uiManager.showVisiblePanelsAndViews();
                     }.bind(this)
                 });
@@ -5885,7 +6007,8 @@ class UIEventHandler {
 		releaseEndDateTimestamps = releaseEndDateTimestamps.concat(this.dataManager.ignoredNewReleases.map(r => r.endDateTimestamp));
 		var newReleaseStartDateTimestamp = (releaseEndDateTimestamps.length == 0) ? (new Date()).getTime() : Math.max(...releaseEndDateTimestamps);
 		var endDate = new Date(newReleaseStartDateTimestamp + (90*24*60*60*1000));
-		this.uiManager.addRelease(0, "", "", endDate.getTime(), formatDateText(endDate), true);
+		this.uiManager.addRelease(0, "", "", 1000, endDate.getTime(),
+            formatDateText(endDate), true);
 		this.bindUIEvents();
 		return false;
 	}

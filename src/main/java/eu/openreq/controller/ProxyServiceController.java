@@ -374,7 +374,7 @@ public class ProxyServiceController {
 
             List<String> requirementsPerRelease = new ArrayList<>();
             Release releaseDto = new Release(releaseCounter++, release.getStatus(),
-                    release.getMaximumCapacity(),
+                    release.getCapacity(),
                     release.getCreatedDate());
             for (RequirementDbo requirement : release.getRequirements()) {
                 requirementsPerRelease.add(Long.toString(requirement.getId()));
