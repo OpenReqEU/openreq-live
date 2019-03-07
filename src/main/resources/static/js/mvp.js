@@ -4473,13 +4473,23 @@ class UIEventHandler {
 				ratingAttributeValueField.append($("<option></option>").attr("value", "").text(""));
 
 				for (var i = ratingAttribute.minValue; i <= ratingAttribute.maxValue; i++) {
-					ratingAttributeValueField.append($("<option></option>").attr("value", i).text(i));
+                    var option = $("<option></option>").attr("value", i);
+                    if (ratingAttribute.name.toLowerCase() == "effort") {
+                        var hours = Math.pow(2, (i - 1));
+                        option.text(hours + "h").attr("data-html", hours + "h");
+                    } else {
+                        option.text(i);
+                    }
+                    ratingAttributeValueField.append(option);
 				}
 
 				var tr = $("<tr></tr>");
 				var ratingAttributeNameColumn = $("<td></td>").addClass("or-rating-attribute-name-cell").append(ratingAttriuteIcon).append(" " + ratingAttribute.name);
 				var ratingAttributeDescriptionColumn = $("<td></td>").addClass("or-rating-attribute-description-cell").append(ratingAttribute.description);
-				var ratingAttributeValueColumn = $("<td></td>").addClass("or-rating-field-cell").append(ratingAttributeValueField);
+				var ratingAttributeValueColumn = $("<td></td>")
+                    .addClass("or-rating-field-cell")
+                    //.attr("data-attribute-name", ratingAttribute.name.toLowerCase())
+                    .append(ratingAttributeValueField);
 
 				tr.append(ratingAttributeNameColumn);
 				tr.append(ratingAttributeDescriptionColumn);
@@ -4548,8 +4558,13 @@ class UIEventHandler {
 								averageCounts[ratingAttribute.id] = 0.0;
 								ratingCounts[ratingAttribute.id] = 0;
 							}
-							ratingValue = userRating.value;
-							averageCounts[ratingAttribute.id] += userRating.value;
+                            if (ratingAttribute.name.toLowerCase() == "effort") {
+                                var hours = Math.pow(2, (userRating.value - 1));
+                                ratingValue = userRating.value + " (" + hours + "h)";
+                            } else {
+                                ratingValue = userRating.value;
+                            }
+                            averageCounts[ratingAttribute.id] += userRating.value;
 							++ratingCounts[ratingAttribute.id];
 							break;
 						}
@@ -4627,15 +4642,7 @@ class UIEventHandler {
 	        showValues: false,
 	        deselectable: true,
             onSelect: function(value, text, event) {
-            	/*
-	            if (typeof(event) !== 'undefined') {
-	              // rating was selected        by a user
-	              console.log(event.target);
-	            } else {
-	              // rating was selected programmatically
-	              // by calling `set` method
-	            }
-	        */
+			    //console.log(value);
 	        }
 		}).barrating('clear');
 

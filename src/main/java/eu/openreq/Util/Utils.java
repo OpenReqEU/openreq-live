@@ -97,9 +97,9 @@ public class Utils {
 
 	public static void generateDefaultRatingSchemeAndAddToProject(ProjectDbo project) {
 		if ((project.getRatingAttributes() == null) || project.getRatingAttributes().size() == 0) {
-			project.addRatingAttribute(new RatingAttributeDbo("Profit", "Profit of the mentioned requirement", "monetization_on", 1, 5, 1, 1.0f, false, project));
-			project.addRatingAttribute(new RatingAttributeDbo("Risk", "Taken risk for developing the mentioned requirement", "report_problem", 1, 5, 1, 1.0f, true, project));
-			project.addRatingAttribute(new RatingAttributeDbo("Effort", "Incurred costs for developing the mentioned requirement", "build", 1, 5, 1, 1.0f, true, project));
+			project.addRatingAttribute(new RatingAttributeDbo("Profit", "Profit of the mentioned requirement", "monetization_on", 1, 10, 1, 1.0f, false, project));
+			project.addRatingAttribute(new RatingAttributeDbo("Risk", "Taken risk for developing the mentioned requirement", "report_problem", 1, 10, 1, 1.0f, true, project));
+			project.addRatingAttribute(new RatingAttributeDbo("Effort", "Incurred costs for developing the mentioned requirement", "build", 1, 10, 1, 1.0f, true, project));
 		}
 
 		if ((project.getStakeholderRatingAttributes() == null) || project.getStakeholderRatingAttributes().size() == 0) {
