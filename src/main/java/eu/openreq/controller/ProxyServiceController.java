@@ -289,11 +289,15 @@ public class ProxyServiceController {
 
             CheckConsistencyResponse body = responseEntity.getBody();
 
+            boolean consistent = true;
+            String errorMessage = "";
+            if(body.getResponse().size() == 4) {
+                consistent = false;
+            }
+
             result.put("status", responseEntity.getStatusCodeValue());
             result.put("response", responseEntity.getBody());
-            result.put("error", false);
-            result.put("errorMessage", null);
-            result.put("consistent", body.getResponse().get(0).getConsistent());
+            result.put("consistent", consistent);
             //    result.put("diagnoses", diagnoses);
            // result.put("explanation", body.getResponse().get(1).getDiagnosisMsg());
         } catch (HttpMessageNotReadableException exception) {
@@ -324,12 +328,9 @@ public class ProxyServiceController {
         List<Release> releases = new ArrayList<>();
         List<Dependency> dependencies = new ArrayList<>();
         for (RequirementDbo requirement : project.getRequirements()) {
-            if (!requirement.isVisible() || (requirement.getRelease() == null)) {
+            if (!requirement.isVisible()) {
                 continue;
             }
-
-            // TODO: compute effort based on MAUT, scale and convert to int!
-            int effort = 0;
             Requirement requirementDto = getRequirementDtoFromDbo(requirement);
             requirements.add(requirementDto);
 
@@ -342,36 +343,34 @@ public class ProxyServiceController {
                     continue;
                 }
 
-                dependencies.add(new Dependency(dependency.getType() == DependencyDbo.Type.EXCLUDES ?
-                        Dependency.DependencyType.INCOMPATIBLE : Dependency.DependencyType.REQUIRES,
+                dependencies.add(new Dependency(dependency.getType(),
                         dependency.getSourceRequirement().getId(),
                         dependency.getTargetRequirement().getId(),
                         dependency.getCreatedDate()));
-                /*
-                DependencyDto dependencyDto = new DependencyDto(
-                    dependency.getType(),
-                    Long.toString(dependency.getSourceRequirement().getId()),
-                    Long.toString(dependency.getTargetRequirement().getId())
-                );
-                requestCheckConsistencyDTO.addDependency(dependencyDto);
-                */
             }
         }
 
-        //	Map<Long, Long> releaseIDMap = new HashMap<>();
-        List<ReleaseDbo> sortedReleases = new ArrayList<>(project.getReleases());
+        List<ReleaseDbo> sortedReleases = new ArrayList<>(project.getReleases().stream()
+                .filter(x -> x.isVisible()).collect(Collectors.toList()));
         Collections.sort(sortedReleases, new Comparator<ReleaseDbo>() {
             public int compare(ReleaseDbo r1, ReleaseDbo r2) {
                 return r1.getEndDate().compareTo(r2.getEndDate());
             }
         });
 
+        //add pool of unassigned requirements in release 0 (helsinki service requirement)
+        List<RequirementDbo> unassignedRequirements = project.getUnassignedRequirements();
+        Release unassignedPoolRelease = new Release(0l, ReleaseDbo.Status.NEW,
+                0,
+                 project.getCreatedDate());
+        unassignedPoolRelease.setRequirements(unassignedRequirements.stream()
+                .map(x -> Long.toString(x.getId()))
+                .collect(Collectors.toList()));
+        releases.add(unassignedPoolRelease);
+
+        //add valid releases counting up from 1 (helsinki service requirement)
         long releaseCounter = 1;
         for (ReleaseDbo release : sortedReleases) {
-            if (!release.isVisible()) {
-                continue;
-            }
-
             List<String> requirementsPerRelease = new ArrayList<>();
             Release releaseDto = new Release(releaseCounter++, release.getStatus(),
                     release.getCapacity(),
@@ -386,7 +385,7 @@ public class ProxyServiceController {
     }
 
     private Requirement getRequirementDtoFromDbo(RequirementDbo requirement) {
-        return new Requirement(requirement.getId(), requirement.getStatus(), requirement.getCreatedDate());
+        return new Requirement(requirement.getId(), requirement.getStatus(),requirement.getAvgEffort(), requirement.getCreatedDate());
     }
 
 }

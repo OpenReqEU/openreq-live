@@ -22,6 +22,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import static eu.openreq.dbo.UserRequirementAttributeVoteDbo.convertBarsToHours;
+
 @Data
 @Entity
 @Table(name = "or_requirement")
@@ -306,6 +308,19 @@ public class RequirementDbo {
 		clonedRequirement.setCreatedDate(this.createdDate);
 		clonedRequirement.setLastUpdatedDate(this.lastUpdatedDate);
 		return clonedRequirement;
+	}
+
+	public int getAvgEffort() {
+		double hours = 0;
+		int noValidVotes = 0;
+		for (UserRequirementAttributeVoteDbo vote : getUserRequirementAttributeVotes()) {
+			if(vote.getRatingAttribute().getName().toLowerCase().equals("effort")
+					&& vote.getValue() > 0) {
+				hours +=  convertBarsToHours(vote.getValue());
+				noValidVotes++;
+			}
+		}
+		return noValidVotes > 0 ? (int)Math.round(hours / noValidVotes) : 0;
 	}
 
 }

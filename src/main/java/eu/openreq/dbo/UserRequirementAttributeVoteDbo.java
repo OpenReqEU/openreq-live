@@ -134,4 +134,10 @@ public class UserRequirementAttributeVoteDbo {
 				"}";
 	}
 
+
+	public static int convertBarsToHours(int noBars)
+	{
+		return (noBars > 0 && noBars <= 10) ?  2 << (noBars-2) : 0;
+	}
+
 }
