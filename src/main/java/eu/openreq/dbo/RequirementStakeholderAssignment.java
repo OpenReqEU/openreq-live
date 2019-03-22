@@ -2,16 +2,8 @@ package eu.openreq.dbo;
 
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+
 import lombok.Data;
 
 @Data
@@ -35,12 +27,17 @@ public class RequirementStakeholderAssignment {
     @Column(name = "last_updated_date", nullable=false)
     private Date lastUpdatedDate;
 
+    @ManyToOne(optional = true, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "proposed_by_stakeholder_id", nullable=true)
+    private UserDbo proposedByStakeholder;
+
     public RequirementStakeholderAssignment() {}
 
-    public RequirementStakeholderAssignment(RequirementDbo requirement, UserDbo stakeholder) {
+    public RequirementStakeholderAssignment(RequirementDbo requirement, UserDbo stakeholder, UserDbo proposedByStakeholder) {
         this.setRequirement(requirement);
         this.setStakeholder(stakeholder);
         this.accepted = false;
+        this.proposedByStakeholder = proposedByStakeholder;
         this.createdDate = null;
         this.lastUpdatedDate = null;
     }

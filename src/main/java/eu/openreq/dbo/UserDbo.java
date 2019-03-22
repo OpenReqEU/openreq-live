@@ -1,21 +1,8 @@
 package eu.openreq.dbo;
 
 import java.util.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -100,6 +87,9 @@ public class UserDbo {
 	@OneToMany(mappedBy="primaryKey.stakeholder", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<RequirementStakeholderAssignment> requirementAssignments;
 
+	@OneToMany(mappedBy="proposedByStakeholder", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	private Set<RequirementStakeholderAssignment> proposedAssignments;
+
 	@JsonIgnore
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 		@JoinTable(
@@ -129,6 +119,10 @@ public class UserDbo {
 	@JsonIgnore
     @OneToMany(mappedBy="primaryKey.ratedStakeholder", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     private Set<UserStakeholderAttributeVoteDbo> ratedStakeholderAttributeVotes;
+
+	@JsonIgnore
+    @OneToMany(mappedBy="primaryKey.ratedStakeholder", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    private Set<BotUserStakeholderAttributeVoteDbo> botUserStakeholderAttributeVotes;
 
 	@JsonIgnore
     @OneToMany(mappedBy="primaryKey.user", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -196,6 +190,7 @@ public class UserDbo {
 		this.completedDependencyAnalysisProject = new HashSet<>();
 		this.userRequirementAttributeVotes = new LinkedHashSet<>();
 		this.ratedStakeholderAttributeVotes = new LinkedHashSet<>();
+		this.botUserStakeholderAttributeVotes = new LinkedHashSet<>();
 		this.userStakeholderAttributeVotes = new LinkedHashSet<>();
 		this.anonymousUserStakeholderAttributeVotes = new LinkedHashSet<>();
 		this.createdProjects = new LinkedHashSet<>();
@@ -203,6 +198,7 @@ public class UserDbo {
 		this.requirementUpdates = new LinkedHashSet<>();
 		this.projectUserParticipations = new LinkedHashSet<>();
 		this.requirementAssignments = new LinkedHashSet<>();
+		this.proposedAssignments = new LinkedHashSet<>();
 		this.activities = new ArrayList<>();
 		this.ratingConflictsFrom = new ArrayList<>();
 		this.ratingConflictsTo = new ArrayList<>();

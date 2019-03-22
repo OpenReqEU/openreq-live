@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @SpringBootApplication
 @ComponentScan
 @EnableAutoConfiguration
+@EnableScheduling
 public class OpenReqReleasePlanningApplication extends WebMvcConfigurerAdapter {
 
 	public static void main(String[] args) {

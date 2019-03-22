@@ -589,7 +589,7 @@ public class ProjectController {
 
         long currentUserId = 0;
 		UserDbo currentUser = null;
-		if (project.getVisibilityPrivate()) {
+		if (project.isVisibilityPrivate()) {
 			if ((authentication == null) || (!authentication.isAuthenticated()) || project.getCreatorUser() == null) {
 				return "redirect:/login";
 			}

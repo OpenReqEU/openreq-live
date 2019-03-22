@@ -7,7 +7,9 @@ import eu.openreq.remote.dto.RemoteRequirementDependencyDto;
 import eu.openreq.remote.dto.RemoteSimilarRequirementsDto;
 import eu.openreq.remote.errorhandler.HelsinkiDependencyDetectionResponseErrorHandler;
 import eu.openreq.remote.request.dto.helsinki.*;
+import eu.openreq.remote.request.dto.stakeholderrecommendation.*;
 import eu.openreq.remote.response.dto.helsinki.CheckConsistencyResponse;
+import eu.openreq.remote.response.dto.stakeholderrecommendation.RecommendResponse;
 import eu.openreq.repository.DependencyRepository;
 import eu.openreq.repository.ProjectRepository;
 import eu.openreq.repository.RequirementRepository;
@@ -22,26 +24,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static java.util.Comparator.comparing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 @Controller
 public class ProxyServiceController {
-
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyServiceController.class);
     private static final String SIEMENS_SERVICE_HOST = "169.254.6.175";
@@ -56,6 +61,7 @@ public class ProxyServiceController {
     private static final int TUG_REQUIREMENT_DEPENDENCY_RECOMMENDATION_SERVICE_PORT = 9007;
     private static final int TUG_CONSISTENCY_CHECK_SERVICE_PORT = 9004;
     private static final int HELSINKI_CONSISTENCY_SERVICE_PORT = 9202;
+
     @Autowired
     ObjectMapper mapper;
     @Autowired
@@ -68,72 +74,6 @@ public class ProxyServiceController {
     private DependencyRepository dependencyRepository;
     @Autowired
     private EmailService emailService;
-
-	/*
-    @ResponseBody
-	@GetMapping("/document/{documentId}/extractRequirements")
-	public RemoteRequirementDto[] proxyExtractRequirementFromDocument(@PathVariable(value="documentId") Long documentId) {
-
-		//TODO: The simulateFunction is only for the testing purpose
-//		return simulateExtractedRequirements(documentId);
-
-		final int MAX_NUMBER_OF_REQUIREMENTS = 10;
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		String url = "http://" + SIEMENS_SERVICE_HOST + ":" + SIEMENS_EXTRACTION_SERVICE_PORT + "/requirements/doc/" + (documentId + 1);
-		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-
-		ResponseEntity<RemoteRequirementDto[]> response = restTemplate.getForEntity(url, RemoteRequirementDto[].class);
-		RemoteRequirementDto[] body = response.getBody();
-
-		if (body != null) {
-			RemoteRequirementDto[] requirements = Arrays.copyOfRange(body, 0, (MAX_NUMBER_OF_REQUIREMENTS - 1));
-			for (RemoteRequirementDto r : requirements) {
-				Double score = proxyClassifyRequirments(r);
-				r.setScore(score);
-			}
-			Collections.sort(Arrays.asList(requirements), new Comparator<RemoteRequirementDto>() {
-			    @Override
-			    public int compare(RemoteRequirementDto c1, RemoteRequirementDto c2) {
-			        return Double.compare(c2.getScore(), c1.getScore());
-			    }
-			});
-			return requirements;
-		}
-		
-				
-		return new RemoteRequirementDto[] {};
-	}
-	*/
-
-	/*
-    private RemoteRequirementDto[] simulateExtractedRequirements(Long documentId){
-		RemoteRequirementDto[] requirements = new RemoteRequirementDto[5];
-		for(long i= 0; i<5; i++){
-			RemoteRequirementDto delegationChainDepthFirstSearch = new RemoteRequirementDto((Long)i,"toolId"+i, "Text of Doc = "+(documentId+1)+"|| Req="+i, "heading"+i,
-					"type"+i, i, null,((1 - 0) * new Random().nextDouble()));
-			requirements[(int) i] = delegationChainDepthFirstSearch;
-		}
-		return requirements;
-	}
-
-	@ResponseBody
-	@PostMapping("/classify/requirements")
-	public Double proxyClassifyRequirments(@RequestBody RemoteRequirementDto requirement) {
-		RestTemplate restTemplate = new RestTemplate();
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-		Map<String, String> map = new HashMap<>();
-		map.put("Content-Type", "application/json");
-		headers.setAll(map);
-		HttpEntity<RemoteRequirementDto> request = new HttpEntity<>(requirement, headers);
-		String url = "http://" + SIEMENS_SERVICE_HOST + ":" + SIEMENS_CLASSIFICATION_SERVICE_PORT + "/classification";
-		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-		ResponseEntity<Double> response = restTemplate.postForEntity(url, request, Double.class);
-		Double body = response.getBody();
-		return body;
-	}
-	*/
 
     @ResponseBody
     @GetMapping("/project/{projectID}/requirement/recommend/similar")
@@ -153,7 +93,7 @@ public class ProxyServiceController {
                 continue;
             }
 
-            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
             RemoteSimilarRequirementsDto similarRequirementsDto = new RemoteSimilarRequirementsDto();
             similarRequirementsDto.setId(requirement.getId());
             similarRequirementsDto.setTitle(requirement.getTitle());
@@ -210,7 +150,7 @@ public class ProxyServiceController {
                 continue;
             }
 
-            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text());
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
             RemoteRequirementDependencyDto requirementDependenciesDto = new RemoteRequirementDependencyDto();
             requirementDependenciesDto.setId(requirement.getId());
             requirementDependenciesDto.setTitle(requirement.getTitle());
@@ -275,7 +215,7 @@ public class ProxyServiceController {
         headers.setAll(map);
 
         final CheckConsistencyRequest checkConsistencyRequest = getCheckConsistencyRequestDto(project);
-        final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "models/projects/consistencyCheckAndDiagnosis";
+        final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "/models/projects/consistencyCheckAndDiagnosis";
         final HttpEntity<CheckConsistencyRequest> request1 = new HttpEntity<>(checkConsistencyRequest, headers);
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -340,6 +280,10 @@ public class ProxyServiceController {
                 }
 
                 if ((dependency.getSourceRequirement().getRelease() == null) || (dependency.getTargetRequirement().getRelease() == null)) {
+                    continue;
+                }
+
+                if ((!dependency.getSourceRequirement().isVisible()) || (!dependency.getTargetRequirement().isVisible())) {
                     continue;
                 }
 

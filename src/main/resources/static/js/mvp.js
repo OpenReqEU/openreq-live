@@ -970,6 +970,7 @@ class DataManager {
 		var releaseIDString = $(reference).parent("tbody").parent(".or-project-requirement-table").attr("id");
 		var assignedRelease = (releaseIDString != "or-project-unassigned-requirements") ? releaseIDString : null;
 		var requirementTitleSelector = $(reference).children("td").children(".or-requirement-title");
+		var importID = requirementTitleSelector.attr("data-import-id");
 		var requirementTitle = requirementTitleSelector.val();
 		var requirementDescription = $(reference).children("td").children("div.or-requirement-description").summernote("code");
 		var requirementStatus = $(reference).children("td.or-requirement-status").children("div").children("input.select-dropdown").val().toUpperCase();
@@ -993,6 +994,7 @@ class DataManager {
                         id: requirementID,
                         title: requirementTitle,
                         description: requirementDescription,
+                        importID: importID,
                         assignedRelease: assignedRelease,
                         status: requirementStatus
 					});
@@ -1003,6 +1005,7 @@ class DataManager {
 				this.newRequirements.push({
                     title: requirementTitle,
                     description: requirementDescription,
+                    importID: importID,
                     assignedRelease: assignedRelease,
                     status: requirementStatus
 				});
@@ -2007,6 +2010,7 @@ class UIManager {
         var numberOfCons = 0;
         var responsibleStakeholders = [];
         var status = null;
+        var importID = null;
 
         if (requirementData != null) {
             requirementID = requirementData.id;
@@ -2028,6 +2032,7 @@ class UIManager {
             numberOfCons = requirementData.numberOfCons;
             responsibleStakeholders = requirementData.responsibleStakeholders;
             status = requirementData.status;
+            importID = requirementData.importID;
         }
 
         var isPrivateProject = this.dataManager.projectData.isPrivateProject;
@@ -2067,6 +2072,9 @@ class UIManager {
 		}
 
 		var titleField = $("<input type=\"text\" class=\"or-requirement-title form-control\" placeholder=\"Title\" name=\"or-requirement-title[]\" autocomplete=\"off\" />");
+		if (importID != null) {
+            titleField.attr("data-import-id", importID);
+        }
 		td = $("<td></td>");
 		td.append(titleField);
 		tr.append(td);
@@ -3090,7 +3098,7 @@ class UIEventHandler {
 		});
 	}
 
-    createRequirementAssignedUserTableRow(requirementID, userID, isAccepted, isAnonymousUser, stakeholderRatingAttributeData, stakeholderVotes, fullName, profileImagePath, isCurrentUser, currentUserID, creatorUserID) {
+    createRequirementAssignedUserTableRow(requirementID, userID, isAccepted, isHidden, proposedBy, isAnonymousUser, stakeholderRatingAttributeData, stakeholderVotes, fullName, profileImagePath, isCurrentUser, currentUserID, creatorUserID) {
         var isCurrentUserLabel = isCurrentUser ? " <span style=\"color:#AAAAAA;\">(you)</span>" : "";
         var rateStakeholderButton = $("<a></a>")
             .attr("href", "#")
@@ -3101,6 +3109,16 @@ class UIEventHandler {
             .attr("data-user-fullname", fullName)
             .attr("title", "Rate " + fullName)
             .append("<i class=\"material-icons right\">rate_review</i>");
+
+        var hideStakeholderButton = $("<a></a>")
+            .attr("href", "#")
+            .addClass("or-rating-specific-content or-rate-stakeholder-btn")
+            .attr("data-requirement-id", requirementID)
+            .attr("data-user-id", userID)
+            .attr("data-is-anonymous-user", isAnonymousUser)
+            .attr("data-user-fullname", fullName)
+            .attr("title", "Hide " + fullName)
+            .append("<i class=\"material-icons right\">visibility_off</i>");
 
         var acceptStakeholderAssignmentButton = $("<a></a>")
             .attr("href", "#")
@@ -3127,28 +3145,31 @@ class UIEventHandler {
         divName.append($("<div></div>")
             .attr("data-toggle", "tooltip")
             .attr("data-placement", "bottom")
-            .attr("title", "Proposed by Artificial Intelligence")
-            .addClass("or-suggested-label")
-            .addClass("or-suggested-label-bot")
-            .addClass("or-help")
-            .text("AI"));
-        divName.append($("<div></div>")
-            .attr("data-toggle", "tooltip")
-            .attr("data-placement", "bottom")
             .attr("title", "Proposed by Requirements Manager")
             .addClass("or-suggested-label")
             .addClass("or-suggested-label-rm")
             .addClass("or-help")
             .text("RM"));
         */
-        divName.append($("<div></div>")
-            .attr("data-toggle", "tooltip")
-            .attr("data-placement", "bottom")
-            .attr("title", "Proposed by Stakeholder")
-            .addClass("or-suggested-label")
-            .addClass("or-suggested-label-others")
-            .addClass("or-help")
-            .text("ST"));
+        if (proposedBy == 0) {
+            divName.append($("<div></div>")
+                .attr("data-toggle", "tooltip")
+                .attr("data-placement", "bottom")
+                .attr("title", "Proposed by Artificial Intelligence")
+                .addClass("or-suggested-label")
+                .addClass("or-suggested-label-bot")
+                .addClass("or-help")
+                .text("AI"));
+        } else {
+            divName.append($("<div></div>")
+                .attr("data-toggle", "tooltip")
+                .attr("data-placement", "bottom")
+                .attr("title", "Proposed by Stakeholder")
+                .addClass("or-suggested-label")
+                .addClass("or-suggested-label-others")
+                .addClass("or-help")
+                .text("ST"));
+        }
         var divStatus = $("<div></div>").addClass("or-accepted-stakeholder-label").text("");
         var aRemove = $("<a></a>")
             .attr("href", "#")
@@ -3242,7 +3263,9 @@ class UIEventHandler {
         tr.append($("<td></td>").addClass("or-rating-specific-content or-left-rating-border or-right-rating-border center").css("font-weight", "bold").text((mautResult != null) ? mautResult.toFixed(1) : "-"));
 
         var tdRemoveCell = $("<td></td>").addClass("or-assigned-users-table-remove-cell");
-        tdRemoveCell.append(aRemove);
+        if (proposedBy != 0) {
+            tdRemoveCell.append(aRemove);
+        }
         tr.append(tdRemoveCell);
         return tr;
     }
@@ -3310,12 +3333,12 @@ class UIEventHandler {
                 if ("userData" in result) {
                     var fullName = result.userData.firstName + " " + result.userData.lastName;
                     tr = uiEventHandler.createRequirementAssignedUserTableRow(requirementID, result.userData.id, false,
-                        false, dataManager.stakeholderRatingAttributeData, [], fullName, result.userData.profileImagePath,
-                        (result.userData.id == currentUserID), currentUserID, creatorUserID);
+                        false, currentUserID, false, dataManager.stakeholderRatingAttributeData, [],
+                        fullName, result.userData.profileImagePath, (result.userData.id == currentUserID), currentUserID, creatorUserID);
                 } else {
                     tr = uiEventHandler.createRequirementAssignedUserTableRow(requirementID, result.anonymousUserData.id,
-                        false, true, dataManager.stakeholderRatingAttributeData, [], result.anonymousUserData.fullName,
-                        null, false, currentUserID, creatorUserID);
+                        false, false, -1, true, dataManager.stakeholderRatingAttributeData,
+                        [], result.anonymousUserData.fullName, null, false, currentUserID, creatorUserID);
                 }
                 tr.hide();
                 $(".or-assign-stakeholder-loading-animation").hide();
@@ -3627,11 +3650,11 @@ class UIEventHandler {
 
     importTwitterRequirementEvent(event, thisObj) {
 	    var tweetID = $(thisObj).attr("data-tweet-id");
+	    $(thisObj).attr("disabled", "disabled");
 	    var requirementText = $(thisObj).parent("td").parent("tr").children("td.or-tweet-message").text();
-	    console.log(tweetID + ": " + requirementText);
 	    var tr = this.uiManager.addRequirementFormFields($("#or-project-unassigned-requirements"),
             null, [], false, false, true);
-	    tr.children("td").children(".or-requirement-title").val("[" + tweetID + "] Imported from Twitter");
+	    tr.children("td").children(".or-requirement-title").attr("data-import-id", tweetID).val("[" + tweetID + "] Imported from Twitter");
 	    tr.children("td.or-requirement-description").children(".or-requirement-description").summernote("code", requirementText);
         this.bindUIEvents();
         this.uiManager.showUnsavedChangesNotificationIfNecessary();
@@ -4617,7 +4640,7 @@ class UIEventHandler {
                     uiEventHandler.saveRatingEvent(event, thisObj);
                 }
             } else if (forceShowRatingTable == true) {
-            		uiEventHandler.rateEvent(event, thisObj, null);
+                uiEventHandler.rateEvent(event, thisObj, null);
             }
             return true;
         });
@@ -4807,7 +4830,8 @@ class UIEventHandler {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var fullName = data.assignedUsers[i].firstName + " " + data.assignedUsers[i].lastName;
                     var tr = this.createRequirementAssignedUserTableRow(requirementID, data.assignedUsers[i].id,
-                        data.assignedUsers[i].isAccepted, false, dataManager.stakeholderRatingAttributeData,
+                        data.assignedUsers[i].isAccepted, data.assignedUsers[i].isHidden, data.assignedUsers[i].proposedBy,
+                        false, dataManager.stakeholderRatingAttributeData,
                         data.assignedUsers[i].stakeholderVotes, fullName,
                         data.assignedUsers[i].profileImagePath, (data.assignedUsers[i].id == currentUserID),
                         currentUserID, creatorUserID);
@@ -4819,9 +4843,9 @@ class UIEventHandler {
                 for (var i in data.assignedAnonymousUsers) {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var tr = this.createRequirementAssignedUserTableRow(requirementID, data.assignedAnonymousUsers[i].id,
-                        data.assignedAnonymousUsers[i].isAccepted, true, dataManager.stakeholderRatingAttributeData,
-                        data.assignedAnonymousUsers[i].stakeholderVotes, data.assignedAnonymousUsers[i].fullName, null,
-                        false, currentUserID, creatorUserID);
+                        data.assignedAnonymousUsers[i].isAccepted, data.assignedAnonymousUsers[i].isHidden, -1,
+                        true, dataManager.stakeholderRatingAttributeData, data.assignedAnonymousUsers[i].stakeholderVotes,
+                        data.assignedAnonymousUsers[i].fullName, null, false, currentUserID, creatorUserID);
                     $(".or-assigned-stakeholders-table > tbody").prepend(tr);
                 }
             }
@@ -4839,41 +4863,83 @@ class UIEventHandler {
     }
 
     requirementQualityClickEvent(event, thisObj) {
+        var uiManager = this.uiManager;
+        var dataManager = uiManager.dataManager;
         var requirementID = parseInt($(thisObj).attr("data-requirement-id"));
         var requirementTitle = $("#or-requirement-" + requirementID + " input.or-requirement-title").val();
         var requirementDescription = $("#or-requirement-" + requirementID + " div.or-requirement-description").summernote("code");
+        requirementDescription = requirementDescription.replace(/<\/?[^>]+(>|$)/g, "");
 
         if (requirementTitle === undefined || requirementDescription === undefined || requirementTitle == "" || requirementDescription == "") {
             swal("Error", "Please enter a title and description first!", "error");
             return false;
         }
 
-        var sentences = requirementDescription.split(".");
-        var cleanedSentences = [];
-        for (var idx in sentences) {
-            var sentence = sentences[idx].trim();
-            if (sentence.length == 0) {
-                continue;
-            }
-            cleanedSentences.push(sentence);
+        var classMapping = {
+            "Passive Ambiguity": "passive",
+            "Pronoun": "pronoun",
+            "Adverb": "adverb",
+            "Optional": "optional",
+            "Ambiguous Positioning": "ambiguous-positioning",
+            "Ambiguous Nominalization": "ambiguous-nominalization",
+            "Negative": "negative",
+            "Adjective": "adjective",
+            "Comparative Adjective": "comparative-adjective",
+            "Inside Behaviour": "behaviour",
+            "Ambiguous Compound Nouns": "compound-nouns",
+            "Vague": "vague"
+        };
+
+        var ambiguityData = dataManager.ambiguityIssueData[requirementID];
+        var currentIndex = 0;
+        var highlightedRequirementDescription = "";
+        var usedAmbiguities = {};
+        for (var i in ambiguityData) {
+            console.log(ambiguityData[i].title);
+            usedAmbiguities[ambiguityData[i].title] = ambiguityData[i].description;
+            var tooltipText = ambiguityData[i].title + ": " + ambiguityData[i].description;
+            highlightedRequirementDescription += requirementDescription.slice(currentIndex, ambiguityData[i].index_start);
+            highlightedRequirementDescription += "<span class=\"or-highlight-ambiguity or-highlight-ambiguity-"
+                + classMapping[ambiguityData[i].title] + "\" data-toggle=\"tooltip\" data-placement=\"left\" title=\""
+                + tooltipText + "\">";
+            highlightedRequirementDescription += requirementDescription.slice(ambiguityData[i].index_start, ambiguityData[i].index_end);
+            highlightedRequirementDescription += "</span>";
+            currentIndex = ambiguityData[i].index_end;
         }
-        requirementDescription = cleanedSentences.join(". ");
 
-        var urlEncodedRequirementTitle = encodeURI(requirementTitle.replace(".", " "));
-        var urlEncodedRequirementDescription = encodeURI(requirementDescription);
-        var url = "http://217.172.12.199:9799/?requirementTitle="
-            + urlEncodedRequirementTitle + "&requirementText=" + urlEncodedRequirementDescription;
+        highlightedRequirementDescription += requirementDescription.slice(currentIndex);
 
-        $(".or-iframe-container > iframe").attr("src", url);
-        var iframeContainer = $(".or-iframe-container");
-        var iframeContainerContent = iframeContainer.wrap('<p/>').parent().html();
-        iframeContainer.unwrap();
+        var ambiguityContainer = $(".or-ambiguity-container");
+        ambiguityContainer.children("h2").text(requirementTitle);
+        ambiguityContainer.children("p").html(highlightedRequirementDescription);
+
+        $(".or-ambiguity-explanation-list").children().remove();
+
+        for (var ambiguityTitle in usedAmbiguities) {
+            var divExplanation = $("<div></div>").addClass("or-ambiguity-explanation");
+            var divExplanationTitle = $("<div></div>")
+                .addClass("or-ambiguity-explanation-title")
+                .addClass("or-highlight-ambiguity-" + classMapping[ambiguityTitle])
+                .text(ambiguityTitle);
+            var divExplanationDescription = $("<div></div>")
+                .addClass("or-ambiguity-explanation-description")
+                .text(usedAmbiguities[ambiguityTitle]);
+            divExplanation.append(divExplanationTitle);
+            divExplanation.append(divExplanationDescription);
+            $(".or-ambiguity-explanation-list").append(divExplanation);
+        }
+
+        var ambiguityContainerContent = ambiguityContainer.wrap('<p/>').parent().html();
+        ambiguityContainer.unwrap();
 
         swal({
-            html:iframeContainerContent,
+            html:ambiguityContainerContent,
             showCancelButton: false,
             confirmButtonText: "Close"
         });
+
+        $(".swal2-popup").css("width", "700px");
+        $('[data-toggle="tooltip"]').tooltip();
         return false;
     }
 
@@ -5017,7 +5083,7 @@ class UIEventHandler {
             confirmButtonText: "Close"
         });
         if (isRatingEnabled) {
-            $(".swal2-popup").css("width", "800px");
+            $(".swal2-popup").css("width", "1000px");
         }
         this.bindUIEvents();
     }
@@ -5713,17 +5779,35 @@ class UIEventHandler {
                 "async": false,
                 "success": function (d) { data = d }
             });
+
             $(htmlClass).children().remove();
             var prefix = categoryClasses[i].charAt(0).toUpperCase();
+
+            if (categoryClasses[i] == "inquiry") {
+                prefix = "INQ";
+            } else if (categoryClasses[i] == "problem_report") {
+                prefix = "PRE";
+            } else if (categoryClasses[i] == "irrelevant") {
+                prefix = "IRR";
+            }
+
             for (var i in data) {
                 var requirementCandidateText = data[i].text.replace("@" + twitterChannel, "");
+                var tweetID = prefix + "-" + (parseInt(i) + 1);
                 var addRequirementCandidateButton = $("<a></a>")
                     .addClass("or-import-requirement-button waves-effect waves-light btn blue darken-3")
                     .html("<i class=\"material-icons left\">add</i> Add")
-                    .attr("data-tweet-id", prefix + (parseInt(i) + 1));
+                    .attr("data-tweet-id", tweetID);
+                var importIDs = {};
+                $(".or-requirement-title").each(function () {
+                    importIDs[$(this).attr("data-import-id")] = true;
+                });
+                if (tweetID in importIDs) {
+                    addRequirementCandidateButton.attr("disabled", "disabled");
+                }
                 var tr = $("<tr></tr>")
                     .addClass("or-requirement-candidate")
-                    .append($("<td></td>").html("<b>" + prefix + (parseInt(i) + 1) + "</b>"))
+                    .append($("<td></td>").html("<b>" + tweetID + "</b>"))
                     .append($("<td></td>").addClass("or-tweet-message").text(requirementCandidateText))
                     .append($("<td></td>").append(addRequirementCandidateButton));
                 $(htmlClass).append(tr);

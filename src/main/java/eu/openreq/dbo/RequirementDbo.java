@@ -44,6 +44,9 @@ public class RequirementDbo {
 	@Column(name = "description", columnDefinition="text", nullable=false)
 	private String description;
 
+	@Column(name = "import_id", nullable=true)
+	private String importId;
+
 	@ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name="project_id", nullable=false)
 	private ProjectDbo project;
@@ -77,6 +80,9 @@ public class RequirementDbo {
 
 	@OneToMany(mappedBy="primaryKey.requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<UserStakeholderAttributeVoteDbo> userStakeholderAttributeVotes;
+
+	@OneToMany(mappedBy="primaryKey.requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	private Set<BotUserStakeholderAttributeVoteDbo> botUserStakeholderAttributeVotes;
 
     @OneToMany(mappedBy="primaryKey.requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     private Set<AnonymousUserStakeholderAttributeVoteDbo> anonymousUserStakeholderAttributeVotes;
@@ -112,6 +118,9 @@ public class RequirementDbo {
 	@Column(name = "visible", nullable=false)
 	private boolean visible;
 
+	@Column(name = "stakeholder_recommendations_fetched", columnDefinition = "boolean default false", nullable=false)
+	private boolean stakeholderRecommendationsFetched;
+
 	@Column(name = "social_popularity", nullable=true)
 	private Float socialPopularity;
 
@@ -125,6 +134,7 @@ public class RequirementDbo {
 		this.projectSpecificRequirementId = 0;
 		this.title = null;
 		this.description = null;
+		this.importId = null;
 		this.project = null;
 		this.release = null;
 		this.requirementSkills = new LinkedHashSet<>();
@@ -133,6 +143,7 @@ public class RequirementDbo {
 		this.userRequirementAttributeVotes = new LinkedHashSet<>();
 		this.anonymousUserRequirementAttributeVotes = new LinkedHashSet<>();
         this.userStakeholderAttributeVotes = new LinkedHashSet<>();
+        this.botUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.anonymousUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.userDelegationVotes = new LinkedHashSet<>();
         this.userComments = new LinkedHashSet<>();
@@ -144,6 +155,7 @@ public class RequirementDbo {
         this.requirementConflicts = new ArrayList<>();
 		this.status = Status.NEW;
 		this.visible = true;
+		this.stakeholderRecommendationsFetched = false;
 		this.socialPopularity = null;
 	}
 
@@ -151,6 +163,7 @@ public class RequirementDbo {
 		this.projectSpecificRequirementId = projectSpecificRequirementId;
 		this.title = title;
 		this.description = description;
+		this.importId = null;
 		this.project = project;
 		this.release = null;
         this.requirementSkills = new LinkedHashSet<>();
@@ -159,6 +172,7 @@ public class RequirementDbo {
         this.userRequirementAttributeVotes = new LinkedHashSet<>();
         this.anonymousUserRequirementAttributeVotes = new LinkedHashSet<>();
         this.userStakeholderAttributeVotes = new LinkedHashSet<>();
+		this.botUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.anonymousUserStakeholderAttributeVotes = new LinkedHashSet<>();
 		this.userDelegationVotes = new LinkedHashSet<>();
         this.userComments = new LinkedHashSet<>();
@@ -170,7 +184,8 @@ public class RequirementDbo {
 		this.requirementConflicts = new ArrayList<>();
 		this.status = Status.NEW;
         this.visible = true;
-        this.socialPopularity = null;
+		this.stakeholderRecommendationsFetched = false;
+		this.socialPopularity = null;
     }
 
 	@PrePersist
@@ -232,7 +247,7 @@ public class RequirementDbo {
 
 	public float getUtilityValue() {
 		ProjectSettingsDbo.EvaluationMode evaluationMode = this.getProject().getProjectSettings().getEvaluationMode();
-		boolean isPrivateProject = this.getProject().getVisibilityPrivate();
+		boolean isPrivateProject = this.getProject().isVisibilityPrivate();
 		if (evaluationMode == ProjectSettingsDbo.EvaluationMode.BASIC) {
 		    float sum = 0.0f;
 		    int numberOfVotes = userRequirementVotes.size();

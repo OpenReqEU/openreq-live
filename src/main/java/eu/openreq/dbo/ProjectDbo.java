@@ -67,7 +67,7 @@ public class ProjectDbo {
 	private boolean visible;
 
 	@Column(name = "visibilityPrivate", nullable=false)
-	private Boolean visibilityPrivate;
+	private boolean visibilityPrivate;
 
 	@ManyToOne(cascade = {CascadeType.ALL})
 	@JoinColumn(name = "creator_user", nullable=true)
@@ -211,7 +211,7 @@ public class ProjectDbo {
 	}
 
 	public boolean hasCreatorOrParticipantRights(UserDbo user) {
-		return (!getVisibilityPrivate() || ((user != null) && user.isAdministrator()) || isCreator(user) || isParticipant(user));
+		return (!isVisibilityPrivate() || ((user != null) && user.isAdministrator()) || isCreator(user) || isParticipant(user));
 	}
 
 	@Override

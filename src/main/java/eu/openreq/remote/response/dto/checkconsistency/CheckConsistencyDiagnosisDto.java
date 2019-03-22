@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class CheckConsistencyDiagnosisDto {
+
     private Boolean consistent;
     private List<ConstraintDto> constraints;
 

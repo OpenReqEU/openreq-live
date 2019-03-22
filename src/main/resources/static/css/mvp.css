@@ -99,6 +99,10 @@ input[type=text] {
     font-size: 16px;
 }
 
+.or-requirement-candidate > td:first-child {
+    width: 80px;
+}
+
 .or-requirement-candidate > td:last-child {
     width: 140px;
 }
@@ -1461,6 +1465,85 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
 
 .or-delete-release-button {
 	color: #E57373;
+}
+
+.or-ambiguity-container > p {
+    text-align: left;
+}
+
+.or-ambiguity-explanation-list {
+    text-align: left;
+}
+
+.or-ambiguity-explanation-title {
+    font-weight: bolder;
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+.or-ambiguity-explanation-description {
+    font-size: 14px;
+    padding: 2px 6px;
+}
+
+.or-highlight-ambiguity {
+    background-color: #ffcccc;
+    padding: 0 2px;
+    font-weight: bolder;
+    cursor: help;
+}
+
+.or-highlight-ambiguity:hover {
+    background-color: #ff7a7a;
+    cursor: help;
+}
+
+.or-highlight-ambiguity-passive {
+    background-color: #caffce;
+}
+
+.or-highlight-ambiguity-pronoun {
+    background-color: #bfbdff;
+}
+
+.or-highlight-ambiguity-adverb {
+    background-color: #7b9bff;
+}
+
+.or-highlight-ambiguity-optional {
+    background-color: #fcf2ff;
+}
+
+.or-highlight-ambiguity-ambiguous-positioning {
+    background-color: #ff96a4;
+}
+
+.or-highlight-ambiguity-ambiguous-nominalization {
+    background-color: #ff96a4;
+}
+
+.or-highlight-ambiguity-negative {
+
+}
+
+.or-highlight-ambiguity-adjective {
+
+}
+
+.or-highlight-ambiguity-comparative-adjective {
+
+}
+
+.or-highlight-ambiguity-behaviour {
+
+}
+
+.or-highlight-ambiguity-compound-nouns {
+
+}
+
+.or-highlight-ambiguity-vague {
+
 }
 
 .btn-floating i {

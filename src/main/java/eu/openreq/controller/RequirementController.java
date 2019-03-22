@@ -10,6 +10,8 @@ import eu.openreq.api.internal.dto.*;
 import eu.openreq.dbo.*;
 import eu.openreq.dbo.UserRequirementCommentDbo.Sentiment;
 import eu.openreq.dbo.RequirementUpdateDbo.ActionType;
+import eu.openreq.remote.request.dto.stakeholderrecommendation.RecommendDto;
+import eu.openreq.remote.response.dto.stakeholderrecommendation.RecommendResponse;
 import eu.openreq.repository.*;
 import eu.openreq.service.DelegateUserRequirementVoteService;
 import eu.openreq.service.EmailService;
@@ -21,10 +23,15 @@ import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +44,8 @@ import eu.openreq.exception.DboConstraintException;
 import eu.openreq.remote.dto.RemoteRequirementDto;
 import eu.openreq.view.ImportedRequirementsBean;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+
 import static java.util.Comparator.comparing;
 
 @Controller
@@ -74,7 +83,10 @@ public class RequirementController {
 	@Autowired
 	private UserRequirementAttributeVoteRepository userRequirementAttributeVoteRepository;
 
-	@Autowired
+    @Autowired
+    private BotUserStakeholderAttributeVoteRepository botUserStakeholderAttributeVoteRepository;
+
+    @Autowired
 	private AnonymousUserRequirementAttributeVoteRepository anonymousUserRequirementAttributeVoteRepository;
 
     @Autowired
@@ -262,6 +274,7 @@ public class RequirementController {
 			requirementData.put("projectSpecificRequirementId", requirement.getProjectSpecificRequirementId());
 			requirementData.put("title", requirement.getTitle());
 			requirementData.put("description", cleanedDescription);
+			requirementData.put("importID", requirement.getImportId());
 			requirementData.put("status", requirement.getStatus());
 			requirementData.put("createdAt", requirement.getCreatedDate().getTime());
 			requirementData.put("lastUpdatedAt", requirement.getLastUpdatedDate().getTime());
@@ -499,14 +512,14 @@ public class RequirementController {
             return result;
         }
 
-        userComment.setVotedAttributes(new HashSet<>());
-        requirementCommentRepository.save(userComment);
-        userComment = requirementCommentRepository.findOne(messageID);
         for (RatingAttributeDbo votedAttribute : userComment.getVotedAttributes()) {
             logVoteActivity(requirement, ProjectSettingsDbo.EvaluationMode.ADVANCED,
                     UserRequirementVoteActivityDbo.ActionType.DELETED, userComment.toString(),
                     votedAttribute.getId(), currentUser);
         }
+        userComment.setVotedAttributes(new HashSet<>());
+        requirementCommentRepository.save(userComment);
+        userComment = requirementCommentRepository.findOne(messageID);
         requirementCommentRepository.delete(userComment);
         requirement = requirementRepository.findOne(requirementID);
         List<ConflictData> conflicts = advancedRatingConflicts(requirement);
@@ -816,6 +829,7 @@ public class RequirementController {
 				requirement.setRelease(null);
 			}
 
+			requirement.setImportId(requirementDto.getImportID());
 			requirement.setStatus((requirementDto.getStatus() != null) ? requirementDto.getStatus() : Status.NEW);
 			requirement.setVisible(true);
 			requirement.logRequirementUpdate(ActionType.CREATED, null, currentUser);
@@ -835,8 +849,7 @@ public class RequirementController {
             HttpServletRequest request,
             @PathVariable(value="projectID") Long projectID,
             @PathVariable(value="requirementID") Long requirementID,
-            Authentication authentication)
-    {
+            Authentication authentication) throws DboConstraintException {
         UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
         ProjectDbo project = projectRepository.findOne(projectID);
         Map<String, Object> result = new HashMap<>();
@@ -863,10 +876,57 @@ public class RequirementController {
         }
 
         List<Map<String, Object>> userInfoList = new ArrayList<>();
-        List<RequirementStakeholderAssignment> stakeholderAssignments = requirement.getUserStakeholderAssignments()
+        List<RequirementStakeholderAssignment> stakeholderAssignments = new ArrayList<>(requirement.getUserStakeholderAssignments()
                 .stream()
                 .sorted(comparing(RequirementStakeholderAssignment::getStakeholderId))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+        System.out.println(requirement.isStakeholderRecommendationsFetched());
+        if ((currentUser != null) && !requirement.isStakeholderRecommendationsFetched()) {
+            RestTemplate restTemplate = new RestTemplate();
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            Map<String, String> map = new HashMap<>();
+            map.put("Content-Type", "application/json");
+            headers.setAll(map);
+
+            RecommendDto recommendDto = new RecommendDto();
+            recommendDto.setProject(Long.toString(project.getId()));
+            recommendDto.setRequirement(Long.toString(requirement.getId()));
+            recommendDto.setUser(currentUser.getUsername());
+
+            System.out.println("[Stakeholder Recommender] Sending request...");
+            HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
+            String url = "http://localhost:9410/upc/stakeholders-recommender/recommend?k=3";
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
+            RecommendResponse[] recommendations = response.getBody();
+            for (RecommendResponse recommendation : recommendations) {
+                if (requirementID != Long.parseLong(recommendation.getRequirement())) {
+                    continue;
+                }
+
+                System.out.println("[Stakeholder Recommender] Recommendation Person: " + recommendation.getPerson());
+                UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson());
+                RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
+                if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
+                    continue;
+                }
+
+                stakeholderAssignment = new RequirementStakeholderAssignment(requirement, recommendedUser, null);
+                stakeholderAssignments.add(stakeholderAssignment);
+                requirementStakeholderAssignmentRepository.save(stakeholderAssignment);
+                StakeholderRatingAttributeDbo ratingAttribute = project.getStakeholderRatingAttributes()
+                        .stream()
+                        .filter(ra -> ra.getName().toLowerCase().equals("appropriateness"))
+                        .collect(Collectors.toList())
+                        .get(0);
+                BotUserStakeholderAttributeVoteDbo botUserStakeholderAttributeVoteDbo = new BotUserStakeholderAttributeVoteDbo(8, requirement, ratingAttribute, recommendedUser);
+                botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAttributeVoteDbo);
+            }
+
+            requirement.setStakeholderRecommendationsFetched(true);
+            requirementRepository.save(requirement);
+        }
 
         for (RequirementStakeholderAssignment stakeholderAssignment : stakeholderAssignments) {
             UserDbo user = stakeholderAssignment.getStakeholder();
@@ -877,8 +937,30 @@ public class RequirementController {
             userInfo.put("mailAddress", user.getMailAddress());
             userInfo.put("profileImagePath", user.getProfileImagePath());
             userInfo.put("isAccepted", stakeholderAssignment.isAccepted());
+            userInfo.put("proposedBy", (stakeholderAssignment.getProposedByStakeholder() != null) ? stakeholderAssignment.getProposedByStakeholder().getId() : 0);
 
             Map<Long, Map<String, Object>> stakeholderVotes = new HashMap<>();
+            for (BotUserStakeholderAttributeVoteDbo attributeVote : user.getBotUserStakeholderAttributeVotes()) {
+                Map<String, Object> attributeVotes = stakeholderVotes.get(0L);
+                if (attributeVotes == null) {
+                    attributeVotes = new HashMap<>();
+                    attributeVotes.put("userID", 0);
+                    attributeVotes.put("firstName", "Bot");
+                    attributeVotes.put("lastName", "Bot");
+                    attributeVotes.put("email", null);
+                    attributeVotes.put("attributeVotes", new ArrayList<HashMap<String, Object>>());
+                }
+
+                ArrayList<HashMap<String, Object>> votes = (ArrayList<HashMap<String, Object>>) attributeVotes.get("attributeVotes");
+                HashMap<String, Object> attributeVoteInfo = new HashMap<>();
+                attributeVoteInfo.put("attributeID", attributeVote.getRatingAttribute().getId());
+                attributeVoteInfo.put("value", attributeVote.getValue());
+                attributeVoteInfo.put("createdDate", attributeVote.getCreatedDate());
+                votes.add(attributeVoteInfo);
+                attributeVotes.put("attributeVotes", votes);
+                stakeholderVotes.put(0L, attributeVotes);
+            }
+
             for (UserStakeholderAttributeVoteDbo attributeVote : user.getRatedStakeholderAttributeVotes()) {
                 UserDbo ratingUser = attributeVote.getUser();
                 Map<String, Object> attributeVotes = stakeholderVotes.get(ratingUser.getId());
@@ -917,6 +999,7 @@ public class RequirementController {
             anonymousUserInfo.put("id", anonymousUser.getId());
             anonymousUserInfo.put("fullName", anonymousUser.getFullName());
             anonymousUserInfo.put("isAccepted", anonymousStakeholderAssignment.isAccepted());
+            anonymousUserInfo.put("proposedBy", 0);
 
             Map<Long, Map<String, Object>> stakeholderVotes = new HashMap<>();
 
@@ -975,13 +1058,6 @@ public class RequirementController {
 		RequirementDbo requirement = requirementRepository.findOne(requirementID);
 		List<UserDbo> foundUsers = userService.searchUser(query, query.contains("@"));
 
-        // FIXME: disabled during study {
-        result.put("error", true);
-        result.put("errorMessage", "Disabled!!!");
-        return result;
-        // }
-
-        /*
         if (requirement == null) {
 			result.put("error", true);
 			result.put("errorMessage", "The requirement does not exist!");
@@ -994,8 +1070,7 @@ public class RequirementController {
 			return result;
 		}
 
-		ProjectDbo project = projectRepository.findOne(projectID);
-		if (!project.getVisibilityPrivate()) {
+		if (!project.isVisibilityPrivate()) {
             result.put("error", true);
             result.put("errorMessage", "Only votes of private projects can be delegated!");
             return result;
@@ -1059,7 +1134,6 @@ public class RequirementController {
         result.put("userData", userInfo);
         result.put("currentUserData", currentUserInfo);
         return result;
-        */
     }
 
 	@ResponseBody
@@ -1082,13 +1156,6 @@ public class RequirementController {
 
 		RequirementDbo requirement = requirementRepository.findOne(requirementID);
 
-        // FIXME: disabled during study {
-        result.put("error", true);
-        result.put("errorMessage", "Disabled!!!");
-        return result;
-        // }
-
-        /*
 		if (requirement == null) {
 			result.put("error", true);
 			result.put("errorMessage", "The requirement does not exist!");
@@ -1101,8 +1168,7 @@ public class RequirementController {
 			return result;
 		}
 
-		ProjectDbo project = projectRepository.findOne(projectID);
-		if (!project.getVisibilityPrivate()) {
+		if (!project.isVisibilityPrivate()) {
             result.put("error", true);
             result.put("errorMessage", "Only votes of private projects can be delegated!");
             return result;
@@ -1121,7 +1187,6 @@ public class RequirementController {
         delegateUserRequirementVoteRepository.delete(voteDelegation);
         result.put("error", false);
         return result;
-        */
     }
 
 	@ResponseBody
@@ -1160,7 +1225,7 @@ public class RequirementController {
 			return result;
 		}
 
-		if (project.getVisibilityPrivate() && (currentUser != null) && (foundUsers.size() > 0)) {
+		if (project.isVisibilityPrivate() && (currentUser != null) && (foundUsers.size() > 0)) {
             final UserDbo user = foundUsers.get(0);
             boolean isAlreadyAssigned = requirement.getUserStakeholderAssignments().stream().filter(a -> a.getStakeholder().equals(user)).count() == 1;
             if (isAlreadyAssigned) {
@@ -1179,7 +1244,7 @@ public class RequirementController {
                 return result;
             }
 
-            RequirementStakeholderAssignment stakeholderAssignment = new RequirementStakeholderAssignment(requirement, user);
+            RequirementStakeholderAssignment stakeholderAssignment = new RequirementStakeholderAssignment(requirement, user, currentUser);
             requirementStakeholderAssignmentRepository.save(stakeholderAssignment);
 
             userInfo.put("id", user.getId());

@@ -192,7 +192,7 @@ public class StatisticsController {
             ratingAttributeWeights.put(attribute.getId(), attributeWeight);
             List<Integer> votingValues = new ArrayList<>();
 
-            if (project.getVisibilityPrivate()) {
+            if (project.isVisibilityPrivate()) {
                 List<UserRequirementAttributeVoteDbo> requirementVotes = attribute.getUserRequirementAttributeVotes()
                         .stream()
                         .filter(v -> v.getRequirement().getId() == requirement.getId())
