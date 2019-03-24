@@ -48,7 +48,9 @@ public class ScheduledBatchJob {
 
     @Transactional
     //@Scheduled(cron = "20 49 12 * * ?")
-    @Scheduled(cron = "0 3 * * * ?")
+    @Scheduled(cron = "40 3 * * * ?")
+    @Scheduled(cron = "0 6 * * * ?")
+    @Scheduled(cron = "0 18 * * * ?")
     public void batchProcess() throws JsonProcessingException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
         System.out.println("[CRON] Current Thread : " + Thread.currentThread().getName());

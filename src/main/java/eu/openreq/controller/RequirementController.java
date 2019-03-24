@@ -1043,13 +1043,19 @@ public class RequirementController {
             try {
                 System.out.println("[Stakeholder Recommender] Sending request...");
                 HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
+                int k = 20;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
-                        + "/upc/stakeholders-recommender/recommend?k=3";
+                        + "/upc/stakeholders-recommender/recommend?k=" + k;
                 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
                 ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
                 RecommendResponse[] recommendations = response.getBody();
+                int numOfMeaningfulRecommendations = 0;
                 for (RecommendResponse recommendation : recommendations) {
+                    if (numOfMeaningfulRecommendations >= 3) {
+                        break;
+                    }
+
                     if (requirementID != Long.parseLong(recommendation.getRequirement())) {
                         continue;
                     }
@@ -1083,6 +1089,7 @@ public class RequirementController {
                     int availabilityValue = (int) Math.max(Math.round(recommendation.getAvailabilityScore() * 10.0), 1);
                     BotUserStakeholderAttributeVoteDbo botUserStakeholderAvailabilityVoteDbo = new BotUserStakeholderAttributeVoteDbo(availabilityValue, requirement, ratingAttribute, recommendedUser);
                     botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAvailabilityVoteDbo);
+                    ++numOfMeaningfulRecommendations;
                 }
 
                 System.out.println("[Stakeholder Recommender] Finished processing request.");

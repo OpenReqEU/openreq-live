@@ -1084,7 +1084,7 @@ public class ProjectController {
 		ProjectDbo project = null;
 
 		try {
-	        Date projectStart = dateformat.parse("2017-01-01");
+	        Date projectStart = dateformat.parse("2019-01-01");
 	        Date projectEnd = dateformat.parse("2020-01-31");
 	        project = new ProjectDbo(Utils.generateRandomProjectKey(projectRepository), "Sportswatch project",
                     "Some description.", projectStart, projectEnd, "/images/innosensr_logo.png",
@@ -1135,9 +1135,9 @@ public class ProjectController {
 			requirement7.setSocialPopularity(0.09f);
 			requirement8.setSocialPopularity(0.11f);
 
-            Date deadlineOfRelease1 = dateformat.parse("2019-10-31");
-            Date deadlineOfRelease2 = dateformat.parse("2019-12-31");
-            Date deadlineOfRelease3 = dateformat.parse("2020-01-31");
+            Date deadlineOfRelease1 = dateformat.parse("2019-03-31");
+            Date deadlineOfRelease2 = dateformat.parse("2019-04-15");
+            Date deadlineOfRelease3 = dateformat.parse("2020-04-30");
 			ReleaseDbo release1 = new ReleaseDbo("Release 1", "", deadlineOfRelease1, 1400, project);
 			ReleaseDbo release2 = new ReleaseDbo("Release 2", "", deadlineOfRelease2, 900, project);
 			ReleaseDbo release3 = new ReleaseDbo("Release 3", "", deadlineOfRelease3, 500, project);
