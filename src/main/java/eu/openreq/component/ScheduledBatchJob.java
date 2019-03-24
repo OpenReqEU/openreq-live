@@ -53,7 +53,7 @@ public class ScheduledBatchJob {
     private static Date getDeadline() {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZ");
         try {
-            return dateformat.parse("2019-12-21T23:59:00+0100");
+            return dateformat.parse("2019-03-21T23:59:00+0100");
         } catch (Exception e) {
             return new Date();
         }
@@ -62,13 +62,14 @@ public class ScheduledBatchJob {
     @Transactional
     //@Scheduled(cron = "20 49 12 * * ?")
     @Scheduled(cron = "0 0 * * * ?")
-    @Scheduled(cron = "0 55 * * * ?")
-    @Scheduled(cron = "0 3 * * * ?")
-    @Scheduled(cron = "0 6 * * * ?")
-    @Scheduled(cron = "0 9 * * * ?")
-    @Scheduled(cron = "0 12 * * * ?")
-    @Scheduled(cron = "0 15 * * * ?")
-    @Scheduled(cron = "0 18 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "1 2 * * * ?")
+    @Scheduled(cron = "3 0 * * * ?")
+    @Scheduled(cron = "6 0 * * * ?")
+    @Scheduled(cron = "9 0 * * * ?")
+    @Scheduled(cron = "12 0 * * * ?")
+    @Scheduled(cron = "15 0 * * * ?")
+    @Scheduled(cron = "18 0 * * * ?")
     public void batchProcess() throws JsonProcessingException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
         System.out.println("[CRON] Current Thread : " + Thread.currentThread().getName());
@@ -94,7 +95,7 @@ public class ScheduledBatchJob {
         }
 
         for (ProjectDbo project : projects) {
-            if (!project.getUniqueKey().equals("h108VA0M") || project.getCreatedDate().before(getDeadline())) {
+            if (!project.getUniqueKey().equals("h108VA0M") && project.getCreatedDate().before(getDeadline())) {
                 continue;
             }
 
