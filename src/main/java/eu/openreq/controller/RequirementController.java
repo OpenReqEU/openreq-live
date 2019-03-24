@@ -1043,7 +1043,7 @@ public class RequirementController {
             try {
                 System.out.println("[Stakeholder Recommender] Sending request...");
                 HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
-                int k = 10;
+                int k = 300;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
                         + "/upc/stakeholders-recommender/recommend?k=" + k;
