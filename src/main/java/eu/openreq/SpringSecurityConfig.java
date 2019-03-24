@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -121,7 +122,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
-        http.headers().frameOptions().sameOrigin();
+        http.headers()
+				.frameOptions()
+				.disable()
+				.addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "ALLOW-FROM live.openreq.eu"));
     }
 
     @Bean

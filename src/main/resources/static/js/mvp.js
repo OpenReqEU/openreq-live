@@ -5567,7 +5567,16 @@ class UIEventHandler {
             this.showDependenciesContainerEvent(event, thisObj);
         } else if (containerID == "#container-statistics") {
             var projectID = this.uiManager.projectID;
-            $("#iframe-depenency-wheel").attr("src", "/project/" + projectID + "/statistics/graph/dependency");
+            var protocol = location.protocol;
+            var slashes = protocol.concat("//");
+            var host = slashes.concat(window.location.hostname);
+            var port = window.location.port;
+            var prefix = host;
+            if (port != 443 && port != 80) {
+                prefix += ":" + port;
+            }
+            alert(prefix);
+            $("#iframe-depenency-wheel").attr("src", prefix + "/project/" + projectID + "/statistics/graph/dependency");
         }
         this.bindUIEvents();
         return false;
@@ -6062,7 +6071,7 @@ class UIEventHandler {
                             title: "Twitter Service installed!",
                             text: "The Twitter service has been installed. It will run every 2 hours.",
                             type: "success",
-                            timer: 2000,
+                            timer: 4000,
                             showCancelButton: false,
                             showConfirmButton: false
                         });
