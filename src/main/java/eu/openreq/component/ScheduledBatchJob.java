@@ -48,7 +48,7 @@ public class ScheduledBatchJob {
 
     @Transactional
     //@Scheduled(cron = "20 49 12 * * ?")
-    @Scheduled(cron = "52 3 * * * ?")
+    @Scheduled(cron = "0 4 * * * ?")
     @Scheduled(cron = "0 6 * * * ?")
     @Scheduled(cron = "0 18 * * * ?")
     public void batchProcess() throws JsonProcessingException {

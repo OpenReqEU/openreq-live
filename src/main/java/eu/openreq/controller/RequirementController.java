@@ -1043,7 +1043,7 @@ public class RequirementController {
             try {
                 System.out.println("[Stakeholder Recommender] Sending request...");
                 HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
-                int k = 20;
+                int k = 10;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
                         + "/upc/stakeholders-recommender/recommend?k=" + k;
@@ -1097,6 +1097,8 @@ public class RequirementController {
                 requirementRepository.save(requirement);
             } catch (Exception e) {
                 System.out.println("ERROR: Cannot reach UPC Stakeholder Recommendation Service!!!");
+                System.out.println(e.getMessage());
+                System.out.println(e.getStackTrace());
             }
         }
 
