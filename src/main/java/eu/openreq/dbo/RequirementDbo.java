@@ -90,6 +90,9 @@ public class RequirementDbo {
 	@OneToMany(mappedBy="primaryKey.requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<DelegateUserRequirementVoteDbo> userDelegationVotes;
 
+	@OneToMany(mappedBy="primaryKey.requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	private Set<HideStakeholderAssignmentDbo> hideStakeholderAssignments;
+
 	@OneToMany(mappedBy="requirement", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	private Set<UserRequirementCommentDbo> userComments;
 
@@ -146,6 +149,7 @@ public class RequirementDbo {
         this.botUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.anonymousUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.userDelegationVotes = new LinkedHashSet<>();
+        this.hideStakeholderAssignments = new LinkedHashSet<>();
         this.userComments = new LinkedHashSet<>();
         this.sourceDependencies = new LinkedHashSet<>();
         this.targetDependencies = new LinkedHashSet<>();
@@ -175,7 +179,8 @@ public class RequirementDbo {
 		this.botUserStakeholderAttributeVotes = new LinkedHashSet<>();
         this.anonymousUserStakeholderAttributeVotes = new LinkedHashSet<>();
 		this.userDelegationVotes = new LinkedHashSet<>();
-        this.userComments = new LinkedHashSet<>();
+		this.hideStakeholderAssignments = new LinkedHashSet<>();
+		this.userComments = new LinkedHashSet<>();
 		this.sourceDependencies = new LinkedHashSet<>();
 		this.targetDependencies = new LinkedHashSet<>();
 		this.potentialSourceDependencies = new LinkedHashSet<>();

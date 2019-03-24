@@ -240,9 +240,9 @@ input[type=text] {
     border: 1px #FFFFFF solid;
     border-radius: 50%;
     display: inline-block;
-    padding: 6px;
-    font-size: 12px;
-    width: 30px;
+    padding: 7px;
+    font-size: 10px;
+    width: 29px;
     text-align: center;
     font-weight: bold;
     color: #FFFFFF;
@@ -607,7 +607,7 @@ h3 > .or-title-icon {
 }
 
 .or-assigned-stakeholders-table > tbody > tr > td:first-child {
-	width: 70px;
+	width: 57px;
 	text-align: center;
 }
 
@@ -653,6 +653,31 @@ h3 > .or-title-icon {
     font-style: italic;
 }
 
+.or-hidden-stakeholder-assignment {
+    background-color: #f7f7f7;
+    color: #d2d2d2;
+}
+
+.or-hidden-stakeholder-assignment a {
+    color: #d2d2d2;
+}
+
+.or-hidden-stakeholder-assignment a.or-unhide-stakeholder-assignment-btn {
+    color: #02c0bc;
+}
+
+.or-hidden-stakeholder-assignment .or-rate-stakeholder-btn,
+.or-hidden-stakeholder-assignment .or-accept-stakeholder-assignment-btn,
+.or-hidden-stakeholder-assignment .or-unaccept-stakeholder-assignment-btn,
+.or-hidden-stakeholder-assignment .or-unassign-user-btn,
+.or-hidden-stakeholder-assignment .or-suggested-label {
+    display: none;
+}
+
+.or-rating-specific-content > .material-icons {
+    margin-left: 3px;
+}
+
 .or-accepted-stakeholder {
 	background-color: #6c9e24 !important;
 	color: #FFFFFF;
@@ -668,23 +693,34 @@ h3 > .or-title-icon {
 }
 
 .or-rate-stakeholder-attribute {
-    border: 6px #CCCCCC solid;
+    border: 3px #CCCCCC solid;
 }
 
 .or-left-rating-border {
-    border-left: 6px #CCCCCC solid;
+    border-left: 3px #CCCCCC solid;
 }
 
 .or-right-rating-border {
-    border-right: 6px #CCCCCC solid;
+    border-right: 3px #CCCCCC solid;
 }
 
 .or-bottom-rating-border {
-    border-bottom: 6px #CCCCCC solid;
+    border-bottom: 3px #CCCCCC solid;
+}
+
+.or-assigned-stakeholders-table > thead > tr > th {
+    font-size: 15px;
+    padding: 5px;
+}
+
+.or-assigned-stakeholders-table > thead > tr > th > .or-rating-attribute-icon {
+    margin-right: -10px;
 }
 
 .or-assigned-stakeholders-table > tbody > tr > td {
     border-bottom: 1px #CCCCCC solid;
+    padding: 5px;
+    font-size: 15px;
 }
 
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }

@@ -125,7 +125,7 @@
                 <i class="material-icons dp48">verified_user</i> <div><b>Congratulations!</b> The data model is consistent.</div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-error-message or-icon-alert alert alert-danger" role="alert">
-                <i class="material-icons dp48">error</i> <div><b>Error:</b> note that your requirements model is inconsistent..</div>
+                <i class="material-icons dp48">error</i> <div><b>Error:</b> Your requirements model is inconsistent..</div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-service-unavailable-message or-icon-alert alert alert-danger" role="alert">
                 <i class="material-icons dp48">error</i> <div><b>Error!</b> The consistency check service is not available! Please contact the administrator of this system.</div>
@@ -457,7 +457,21 @@
 </div>
 <div style="display:none;">
 	<div class="or-assigned-stakeholders-container">
-		<h2>Proposed stakeholders:</h2>
+        <div class="or-assign-stakeholders-form">
+            <h2>Propose stakeholder:</h2>
+            <div class="or-input-submit-row row">
+                <div class="col-sm-9">
+                    <input class="or-search-user" placeholder="Enter name..." />
+                </div>
+                <div class="col-sm-3">
+                    <a class="or-complete-action-btn or-assign-stakeholder-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">person_add</i> Propose</a>
+                </div>
+            </div>
+            <div class="ia-table-section ia-wide">
+            </div>
+        </div>
+        <hr />
+        <h2>Proposed stakeholders:</h2>
 		<table class="or-assigned-stakeholders-table striped">
             <thead>
                 <tr class="or-rating-specific-content">
@@ -481,7 +495,7 @@
             </thead>
 			<tbody>
                 <tr class="or-assign-stakeholder-placeholder">
-                    <td colspan="8">No stakeholder assigned</td>
+                    <td colspan="8">No stakeholder has been proposed</td>
                 </tr>
                 <tr class="or-assign-stakeholder-loading-animation">
                     <td colspan="8">
@@ -494,20 +508,6 @@
                 </tr>
 			</tbody>
 		</table>
-		<hr />
-		<div class="or-assign-stakeholders-form">
-			<h2>Assign stakeholders:</h2>
-			<div class="or-input-submit-row row">
-				<div class="col-sm-9">
-					<input class="or-search-user" placeholder="Enter name..." />
-				</div>
-				<div class="col-sm-3">
-					<a class="or-complete-action-btn or-assign-stakeholder-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">person_add</i> Assign</a>
-				</div>
-			</div>
-			<div class="ia-table-section ia-wide">
-			</div>
-		</div>
 	</div>
 </div>
 <div style="display:none;">

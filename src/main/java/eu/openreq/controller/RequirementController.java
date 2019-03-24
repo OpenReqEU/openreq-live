@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import eu.openreq.Util.Utils;
 import eu.openreq.api.internal.dto.*;
+import eu.openreq.component.ScheduledBatchJob;
 import eu.openreq.dbo.*;
 import eu.openreq.dbo.UserRequirementCommentDbo.Sentiment;
 import eu.openreq.dbo.RequirementUpdateDbo.ActionType;
@@ -111,6 +112,12 @@ public class RequirementController {
     private DelegateUserRequirementVoteRepository delegateUserRequirementVoteRepository;
 
     @Autowired
+    private HideStakeholderAssignmentRepository hideStakeholderAssignmentRepository;
+
+    @Autowired
+    private HideAnonymousStakeholderAssignmentRepository hideAnonymousStakeholderAssignmentRepository;
+
+    @Autowired
     private UserRequirementVoteActivityRepository userRequirementVoteActivityRepository;
 
     @Autowired
@@ -122,7 +129,7 @@ public class RequirementController {
     @Autowired
     private EmailService emailService;
 
-	@ResponseBody
+    @ResponseBody
 	@GetMapping("/project/{projectID}/requirement/list.json")
     public List<Map<String, Object>> requirementListJson(
             HttpServletRequest request,
@@ -530,6 +537,145 @@ public class RequirementController {
     }
 
     @ResponseBody
+	@PostMapping("/project/{projectID}/requirement/{requirementID}/stakeholder/{userID}/hide.json")
+	public Map<String, Object> hideStakeholderAssignement(
+            HttpServletRequest request,
+            @PathVariable(value="projectID") Long projectID,
+            @PathVariable(value="requirementID") Long requirementID,
+            @PathVariable(value="userID") Long userID,
+            Authentication authentication)
+	{
+        UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
+        ProjectDbo project = projectRepository.findOne(projectID);
+        RequirementDbo requirement = requirementRepository.findOne(requirementID);
+        Map<String, Object> result = new HashMap<>();
+        UserDbo hiddenStakeholder = userRepository.findOne(userID);
+
+        if (!project.hasCreatorOrParticipantRights(currentUser) || !project.hasCreatorOrParticipantRights(hiddenStakeholder)) {
+            String errorMessage = Utils.generateErrorMessageAndSendEmail(request, currentUser, emailService);
+            result.put("error", false);
+            result.put("errorMessage", errorMessage);
+            return result;
+        }
+
+        HideStakeholderAssignmentDbo hideStakeholderAssignment = hideStakeholderAssignmentRepository
+                .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                        currentUser.getId(), userID, requirementID);
+        if (hideStakeholderAssignment == null) {
+            hideStakeholderAssignment = new HideStakeholderAssignmentDbo(requirement, currentUser, hiddenStakeholder);
+            hideStakeholderAssignmentRepository.save(hideStakeholderAssignment);
+        }
+
+        result.put("error", false);
+		return result;
+    }
+
+    @ResponseBody
+	@PostMapping("/project/{projectID}/requirement/{requirementID}/stakeholder/{userID}/unhide.json")
+	public Map<String, Object> unhideStakeholderAssignement(
+            HttpServletRequest request,
+            @PathVariable(value="projectID") Long projectID,
+            @PathVariable(value="requirementID") Long requirementID,
+            @PathVariable(value="userID") Long userID,
+            Authentication authentication)
+	{
+        UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
+        ProjectDbo project = projectRepository.findOne(projectID);
+        RequirementDbo requirement = requirementRepository.findOne(requirementID);
+        Map<String, Object> result = new HashMap<>();
+        UserDbo hiddenStakeholder = userRepository.findOne(userID);
+
+        if (!project.hasCreatorOrParticipantRights(currentUser) || !project.hasCreatorOrParticipantRights(hiddenStakeholder)) {
+            String errorMessage = Utils.generateErrorMessageAndSendEmail(request, currentUser, emailService);
+            result.put("error", false);
+            result.put("errorMessage", errorMessage);
+            return result;
+        }
+
+        HideStakeholderAssignmentDbo hideStakeholderAssignment = hideStakeholderAssignmentRepository
+                .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                        currentUser.getId(), userID, requirementID);
+        if (hideStakeholderAssignment == null) {
+            result.put("error", false);
+            result.put("errorMessage", "Cannot unhide the stakeholder since he/she is already visible!");
+            return result;
+        }
+
+        hideStakeholderAssignmentRepository.delete(hideStakeholderAssignment);
+        result.put("error", false);
+		return result;
+    }
+
+    @ResponseBody
+	@PostMapping("/project/{projectID}/requirement/{requirementID}/stakeholder/anonymous/hide.json")
+	public Map<String, Object> hideAnonymousStakeholderAssignement(
+            HttpServletRequest request,
+            @PathVariable(value="projectID") Long projectID,
+            @PathVariable(value="requirementID") Long requirementID,
+            @RequestParam(value="anonymousUserID", required=true) Long anonymousUserID,
+            Authentication authentication)
+	{
+        UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
+        ProjectDbo project = projectRepository.findOne(projectID);
+        RequirementDbo requirement = requirementRepository.findOne(requirementID);
+        Map<String, Object> result = new HashMap<>();
+        AnonymousUserDbo hiddenAnonymousStakeholder = anonymousUserRepository.findOne(anonymousUserID);
+
+        if (!project.hasCreatorOrParticipantRights(currentUser)) {
+            String errorMessage = Utils.generateErrorMessageAndSendEmail(request, currentUser, emailService);
+            result.put("error", false);
+            result.put("errorMessage", errorMessage);
+            return result;
+        }
+
+        HideAnonymousStakeholderAssignmentDbo hideAnonymousStakeholderAssignment = hideAnonymousStakeholderAssignmentRepository
+                .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                        currentUser.getId(), hiddenAnonymousStakeholder.getId(), requirementID);
+        if (hideAnonymousStakeholderAssignment == null) {
+            hideAnonymousStakeholderAssignment = new HideAnonymousStakeholderAssignmentDbo(requirement, currentUser, hiddenAnonymousStakeholder);
+            hideAnonymousStakeholderAssignmentRepository.save(hideAnonymousStakeholderAssignment);
+        }
+
+        result.put("error", false);
+		return result;
+    }
+
+    @ResponseBody
+	@PostMapping("/project/{projectID}/requirement/{requirementID}/stakeholder/anonymous/unhide.json")
+	public Map<String, Object> unhideAnonymousStakeholderAssignement(
+            HttpServletRequest request,
+            @PathVariable(value="projectID") Long projectID,
+            @PathVariable(value="requirementID") Long requirementID,
+            @RequestParam(value="anonymousUserID", required=true) Long anonymousUserID,
+            Authentication authentication)
+	{
+        UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
+        ProjectDbo project = projectRepository.findOne(projectID);
+        RequirementDbo requirement = requirementRepository.findOne(requirementID);
+        Map<String, Object> result = new HashMap<>();
+
+        if (!project.hasCreatorOrParticipantRights(currentUser)) {
+            String errorMessage = Utils.generateErrorMessageAndSendEmail(request, currentUser, emailService);
+            result.put("error", false);
+            result.put("errorMessage", errorMessage);
+            return result;
+        }
+
+        HideAnonymousStakeholderAssignmentDbo hideAnonymousStakeholderAssignment = hideAnonymousStakeholderAssignmentRepository
+                .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                        currentUser.getId(), anonymousUserID, requirementID);
+        if (hideAnonymousStakeholderAssignment == null) {
+            result.put("error", false);
+            result.put("errorMessage", "Cannot unhide the stakeholder since he/she is already visible!");
+            return result;
+        }
+
+        hideAnonymousStakeholderAssignmentRepository.delete(hideAnonymousStakeholderAssignment);
+        result.put("error", false);
+		return result;
+    }
+
+    @ResponseBody
 	@PostMapping("/project/{projectID}/requirement/delete.json")
 	public Map<String, Object> deleteRequirement(
             HttpServletRequest request,
@@ -894,42 +1040,65 @@ public class RequirementController {
             recommendDto.setRequirement(Long.toString(requirement.getId()));
             recommendDto.setUser(currentUser.getUsername());
 
-            System.out.println("[Stakeholder Recommender] Sending request...");
-            HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
-            String url = "http://localhost:9410/upc/stakeholders-recommender/recommend?k=3";
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-            ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
-            RecommendResponse[] recommendations = response.getBody();
-            for (RecommendResponse recommendation : recommendations) {
-                if (requirementID != Long.parseLong(recommendation.getRequirement())) {
-                    continue;
+            try {
+                System.out.println("[Stakeholder Recommender] Sending request...");
+                HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
+                String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
+                        + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
+                        + "/upc/stakeholders-recommender/recommend?k=3";
+                restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+                ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
+                RecommendResponse[] recommendations = response.getBody();
+                for (RecommendResponse recommendation : recommendations) {
+                    if (requirementID != Long.parseLong(recommendation.getRequirement())) {
+                        continue;
+                    }
+
+                    System.out.println("[Stakeholder Recommender] Recommendation Person: " + recommendation.getPerson());
+                    UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson());
+                    RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
+                    if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
+                        continue;
+                    }
+
+                    stakeholderAssignment = new RequirementStakeholderAssignment(requirement, recommendedUser, null);
+                    stakeholderAssignments.add(stakeholderAssignment);
+                    requirementStakeholderAssignmentRepository.save(stakeholderAssignment);
+
+                    // bot rating
+                    StakeholderRatingAttributeDbo ratingAttribute = project.getStakeholderRatingAttributes()
+                            .stream()
+                            .filter(ra -> ra.getName().toLowerCase().equals("appropriateness"))
+                            .collect(Collectors.toList())
+                            .get(0);
+                    int appropriatenessValue = (int) Math.max(Math.round(recommendation.getApropiatenessScore() * 10.0), 1);
+                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAttributeVoteDbo = new BotUserStakeholderAttributeVoteDbo(appropriatenessValue, requirement, ratingAttribute, recommendedUser);
+                    botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAttributeVoteDbo);
+
+                    ratingAttribute = project.getStakeholderRatingAttributes()
+                            .stream()
+                            .filter(ra -> ra.getName().toLowerCase().equals("availability"))
+                            .collect(Collectors.toList())
+                            .get(0);
+                    int availabilityValue = (int) Math.max(Math.round(recommendation.getAvailabilityScore() * 10.0), 1);
+                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAvailabilityVoteDbo = new BotUserStakeholderAttributeVoteDbo(availabilityValue, requirement, ratingAttribute, recommendedUser);
+                    botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAvailabilityVoteDbo);
                 }
 
-                System.out.println("[Stakeholder Recommender] Recommendation Person: " + recommendation.getPerson());
-                UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson());
-                RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
-                if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
-                    continue;
-                }
-
-                stakeholderAssignment = new RequirementStakeholderAssignment(requirement, recommendedUser, null);
-                stakeholderAssignments.add(stakeholderAssignment);
-                requirementStakeholderAssignmentRepository.save(stakeholderAssignment);
-                StakeholderRatingAttributeDbo ratingAttribute = project.getStakeholderRatingAttributes()
-                        .stream()
-                        .filter(ra -> ra.getName().toLowerCase().equals("appropriateness"))
-                        .collect(Collectors.toList())
-                        .get(0);
-                BotUserStakeholderAttributeVoteDbo botUserStakeholderAttributeVoteDbo = new BotUserStakeholderAttributeVoteDbo(8, requirement, ratingAttribute, recommendedUser);
-                botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAttributeVoteDbo);
+                System.out.println("[Stakeholder Recommender] Finished processing request.");
+                requirement.setStakeholderRecommendationsFetched(true);
+                requirementRepository.save(requirement);
+            } catch (Exception e) {
+                System.out.println("ERROR: Cannot reach UPC Stakeholder Recommendation Service!!!");
             }
-
-            requirement.setStakeholderRecommendationsFetched(true);
-            requirementRepository.save(requirement);
         }
 
         for (RequirementStakeholderAssignment stakeholderAssignment : stakeholderAssignments) {
             UserDbo user = stakeholderAssignment.getStakeholder();
+            HideStakeholderAssignmentDbo hideStakeholderAssignment = hideStakeholderAssignmentRepository
+                    .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                            currentUser.getId(), user.getId(), requirementID);
+
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", user.getId());
             userInfo.put("firstName", user.getFirstName());
@@ -938,6 +1107,8 @@ public class RequirementController {
             userInfo.put("profileImagePath", user.getProfileImagePath());
             userInfo.put("isAccepted", stakeholderAssignment.isAccepted());
             userInfo.put("proposedBy", (stakeholderAssignment.getProposedByStakeholder() != null) ? stakeholderAssignment.getProposedByStakeholder().getId() : 0);
+            userInfo.put("isHidden", (hideStakeholderAssignment != null));
+            userInfo.put("proposedDate", stakeholderAssignment.getCreatedDate().getTime());
 
             Map<Long, Map<String, Object>> stakeholderVotes = new HashMap<>();
             for (BotUserStakeholderAttributeVoteDbo attributeVote : user.getBotUserStakeholderAttributeVotes()) {
@@ -995,11 +1166,17 @@ public class RequirementController {
 
         for (RequirementAnonymousStakeholderAssignment anonymousStakeholderAssignment : anonymousStakeholderAssignments) {
             AnonymousUserDbo anonymousUser = anonymousStakeholderAssignment.getAnonymousStakeholder();
+            HideAnonymousStakeholderAssignmentDbo hideAnonymousStakeholderAssignment = hideAnonymousStakeholderAssignmentRepository
+                    .findOneByUserIdAndHiddenStakeholderUserIdAndRequirementId(
+                            currentUser.getId(), anonymousUser.getId(), requirementID);
+
             Map<String, Object> anonymousUserInfo = new HashMap<>();
             anonymousUserInfo.put("id", anonymousUser.getId());
             anonymousUserInfo.put("fullName", anonymousUser.getFullName());
             anonymousUserInfo.put("isAccepted", anonymousStakeholderAssignment.isAccepted());
             anonymousUserInfo.put("proposedBy", 0);
+            anonymousUserInfo.put("isHidden", (hideAnonymousStakeholderAssignment != null));
+            anonymousUserInfo.put("proposedDate", anonymousStakeholderAssignment.getCreatedDate().getTime());
 
             Map<Long, Map<String, Object>> stakeholderVotes = new HashMap<>();
 
@@ -1230,7 +1407,7 @@ public class RequirementController {
             boolean isAlreadyAssigned = requirement.getUserStakeholderAssignments().stream().filter(a -> a.getStakeholder().equals(user)).count() == 1;
             if (isAlreadyAssigned) {
                 result.put("error", true);
-                result.put("errorMessage", "This user is already assigned to this requirement!");
+                result.put("errorMessage", "This stakeholder has already been proposed!");
                 return result;
             }
 
@@ -1240,7 +1417,7 @@ public class RequirementController {
 
             if (!isCreator && !isParticipatingUser && !isParticipationgGuestUser) {
                 result.put("error", true);
-                result.put("errorMessage", "This user cannot be assigned to the requirement because he/she is not invited to this private project! ");
+                result.put("errorMessage", "This stakeholder cannot be proposed because he/she is not invited to this private project! ");
                 return result;
             }
 
@@ -1285,7 +1462,7 @@ public class RequirementController {
 	}
 
 	@ResponseBody
-	@GetMapping("/project/{projectID}/requirement/{requirementID}/user/{userID}/unassign.json")
+	@PostMapping("/project/{projectID}/requirement/{requirementID}/user/{userID}/unassign.json")
 	public Map<String, Object> unassignStakeholder(
             HttpServletRequest request,
             @PathVariable(value="projectID") Long projectID,

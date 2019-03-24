@@ -35,7 +35,8 @@ import static java.util.Comparator.comparing;
 @Component
 public class ScheduledBatchJob {
 
-    private static final int UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT = 9410;
+    public static final String UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST = "217.172.12.199";
+    public static final int UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT = 9410;
     private static final Logger logger = LoggerFactory.getLogger(ScheduledBatchJob.class);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -47,7 +48,7 @@ public class ScheduledBatchJob {
 
     @Transactional
     //@Scheduled(cron = "20 49 12 * * ?")
-    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 2 * * * ?")
     public void batchProcess() throws JsonProcessingException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
         System.out.println("[CRON] Current Thread : " + Thread.currentThread().getName());
@@ -113,11 +114,13 @@ public class ScheduledBatchJob {
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
         try {
             // delete all data from UPC stakeholder recommendation service since it might not be up2date any more
-            String deleteUrl = "http://localhost:" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/purge";
+            String deleteUrl = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
+                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/purge";
             restTemplate.delete(deleteUrl);
 
             // transfer all data to UPC stakeholder recommendation service
-            String url = "http://localhost:" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process";
+            String url = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
+                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process";
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             if ((response.getStatusCodeValue() != 200) && (response.getStatusCodeValue() != 201)) {
                 throw new Exception("An error occured!");
@@ -125,12 +128,14 @@ public class ScheduledBatchJob {
 
             String body = response.getBody();
             System.out.println("[CRON] Batch Process Task :: Body: " + body);
-            System.out.println("[CRON] Batch Process Task :: Successfully completed - " + dateTimeFormatter.format(LocalDateTime.now()));
+            System.out.println("[CRON] Batch Process Task :: Successfully completed - "
+                    + dateTimeFormatter.format(LocalDateTime.now()));
             return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("[CRON] Batch Process Task :: !!! FAILED !!! - " + dateTimeFormatter.format(LocalDateTime.now()));
+        System.out.println("[CRON] Batch Process Task :: !!! FAILED !!! - "
+                + dateTimeFormatter.format(LocalDateTime.now()));
     }
 
 }

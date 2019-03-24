@@ -9,5 +9,7 @@ public class RecommendResponse {
 
     private String requirement;
     private String person;
+    private float availabilityScore;
+    private float apropiatenessScore;
 
 }

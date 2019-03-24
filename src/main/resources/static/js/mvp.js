@@ -1731,6 +1731,16 @@ class UIManager {
             if (this.dataManager.dependencyData.length > 0) {
                 $(".or-consistency-check-error-message").fadeIn();
             }
+
+            var helsinkiAnalysis = issueData.response.response;
+            console.log(helsinkiAnalysis);
+            if ("RelationshipsInconsistent_msg" in helsinkiAnalysis[0] && "Diagnosis_msg" in helsinkiAnalysis[1]) {
+                console.log(helsinkiAnalysis[0].RelationshipsInconsistent_msg);
+                var notificationID = "or-req-diag-0";
+                var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
+                    "Constraint inconsistency", helsinkiAnalysis[1].Diagnosis_msg + " => " + helsinkiAnalysis[0].RelationshipsInconsistent_msg);
+                this.notificationCenter.addNotification(notification);
+            }
         } else if (issueData.consistent) {
             var notificationID = "or-global-consistency-success";
             var notification = new UINotification(notificationID, UINotificationType.SERVICE_NOTIFICATION,
@@ -2687,6 +2697,8 @@ class UIEventHandler {
         $(".or-rate-stakeholder-btn").unbind("click");
         $(".or-accept-stakeholder-assignment-btn").unbind("click");
         $(".or-unaccept-stakeholder-assignment-btn").unbind("click");
+        $(".or-hide-stakeholder-assignment-btn").unbind("click");
+        $(".or-unhide-stakeholder-assignment-btn").unbind("click");
         $(".or-container").unbind("click");
         $(".or-add-dependency-button-link").unbind("click");
         $(".or-delete-dependency-button").unbind("click");
@@ -2735,7 +2747,7 @@ class UIEventHandler {
 		$("#or-delete-requirements-button").on("click", bindUIEvent(this, "deleteableRequirementsEvent"));
         $("#or-project-settings-button").on("click", bindUIEvent(this, "projectSettingsEvent"));
         $(".or-requirement-basic-evaluation").on("click", bindUIEvent(this, "basicRequirementEvaluationEvent"));
-        $(".or-requirement-normal-evaluation").on("click", bindUIEvent(this, "rateEvent"));
+        $(".or-requirement-normal-evaluation").on("click", bindUIEvent(this, "normalRequirementEvaluationEvent"));
         $(".or-requirement-advanced-evaluation").on("click", bindUIEvent(this, "messageClickEvent"));
         $(".or-delete-rating-attribute-button").on("click", bindUIEvent(this, "deleteRatingAttributeClickEvent"));
         $(".or-rating-self-vote").on("click", bindUIEvent(this, "rateEvent"));
@@ -2758,6 +2770,8 @@ class UIEventHandler {
         $(".or-rate-stakeholder-btn").on("click", bindUIEvent(this, "rateStakeholderClickEvent"));
         $(".or-accept-stakeholder-assignment-btn").on("click", bindUIEvent(this, "acceptStakeholderClickEvent"));
         $(".or-unaccept-stakeholder-assignment-btn").on("click", bindUIEvent(this, "unacceptStakeholderClickEvent"));
+        $(".or-hide-stakeholder-assignment-btn").on("click", bindUIEvent(this, "hideStakeholderClickEvent"));
+        $(".or-unhide-stakeholder-assignment-btn").on("click", bindUIEvent(this, "unhideStakeholderClickEvent"));
         $(".or-container").on("click", bindUIEvent(this, "navigationClickEvent"));
         $(".or-add-dependency-button-link").bind("click", bindUIEvent(this, "createDependencyClickEvent"));
         $(".or-delete-dependency-button").bind("click", bindUIEvent(this, "deleteDependencyClickEvent"));
@@ -3112,13 +3126,14 @@ class UIEventHandler {
 
         var hideStakeholderButton = $("<a></a>")
             .attr("href", "#")
-            .addClass("or-rating-specific-content or-rate-stakeholder-btn")
+            .addClass("or-rating-specific-content")
+            .addClass(isHidden ? "or-unhide-stakeholder-assignment-btn" : "or-hide-stakeholder-assignment-btn")
             .attr("data-requirement-id", requirementID)
             .attr("data-user-id", userID)
             .attr("data-is-anonymous-user", isAnonymousUser)
             .attr("data-user-fullname", fullName)
             .attr("title", "Hide " + fullName)
-            .append("<i class=\"material-icons right\">visibility_off</i>");
+            .append("<i class=\"material-icons right\">" + (isHidden ? "visibility" : "visibility_off") + "</i>");
 
         var acceptStakeholderAssignmentButton = $("<a></a>")
             .attr("href", "#")
@@ -3135,7 +3150,14 @@ class UIEventHandler {
             acceptStakeholderAssignmentButton.attr("title", isCurrentUser ? "Accept me" : ("Accept " + fullName));
         }
 
+        if (isHidden) {
+            hideStakeholderButton.attr("title", isCurrentUser ? "Show me" : ("Show " + fullName));
+        } else {
+            hideStakeholderButton.attr("title", isCurrentUser ? "Hide me" : ("Hide " + fullName));
+        }
+
         var divName = $("<div></div>").html(fullName + isCurrentUserLabel);
+        divName.append(hideStakeholderButton);
         if (isCurrentUser || (creatorUserID == currentUserID)) {
             divName.append(acceptStakeholderAssignmentButton);
         }
@@ -3179,6 +3201,9 @@ class UIEventHandler {
             .html("<i class=\"material-icons\">close</i></a>");
 
         var tr = $("<tr></tr>");
+        if (isHidden) {
+            tr.addClass("or-hidden-stakeholder-assignment");
+        }
         var userImage = "<img src=\"" + ((profileImagePath != null) ? profileImagePath : "/images/userimage.png")
             + "\" class=\"or-participating-user-avatar or-avatar\" />";
         tr.addClass("or-assigned-stakeholder");
@@ -4219,7 +4244,7 @@ class UIEventHandler {
 	    return false;
     }
 
-    selectRateEvent(event, thisObj) {
+    normalRequirementEvaluationEvent(event, thisObj) {
         var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
         var requirement = this.uiManager.dataManager.requirementData.filter(function (req) { return req.id == requirementID; })[0];
         $(".or-rating-self-vote").attr("data-requirement-id", requirementID);
@@ -4453,8 +4478,8 @@ class UIEventHandler {
     }
 
 	rateEvent(event, thisObj, forceShowRatingTable) {
-        var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
-        //var requirementID = parseInt($(".or-rating-self-vote").attr("data-requirement-id"));
+        //var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
+        var requirementID = parseInt($(".or-rating-self-vote").attr("data-requirement-id"));
 		var requirement = this.uiManager.dataManager.requirementData.filter(function (req) { return req.id == requirementID; })[0];
 		var isPrivateProject = this.uiManager.dataManager.projectData.isPrivateProject;
 		var uiManager = this.uiManager;
@@ -4824,8 +4849,18 @@ class UIEventHandler {
         $(".or-assign-stakeholder-placeholder").show();
         $(".or-assigned-stakeholders-container").attr("data-requirement-ID", requirementID);
 
+        swal({
+            html: '<div><b>Loading...</b></div>',
+            showCancelButton: false,
+            showConfirmButton: false
+        });
+        swal.showLoading();
+
         $.getJSON("/project/" + projectID + "/requirement/" + requirementID + "/user/list.json", function(data) {
             if (data.assignedUsers != null) {
+                data.assignedUsers = data.assignedUsers.sort((a,b) => (a.proposedDate < b.proposedDate) ? 1 : ((b.proposedDate < a.proposedDate) ? -1 : 0));
+                data.assignedUsers = data.assignedUsers.sort((a,b) => (a.isHidden < b.isHidden) ? 1 : ((b.isHidden < a.isHidden) ? -1 : 0));
+
                 for (var i in data.assignedUsers) {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var fullName = data.assignedUsers[i].firstName + " " + data.assignedUsers[i].lastName;
@@ -4840,6 +4875,9 @@ class UIEventHandler {
             }
 
             if (data.assignedAnonymousUsers != null) {
+                data.assignedAnonymousUsers = data.assignedAnonymousUsers.sort((a,b) => (a.proposedDate < b.proposedDate) ? 1 : ((b.proposedDate < a.proposedDate) ? -1 : 0));
+                data.assignedAnonymousUsers = data.assignedAnonymousUsers.sort((a,b) => (a.isHidden < b.isHidden) ? 1 : ((b.isHidden < a.isHidden) ? -1 : 0));
+
                 for (var i in data.assignedAnonymousUsers) {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var tr = this.createRequirementAssignedUserTableRow(requirementID, data.assignedAnonymousUsers[i].id,
@@ -4853,6 +4891,8 @@ class UIEventHandler {
             if (!isPrivateProject) {
                 $(".or-rating-specific-content").hide();
             }
+
+            swal.hideLoading();
             var assignedUsersContainer = $(".or-assigned-stakeholders-container");
             var assignedUsersContainerContent = assignedUsersContainer.wrap('<p/>').parent().html();
             assignedUsersContainer.unwrap();
@@ -5083,9 +5123,65 @@ class UIEventHandler {
             confirmButtonText: "Close"
         });
         if (isRatingEnabled) {
-            $(".swal2-popup").css("width", "1000px");
+            $(".swal2-popup").css("width", "850px");
         }
         this.bindUIEvents();
+    }
+
+    hideStakeholderClickEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var requirementID = parseInt($(thisObj).attr("data-requirement-id"));
+        var userID = parseInt($(thisObj).attr("data-user-id"));
+        var isAnonymousUser = ($(thisObj).attr("data-is-anonymous-user") == "true");
+        var uiEventHandler = this;
+        var url = "/project/" + projectID + "/requirement/" + requirementID + "/stakeholder/" + userID + "/hide.json";
+        if (isAnonymousUser) {
+            url = "/project/" + projectID + "/requirement/" + requirementID
+                + "/stakeholder/anonymous/hide.json?anonymousUserID=" + userID;
+        }
+
+        $.ajax(url, {
+            'type': 'POST',
+            'success': function (result) {
+                if (result.error == true) {
+                    swal("Error", result.errorMessage, "error").then(function (result) {
+                        uiEventHandler.assignStakeholderEvent(event, thisObj, requirementID);
+                    });
+                    return false;
+                }
+
+                uiEventHandler.assignStakeholderEvent(event, thisObj, requirementID);
+            }
+        });
+	    return false;
+    }
+
+    unhideStakeholderClickEvent(event, thisObj) {
+        var projectID = this.uiManager.projectID;
+        var requirementID = parseInt($(thisObj).attr("data-requirement-id"));
+        var userID = parseInt($(thisObj).attr("data-user-id"));
+        var isAnonymousUser = ($(thisObj).attr("data-is-anonymous-user") == "true");
+        var uiEventHandler = this;
+        var url = "/project/" + projectID + "/requirement/" + requirementID + "/stakeholder/" + userID + "/unhide.json";
+        if (isAnonymousUser) {
+            url = "/project/" + projectID + "/requirement/" + requirementID
+                + "/stakeholder/anonymous/unhide.json?anonymousUserID=" + userID;
+        }
+
+        $.ajax(url, {
+            'type': 'POST',
+            'success': function (result) {
+                if (result.error == true) {
+                    swal("Error", result.errorMessage, "error").then(function (result) {
+                        uiEventHandler.assignStakeholderEvent(event, thisObj, requirementID);
+                    });
+                    return false;
+                }
+
+                uiEventHandler.assignStakeholderEvent(event, thisObj, requirementID);
+            }
+        });
+	    return false;
     }
 
     acceptStakeholderClickEvent(event, thisObj) {
@@ -5192,8 +5288,8 @@ class UIEventHandler {
 	}
 
     saveRatingEvent(event, thisObj) {
-        var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
-        //var requirementID = parseInt($(".or-rating-self-vote").attr("data-requirement-id"));
+        //var requirementID = parseInt($(thisObj).parent().attr("id").split("-")[2]);
+        var requirementID = parseInt($(".or-rating-self-vote").attr("data-requirement-id"));
 		var requirement = this.uiManager.dataManager.requirementData.filter(function (req) { return req.id == requirementID; })[0];
 		var projectID = this.uiManager.projectID;
 		var isPrivateProject = this.uiManager.dataManager.projectData.isPrivateProject;

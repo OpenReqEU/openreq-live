@@ -54,7 +54,7 @@ public class ProxyServiceController {
     //    private static final String TUG_SERVICE_HOST = "localhost";
 //	private static final String SIEMENS_SERVICE_HOST = "192.168.178.23";
 //	private static final String SIEMENS_SERVICE_HOST = "172.20.10.9";
-    private static final String HELSINKI_SERVICE_HOST = "localhost";
+    private static final String HELSINKI_SERVICE_HOST = "217.172.12.199";
     private static final int SIEMENS_EXTRACTION_SERVICE_PORT = 8081;
     private static final int SIEMENS_CLASSIFICATION_SERVICE_PORT = 8080;
     private static final int TUG_SIMILAR_REQUIREMENTS_RECOMMENDATION_SERVICE_PORT = 9006;
