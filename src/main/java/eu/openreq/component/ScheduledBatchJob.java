@@ -10,6 +10,7 @@ import eu.openreq.dbo.UserDbo;
 import eu.openreq.remote.request.dto.stakeholderrecommendation.*;
 import eu.openreq.repository.ProjectRepository;
 import eu.openreq.repository.UserRepository;
+import eu.openreq.service.EmailService;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import static java.util.Comparator.comparing;
@@ -46,10 +47,27 @@ public class ScheduledBatchJob {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+    private static Date getDeadline() {
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZ");
+        try {
+            return dateformat.parse("2019-12-21T23:59:00+0100");
+        } catch (Exception e) {
+            return new Date();
+        }
+    }
+
     @Transactional
     //@Scheduled(cron = "20 49 12 * * ?")
-    @Scheduled(cron = "0 4 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 55 * * * ?")
+    @Scheduled(cron = "0 3 * * * ?")
     @Scheduled(cron = "0 6 * * * ?")
+    @Scheduled(cron = "0 9 * * * ?")
+    @Scheduled(cron = "0 12 * * * ?")
+    @Scheduled(cron = "0 15 * * * ?")
     @Scheduled(cron = "0 18 * * * ?")
     public void batchProcess() throws JsonProcessingException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
@@ -62,14 +80,24 @@ public class ScheduledBatchJob {
                 .collect(Collectors.toList());
 
         BatchProcessDto batchProcessDto = new BatchProcessDto();
+        Set<Long> allowedUserIDs = new HashSet<>();
         for (UserDbo user : userRepository.findAll()) {
-            PersonDto personDto = new PersonDto();
-            personDto.setUsername(user.getUsername());
-            personDto.setEmail(user.getMailAddress());
-            batchProcessDto.addPerson(personDto);
+            if (user.getLastName().startsWith("Root") || user.getLastName().startsWith("Mustermann")
+                    || user.getLastName().startsWith("Atas") || user.getLastName().startsWith("Felfernig")
+                    || user.getLastName().startsWith("Stettinger")) {
+                PersonDto personDto = new PersonDto();
+                personDto.setUsername(user.getUsername());
+                personDto.setEmail(user.getMailAddress());
+                batchProcessDto.addPerson(personDto);
+                allowedUserIDs.add(user.getId());
+            }
         }
 
         for (ProjectDbo project : projects) {
+            if (!project.getUniqueKey().equals("h108VA0M") || project.getCreatedDate().before(getDeadline())) {
+                continue;
+            }
+
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
             projectDto.setCreated_at((int) (project.getCreatedDate().getTime() / 1000));
@@ -87,7 +115,7 @@ public class ScheduledBatchJob {
                 requirementDto.setCreated_at((int) (requirement.getCreatedDate().getTime() / 1000));
 
                 for (RequirementStakeholderAssignment stakeholderAssignment : requirement.getUserStakeholderAssignments()) {
-                    if (stakeholderAssignment.isAccepted()) {
+                    if (stakeholderAssignment.isAccepted() && allowedUserIDs.contains(stakeholderAssignment.getStakeholder().getId())) {
                         ResponsibleDto responsibleDto = new ResponsibleDto();
                         responsibleDto.setPerson(stakeholderAssignment.getStakeholder().getUsername());
                         responsibleDto.setRequirement(Long.toString(requirement.getId()));
@@ -107,10 +135,16 @@ public class ScheduledBatchJob {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         headers.setAll(map);
-
         HttpEntity<BatchProcessDto> request = new HttpEntity<>(batchProcessDto, headers);
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = mapper.writeValueAsString(batchProcessDto);
+        emailService.sendEmailAsync(
+                "ralleaustria@gmail.com",
+                "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
+                "The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
+                "The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
+        );
+
         System.out.println("[CRON] Batch Process Task :: Request: " + jsonInString);
 
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());

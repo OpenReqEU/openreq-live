@@ -1431,7 +1431,10 @@ class UINotificationCenter {
                     notificationCenter.messageCounter, priority, null, issueData.id);
 
             } else if (notification.type == UINotificationType.SERVICE_ISSUE) {
-                var title = "Service failure" + (notification.hasTag() ? " " + notification.tags[0] : "");
+                var title = "Service failure";
+                if (notification.hasTag(UINotificationTag.CONSISTENCY_CHECK)) {
+                    title = "Model Inconsistency";
+                }
                 uiEventHandler.addIssueRow(title, notification.description, notificationCenter.messageCounter,
                     priority, null);
 
@@ -1738,7 +1741,9 @@ class UIManager {
                 console.log(helsinkiAnalysis[0].RelationshipsInconsistent_msg);
                 var notificationID = "or-req-diag-0";
                 var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
-                    "Constraint inconsistency", helsinkiAnalysis[1].Diagnosis_msg + " => " + helsinkiAnalysis[0].RelationshipsInconsistent_msg);
+                    "Constraint inconsistency",
+                    helsinkiAnalysis[1].Diagnosis_msg + " => " + helsinkiAnalysis[0].RelationshipsInconsistent_msg,
+                    [UINotificationTag.CONSISTENCY_CHECK]);
                 this.notificationCenter.addNotification(notification);
             }
         } else if (issueData.consistent) {
@@ -3560,19 +3565,20 @@ class UIEventHandler {
         var dataManager = this.uiManager.dataManager;
         if ($("#container-notification-center").is(":visible")) {
             $("#container-notification-center").hide();
-            var activeContainers = 0;
             $(".or-container").each(function() {
                 if ($(this).hasClass("active")) {
                     var containerID = $(this).attr("href");
                     $(containerID).show();
-                    ++activeContainers;
                 }
             });
-            console.log(activeContainers);
-            if (activeContainers > 1) {
-                $("#or-tab-navigation-bar").show();
+            $("#or-tab-navigation-bar").show();
+            var numberOfVisibleTabs = $("a.or-container:visible").length;
+            if (numberOfVisibleTabs == 1) {
+                $("#or-tab-navigation-bar").hide();
             }
             return false;
+        } else {
+            $("#or-tab-navigation-bar").hide();
         }
         $(".or-container").each(function() {
             if ($(this).hasClass("active")) {
@@ -3581,7 +3587,6 @@ class UIEventHandler {
             }
         });
         $("#container-notification-center").show();
-        $("#or-tab-navigation-bar").hide();
         this.uiManager.notificationCenter.render();
         this.bindUIEvents();
         return false;
@@ -5575,7 +5580,6 @@ class UIEventHandler {
             if (port != 443 && port != 80) {
                 prefix += ":" + port;
             }
-            alert(prefix);
             $("#iframe-depenency-wheel").attr("src", prefix + "/project/" + projectID + "/statistics/graph/dependency");
         }
         this.bindUIEvents();
@@ -6202,7 +6206,7 @@ class UIEventHandler {
 		releaseEndDateTimestamps = releaseEndDateTimestamps.concat(this.dataManager.releaseData.map(r => r.endDateTimestamp));
 		releaseEndDateTimestamps = releaseEndDateTimestamps.concat(this.dataManager.ignoredNewReleases.map(r => r.endDateTimestamp));
 		var newReleaseStartDateTimestamp = (releaseEndDateTimestamps.length == 0) ? (new Date()).getTime() : Math.max(...releaseEndDateTimestamps);
-		var endDate = new Date(newReleaseStartDateTimestamp + (90*24*60*60*1000));
+		var endDate = new Date(newReleaseStartDateTimestamp + (30*24*60*60*1000));
 		this.uiManager.addRelease(0, "", "", 1000, endDate.getTime(),
             formatDateText(endDate), true);
 		this.bindUIEvents();
