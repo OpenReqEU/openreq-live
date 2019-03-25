@@ -1682,7 +1682,7 @@ class UIManager {
             var notificationID = "or-global-consistency-error";
             var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
                 "Consistency check error", "The consistency check service is not available! " +
-                "Please contact the administrator of this system.", [UINotificationTag.CONSISTENCY_CHECK]);
+                "Please contact the administrator of this system.");
             this.notificationCenter.addNotification(notification);
 
             if (this.dataManager.dependencyData.length > 0) {

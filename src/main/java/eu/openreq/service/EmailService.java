@@ -138,7 +138,7 @@ public class EmailService {
     		"	</header>\n" + 
     		"		<div class=\"content\">\n" + htmlMessage +
     		"			<p class=\"greetings\">Best regards,\n" + 
-    		"your InnoSensr Team</p>\n" +
+    		"your OpenReq!Live Team</p>\n" +
     		"		</div>\n" +
     		"		<footer>\n" +
     		"		<p>Powered by Applied Artificial Intelligence Group @ TU Graz</p>\n" +

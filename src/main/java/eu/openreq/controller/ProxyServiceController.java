@@ -207,6 +207,13 @@ public class ProxyServiceController {
         headers.setAll(map);
 
         final CheckConsistencyRequest checkConsistencyRequest = getCheckConsistencyRequestDto(project);
+        if (checkConsistencyRequest.getRequirements().size() == 0) {
+            result.put("error", false);
+            result.put("status", 200);
+            result.put("consistent", true);
+            return result;
+        }
+
         final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "/models/projects/consistencyCheckAndDiagnosis";
         final HttpEntity<CheckConsistencyRequest> request1 = new HttpEntity<>(checkConsistencyRequest, headers);
 
