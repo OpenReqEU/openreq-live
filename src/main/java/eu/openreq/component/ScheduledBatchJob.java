@@ -63,7 +63,7 @@ public class ScheduledBatchJob {
     //@Scheduled(cron = "20 49 12 * * ?")
     @Scheduled(cron = "0 0 * * * ?")
     @Scheduled(cron = "0 0 * * * ?")
-    @Scheduled(cron = "1 10 * * * ?")
+    @Scheduled(cron = "1 40 * * * ?")
     @Scheduled(cron = "3 0 * * * ?")
     @Scheduled(cron = "6 0 * * * ?")
     @Scheduled(cron = "9 0 * * * ?")
@@ -173,8 +173,8 @@ public class ScheduledBatchJob {
                     "martin.stettinger@ist.tugraz.at",
                     "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
                     "<b style='color:darkred;'>FAILED!!</b><br /><br />" + e.getMessage() + "<br /><br />"
-                            + e.getStackTrace() + "<br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
-                    "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
+                            + "The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
+                    "FAILED!!\n\n" + e.getMessage() + "\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
             );
         }
         System.out.println("[CRON] Batch Process Task :: !!! FAILED !!! - "
