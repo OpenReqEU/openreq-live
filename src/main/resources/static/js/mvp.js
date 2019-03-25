@@ -1264,6 +1264,7 @@ class DataManager {
 
 	fetchAndShowRequirementsAndReleases(completeCallback) {
         // updating the projectData necessary for refresh!
+
 		this.projectData = {
 			projectID: this.projectData.projectID,
 			projectKey: this.projectData.projectKey,
@@ -1274,7 +1275,14 @@ class DataManager {
             projectSettings: this.projectData.projectSettings
 		};
 
-		this.fetchRatingAttributes(function () {
+        swal({
+            html: '<div><b>Loading...</b></div>',
+            showCancelButton: false,
+            showConfirmButton: false
+        });
+        swal.showLoading();
+
+        this.fetchRatingAttributes(function () {
 		    var callbackChain = function () {
                 this.fetchRequirements(function () {
                     this.fetchReleases(function () {
@@ -1282,6 +1290,8 @@ class DataManager {
                             this.fetchRecommendedSimilarRequirements(function () {
                                 this.fetchAmbiguityIssues(function () {
                                     this.showReleasesRequirementsAndIssues();
+                                    swal.hideLoading();
+                                    swal.close();
                                     if (completeCallback !== undefined) {
                                         completeCallback();
                                     }
@@ -4931,15 +4941,25 @@ class UIEventHandler {
             "Adjective": "adjective",
             "Comparative Adjective": "comparative-adjective",
             "Inside Behaviour": "behaviour",
+            "Unclear Associativity": "associativity",
             "Ambiguous Compound Nouns": "compound-nouns",
-            "Vague": "vague"
+            "Vague": "vague",
+            "Coordination of two nouns preceded by a verb": "coordination-verb",
+            "Coordination of two nouns followed by another noun": "coordination-noun",
+            "Imprecise": "imprecise",
+            "Weak": "weak"
         };
 
         var ambiguityData = dataManager.ambiguityIssueData[requirementID];
         var currentIndex = 0;
         var highlightedRequirementDescription = "";
         var usedAmbiguities = {};
+        ambiguityData = ambiguityData.sort((a,b) => (a.index_start > b.index_start) ? 1 : ((b.index_start > a.index_start) ? -1 : 0));
+        var visibleAmbiguities = 0;
         for (var i in ambiguityData) {
+            if (ambiguityData[i].index_start <= currentIndex) {
+                continue;
+            }
             console.log(ambiguityData[i].title);
             usedAmbiguities[ambiguityData[i].title] = ambiguityData[i].description;
             var tooltipText = ambiguityData[i].title + ": " + ambiguityData[i].description;
@@ -4950,6 +4970,7 @@ class UIEventHandler {
             highlightedRequirementDescription += requirementDescription.slice(ambiguityData[i].index_start, ambiguityData[i].index_end);
             highlightedRequirementDescription += "</span>";
             currentIndex = ambiguityData[i].index_end;
+            ++visibleAmbiguities;
         }
 
         highlightedRequirementDescription += requirementDescription.slice(currentIndex);
@@ -4974,6 +4995,9 @@ class UIEventHandler {
             $(".or-ambiguity-explanation-list").append(divExplanation);
         }
 
+        $(".or-ambiguity-number-total").text(ambiguityData.length);
+        $(".or-ambiguity-number-visible").text(visibleAmbiguities);
+        $(".or-ambiguity-number-hidden").text(ambiguityData.length - visibleAmbiguities);
         var ambiguityContainerContent = ambiguityContainer.wrap('<p/>').parent().html();
         ambiguityContainer.unwrap();
 
