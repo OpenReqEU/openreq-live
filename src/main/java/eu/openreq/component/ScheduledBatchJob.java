@@ -63,7 +63,7 @@ public class ScheduledBatchJob {
     //@Scheduled(cron = "20 49 12 * * ?")
     @Scheduled(cron = "0 0 * * * ?")
     @Scheduled(cron = "0 0 * * * ?")
-    @Scheduled(cron = "1 2 * * * ?")
+    @Scheduled(cron = "1 10 * * * ?")
     @Scheduled(cron = "3 0 * * * ?")
     @Scheduled(cron = "6 0 * * * ?")
     @Scheduled(cron = "9 0 * * * ?")
@@ -139,13 +139,6 @@ public class ScheduledBatchJob {
         HttpEntity<BatchProcessDto> request = new HttpEntity<>(batchProcessDto, headers);
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = mapper.writeValueAsString(batchProcessDto);
-        emailService.sendEmailAsync(
-                "ralleaustria@gmail.com",
-                "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
-                "The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
-                "The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
-        );
-
         System.out.println("[CRON] Batch Process Task :: Request: " + jsonInString);
 
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
@@ -167,9 +160,22 @@ public class ScheduledBatchJob {
             System.out.println("[CRON] Batch Process Task :: Body: " + body);
             System.out.println("[CRON] Batch Process Task :: Successfully completed - "
                     + dateTimeFormatter.format(LocalDateTime.now()));
+            emailService.sendEmailAsync(
+                    "martin.stettinger@ist.tugraz.at",
+                    "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
+                    "<b style='color:darkgreen;'>SUCCESSFULLY TRANSFERED!!</b><br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
+                    "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
+            );
             return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            emailService.sendEmailAsync(
+                    "martin.stettinger@ist.tugraz.at",
+                    "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
+                    "<b style='color:darkred;'>FAILED!!</b><br /><br />" + e.getMessage() + "<br /><br />"
+                            + e.getStackTrace() + "<br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
+                    "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
+            );
         }
         System.out.println("[CRON] Batch Process Task :: !!! FAILED !!! - "
                 + dateTimeFormatter.format(LocalDateTime.now()));
