@@ -12,7 +12,7 @@
     <link href="/css/summernote.css" rel="stylesheet" media="screen" />
 </head>
 
-<body>
+<body th:data-userId="${currentUserID}">
 <div th:replace="fragments/basictemplate :: header(true,true,true)"></div>
 <div id="or-tab-navigation-bar">
     <div class="container">
