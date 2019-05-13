@@ -54,4 +54,4 @@ None.
 See OpenReq project contribution [Guidlines](https://github.com/OpenReqEU/OpenReq/blob/master/CONTRIBUTING.md "Guidlines")
 
 ## License
-Free use of this software is granted under the terms of the EPL version 2 (EPL2.0).
+Free use of this software is granted under the terms of the EPL version 2 ([EPL2.0](https://www.eclipse.org/legal/epl-2.0/)).
