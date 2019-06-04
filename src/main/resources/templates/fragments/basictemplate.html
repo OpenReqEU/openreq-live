@@ -41,6 +41,38 @@
     <script type="text/javascript" src="https://api.openreq.eu/ri-logging/frontend/script"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.js"></script>
     <script>
+        class ConsentCookieHandler {
+
+            constructor(cookieName, expireDays) {
+                this.cookieName = cookieName;
+                this.expireDays = expireDays;
+            }
+
+            setValue(value) {
+                var d = new Date();
+                d.setTime(d.getTime() + (this.expireDays*24*60*60*1000));
+                var expires = "expires="+ d.toUTCString();
+                document.cookie = this.cookieName + "=" + value + ";" + expires + ";path=/";
+            }
+
+            getValue() {
+                var name = this.cookieName + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for(var i = 0; i <ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+
+        }
+
         window.addEventListener("load", function(){
             window.cookieconsent.initialise({
                 "palette": {
@@ -55,8 +87,45 @@
                 },
                 "content": {
                     "href": "/privacypolicy"
+                },
+                "onStatusChange": function(status) {
+                    $(".cc-window").hide();
+                    if (this.hasConsented()) {
+                        swal({
+                            html: "<div class=\"or-cookie-consent\"><div class=\"row\">" +
+                                "<div class=\"col s12 or-cookie-consent-title\">Select which type of cookies do you want to accept?</div>" +
+                                "<div class=\"col s12\">" +
+                                "<div class=\"switch\">" +
+                                "<label class=\"or-cookie-consent-switch-label\">" +
+                                "<input type=\"checkbox\" disabled=\"disabled\" checked=\"checked\" />" +
+                                "<span class=\"lever\"></span>Neccessary cookies" +
+                                "</label></div>" +
+                                "<div class=\"switch\">" +
+                                "<label class=\"or-cookie-consent-switch-label\">" +
+                                "<input class=\"or-cookie-consent-additional-statistics-checkbox\" type=\"checkbox\" checked=\"checked\" />" +
+                                "<span class=\"lever\"></span>Cookies for additional statistics" +
+                                "</label></div></div></div></div>",
+                            showCancelButton: false,
+                            confirmButtonText: "Save"
+                        }).then(function (result) {
+                            return true;
+                        });
+
+                        var consentCookieHandler = new ConsentCookieHandler("allowStatisticCookies", 365);
+                        $(".or-cookie-consent-additional-statistics-checkbox").on("click", function () {
+                            var isAllowed = $(this).prop("checked");
+                            if (isAllowed) {
+                                consentCookieHandler.setValue(true);
+                            } else {
+                                consentCookieHandler.setValue(false);
+                            }
+                        });
+                        consentCookieHandler.setValue(true);
+                        $(".swal2-popup").css("width", "600px");
+                    }
+                    return true;
                 }
-            })});
+        })});
     </script>
     <th:block th:replace="${scripts}" />
 </head>

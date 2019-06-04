@@ -1584,7 +1584,8 @@ class UIManager {
 		this.uiEventHandler.uiManager = this;
 		this.saveHandler = new SaveHandler(this.projectID);
 		this.cookieHandler = new CookieHandler("explanationShown", 365);
-		this.newReleaseCounter = 0;
+		this.consentCookieHandler = new ConsentCookieHandler("allowStatisticCookies", 365);
+        this.newReleaseCounter = 0;
 		this.notificationCenter = new UINotificationCenter($(".or-notification-button-container"), uiEventHandler);
 	}
 
@@ -1600,6 +1601,7 @@ class UIManager {
 
     showVisiblePanelsAndViews() {
 	    var projectSettings = this.dataManager.projectData.projectSettings;
+	    var consentCookieHandler = this.consentCookieHandler;
 
 	    if (projectSettings.showDependencies) {
             $(".or-tab-dependencies").show();
@@ -1607,7 +1609,7 @@ class UIManager {
 	        $(".or-tab-dependencies").hide();
         }
 
-	    if (projectSettings.showStatistics) {
+        if (projectSettings.showStatistics && consentCookieHandler.getValue() == "true") {
             $(".or-tab-statistics").show();
         } else {
             $(".or-tab-statistics").hide();
@@ -1644,7 +1646,7 @@ class UIManager {
             $(".or-requirement-advanced-evaluation").show();
         }
 
-        if (!projectSettings.showDependencies && !projectSettings.showStatistics) {
+        if (!projectSettings.showDependencies && (!projectSettings.showStatistics || consentCookieHandler.getValue() != "true")) {
             $(".or-navbar, .maincontainer").addClass("or-no-tab-navigation-bar");
 	        $("#or-tab-navigation-bar").hide();
         } else {
@@ -6000,6 +6002,7 @@ class UIEventHandler {
     projectSettingsEvent(event, thisObj) {
         $(".dropdown-button").dropdown("close");
 	    var dataManager = this.uiManager.dataManager;
+        var consentCookieHandler = this.uiManager.consentCookieHandler;
 	    var projectID = this.uiManager.projectID;
 	    var projectSettings = dataManager.projectData.projectSettings;
 
@@ -6034,6 +6037,10 @@ class UIEventHandler {
         }
 
         $(".or-settings-twitter-channel").attr("value", projectSettings.twitterChannel);
+
+	    if (consentCookieHandler.getValue() != "true") {
+            $(".or-row-show-statistics").hide();
+        }
 
         var settingsContainer = $(".or-settings-container");
         var settingsContainerContent = settingsContainer.wrap('<p/>').parent().html();

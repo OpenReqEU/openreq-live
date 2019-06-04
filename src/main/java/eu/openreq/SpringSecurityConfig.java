@@ -71,6 +71,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/project/**/update.json",
 						"/project/**/settings.json",
 						"/project/**/settings/update.json",
+						"/project/**/issue/list.json",
 						"/project/**/requirement/rating/attribute/list.json",
 						"/project/**/requirement/pairs/recommend",
 						"/project/**/requirement/pairs/recommend.json",
