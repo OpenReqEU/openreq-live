@@ -3,10 +3,7 @@ package eu.openreq.component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openreq.Util.Utils;
-import eu.openreq.dbo.ProjectDbo;
-import eu.openreq.dbo.RequirementDbo;
-import eu.openreq.dbo.RequirementStakeholderAssignment;
-import eu.openreq.dbo.UserDbo;
+import eu.openreq.dbo.*;
 import eu.openreq.remote.request.dto.stakeholderrecommendation.*;
 import eu.openreq.repository.ProjectRepository;
 import eu.openreq.repository.UserRepository;
@@ -80,7 +77,7 @@ public class ScheduledBatchJob {
                     || user.getLastName().startsWith("Stettinger")) {
                 PersonDto personDto = new PersonDto();
                 personDto.setUsername(user.getUsername());
-                personDto.setEmail(user.getMailAddress());
+                personDto.setAvailability(0); // TODO: figure out what UPC expects...
                 batchProcessDto.addPerson(personDto);
                 allowedUserIDs.add(user.getId());
             }
@@ -93,7 +90,13 @@ public class ScheduledBatchJob {
 
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
-            projectDto.setCreated_at((int) (project.getCreatedDate().getTime() / 1000));
+
+            for (ProjectUserParticipationDbo userParticipation : project.getUserParticipations()) {
+                ParticipantDto participantDto = new ParticipantDto();
+                participantDto.setPerson(userParticipation.getUser().getUsername());
+                participantDto.setAvailability(0); // TODO: figure out what UPC expects...
+                participantDto.setProject(Long.toString(project.getId()));
+            }
 
             for (RequirementDbo requirement : project.getRequirements()) {
                 if (!requirement.isVisible()) {
@@ -103,9 +106,9 @@ public class ScheduledBatchJob {
                 String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
                 RequirementDto requirementDto = new RequirementDto();
                 requirementDto.setId(Long.toString(requirement.getId()));
-                requirementDto.setName(requirement.getTitle());
-                requirementDto.setDescription(strippedDescription);
-                requirementDto.setCreated_at((int) (requirement.getCreatedDate().getTime() / 1000));
+                requirementDto.setDescription(requirement.getTitle() + " " + strippedDescription);
+                requirementDto.setEffort(0);
+                requirementDto.setModified_at(Long.toString(((long) (requirement.getLastUpdatedDate().getTime() / 1000))));
 
                 for (RequirementStakeholderAssignment stakeholderAssignment : requirement.getUserStakeholderAssignments()) {
                     if (stakeholderAssignment.isAccepted() && allowedUserIDs.contains(stakeholderAssignment.getStakeholder().getId())) {
@@ -135,14 +138,10 @@ public class ScheduledBatchJob {
 
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
         try {
-            // delete all data from UPC stakeholder recommendation service since it might not be up2date any more
-            String deleteUrl = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
-                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/purge";
-            restTemplate.delete(deleteUrl);
-
-            // transfer all data to UPC stakeholder recommendation service
+            // deletes all data from UPC stakeholder recommendation service since it might not be up2date any more
+            // and also transfers all data to UPC's stakeholder recommendation service
             String url = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
-                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process";
+                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process?withAvailability=true";
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             if ((response.getStatusCodeValue() != 200) && (response.getStatusCodeValue() != 201)) {
                 throw new Exception("An error occured!");

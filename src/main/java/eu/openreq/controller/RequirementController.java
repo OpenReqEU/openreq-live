@@ -1046,7 +1046,7 @@ public class RequirementController {
                 int k = 10;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
-                        + "/upc/stakeholders-recommender/recommend?k=" + k;
+                        + "/upc/stakeholders-recommender/recommend?k=" + k + "&projectSpecific=true";
                 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
                 ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
                 RecommendResponse[] recommendations = response.getBody();
@@ -1077,8 +1077,13 @@ public class RequirementController {
                             .filter(ra -> ra.getName().toLowerCase().equals("appropriateness"))
                             .collect(Collectors.toList())
                             .get(0);
-                    int appropriatenessValue = (int) Math.max(Math.round(recommendation.getApropiatenessScore() * 10.0), 1);
-                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAttributeVoteDbo = new BotUserStakeholderAttributeVoteDbo(appropriatenessValue, requirement, ratingAttribute, recommendedUser);
+                    // apply inverse feature scaling
+                    float rescaledAppropriatenessValue = (recommendation.getApropiatenessScore()
+                                                       * (ratingAttribute.getMaxValue() - ratingAttribute.getMinValue()))
+                                                       + ratingAttribute.getMinValue();
+                    int appropriatenessValue = (int) Math.max(Math.round(rescaledAppropriatenessValue), 1);
+                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAttributeVoteDbo = new BotUserStakeholderAttributeVoteDbo(
+                            appropriatenessValue, requirement, ratingAttribute, recommendedUser);
                     botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAttributeVoteDbo);
 
                     ratingAttribute = project.getStakeholderRatingAttributes()
@@ -1086,8 +1091,13 @@ public class RequirementController {
                             .filter(ra -> ra.getName().toLowerCase().equals("availability"))
                             .collect(Collectors.toList())
                             .get(0);
-                    int availabilityValue = (int) Math.max(Math.round(recommendation.getAvailabilityScore() * 10.0), 1);
-                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAvailabilityVoteDbo = new BotUserStakeholderAttributeVoteDbo(availabilityValue, requirement, ratingAttribute, recommendedUser);
+                    // apply inverse feature scaling
+                    float rescaledAvailabilityValue = (recommendation.getAvailabilityScore()
+                                                    * (ratingAttribute.getMaxValue() - ratingAttribute.getMinValue()))
+                                                    + ratingAttribute.getMinValue();
+                    int availabilityValue = (int) Math.max(Math.round(rescaledAvailabilityValue * 10.0), 1);
+                    BotUserStakeholderAttributeVoteDbo botUserStakeholderAvailabilityVoteDbo = new BotUserStakeholderAttributeVoteDbo(
+                            availabilityValue, requirement, ratingAttribute, recommendedUser);
                     botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAvailabilityVoteDbo);
                     ++numOfMeaningfulRecommendations;
                 }

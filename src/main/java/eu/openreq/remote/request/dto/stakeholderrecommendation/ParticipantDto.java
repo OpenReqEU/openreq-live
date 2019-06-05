@@ -1,13 +1,12 @@
 package eu.openreq.remote.request.dto.stakeholderrecommendation;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class PersonDto {
+public class ParticipantDto {
 
     private int availability;
-    private String username;
+    private String person;
+    private String project;
 
 }

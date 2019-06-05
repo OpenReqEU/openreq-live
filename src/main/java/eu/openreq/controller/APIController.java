@@ -451,7 +451,7 @@ public class APIController {
         Map<String, Object> creationDateProperty = new LinkedHashMap<>();
         creationDateProperty.put("description", user.getCreatedDate().getTime());
         creationDateProperty.put("type", "string");
-        participationProperties.put("created_at", creationDateProperty);
+        participationProperties.put("modified_at", creationDateProperty);
 
         Map<String, Object> lastUpdateDateProperty = new LinkedHashMap<>();
         lastUpdateDateProperty.put("description", (user.getLastUpdatedDate() != null) ? user.getLastUpdatedDate().getTime() : 0);
@@ -506,7 +506,7 @@ public class APIController {
         Map<String, Object> creationDateProperty = new LinkedHashMap<>();
         creationDateProperty.put("description", user.getCreatedDate().getTime());
         creationDateProperty.put("type", "string");
-        participationProperties.put("created_at", creationDateProperty);
+        participationProperties.put("modified_at", creationDateProperty);
 
         Map<String, Object> lastUpdateDateProperty = new LinkedHashMap<>();
         lastUpdateDateProperty.put("description", (user.getLastUpdatedDate() != null) ? user.getLastUpdatedDate().getTime() : 0);

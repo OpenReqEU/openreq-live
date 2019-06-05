@@ -10,7 +10,6 @@ import java.util.List;
 public class ProjectDto {
 
     private String id;
-    private long created_at;
     private List<String> specifiedRequirements = new ArrayList<>();
 
     public void addSpecifiedRequirement(String specifiedRequirement) {

@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BatchProcessDto {
 
+    private List<ParticipantDto> participants = new ArrayList<>();
     private List<PersonDto> persons = new ArrayList<>();
     private List<ProjectDto> projects = new ArrayList<>();
     private List<RequirementDto> requirements = new ArrayList<>();

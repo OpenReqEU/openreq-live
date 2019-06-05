@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 public class RequirementDto {
 
     private String id;
-    private String name;
     private String description;
-    private int created_at;
+    private int effort;
+    private String modified_at;
 
 }
