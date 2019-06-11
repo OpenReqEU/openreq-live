@@ -1060,7 +1060,7 @@ public class RequirementController {
                         continue;
                     }
 
-                    System.out.println("[Stakeholder Recommender] Recommendation Person: " + recommendation.getPerson());
+                    System.out.println("[Stakeholder Recommender] Recommended Person: " + recommendation.getPerson());
                     UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson());
                     RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
                     if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
@@ -1124,6 +1124,7 @@ public class RequirementController {
 
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", user.getId());
+            userInfo.put("username", user.getUsername());
             userInfo.put("firstName", user.getFirstName());
             userInfo.put("lastName", user.getLastName());
             userInfo.put("mailAddress", user.getMailAddress());
@@ -1195,6 +1196,7 @@ public class RequirementController {
 
             Map<String, Object> anonymousUserInfo = new HashMap<>();
             anonymousUserInfo.put("id", anonymousUser.getId());
+            anonymousUserInfo.put("username", anonymousUser.getFullName());
             anonymousUserInfo.put("fullName", anonymousUser.getFullName());
             anonymousUserInfo.put("isAccepted", anonymousStakeholderAssignment.isAccepted());
             anonymousUserInfo.put("proposedBy", 0);
@@ -1448,6 +1450,7 @@ public class RequirementController {
             requirementStakeholderAssignmentRepository.save(stakeholderAssignment);
 
             userInfo.put("id", user.getId());
+            userInfo.put("username", user.getUsername());
             userInfo.put("firstName", user.getFirstName());
             userInfo.put("lastName", user.getLastName());
             userInfo.put("mailAddress", user.getMailAddress());
@@ -1476,6 +1479,7 @@ public class RequirementController {
             requirementAnonymousStakeholderAssignmentRepository.save(stakeholderAssignment);
 
             userInfo.put("id", anonymousUser.getId());
+            userInfo.put("username", anonymousUser.getFullName());
             userInfo.put("fullName", anonymousUser.getFullName());
 
             result.put("error", false);

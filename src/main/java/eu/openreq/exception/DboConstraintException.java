@@ -11,6 +11,6 @@ public class DboConstraintException extends BaseException {
 
 	@Override
     public String getMessage() {
-        return "A Dbo Constraint Exception occured: " + message + " " + super.getMessage();
+        return "A Dbo Constraint Exception occurred: " + message + " (additional message: " + super.getMessage() + ")";
     }
 }

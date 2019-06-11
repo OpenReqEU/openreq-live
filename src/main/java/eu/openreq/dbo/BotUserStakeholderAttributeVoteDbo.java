@@ -97,7 +97,7 @@ public class BotUserStakeholderAttributeVoteDbo {
         // sanity check
         if (value < getRatingAttribute().getMinValue() || value > getRatingAttribute().getMaxValue()) {
             throw new DboConstraintException("value must lie in between " + getRatingAttribute().getMinValue()
-                    + " and " + getRatingAttribute().getMaxValue());
+                    + " and " + getRatingAttribute().getMaxValue() + " but is " + value);
         }
         this.value = value;
     }

@@ -15,6 +15,10 @@ public class BatchProcessDto {
     private List<RequirementDto> requirements = new ArrayList<>();
     private List<ResponsibleDto> responsibles = new ArrayList<>();
 
+    public void addParticipant(ParticipantDto participant) {
+        participants.add(participant);
+    }
+
     public void addPerson(PersonDto person) {
         persons.add(person);
     }

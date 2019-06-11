@@ -687,6 +687,7 @@ class DataManager {
 		this.similarRequirementsRecommendationUrl = "/project/" + projectID + "/requirement/recommend/similar";
 		this.projectData = projectData;
 		this.currentUserID = currentUserID;
+		this.currentUsername = userData.username;
 		this.ratingAttributeData = [];
         this.stakeholderRatingAttributeData = [];
 		this.requirementData = [];
@@ -1748,7 +1749,6 @@ class UIManager {
             }
 
             var helsinkiAnalysis = issueData.response.response;
-            console.log(helsinkiAnalysis);
             if ("RelationshipsInconsistent_msg" in helsinkiAnalysis[0] && "Diagnosis_msg" in helsinkiAnalysis[1]) {
                 console.log(helsinkiAnalysis[0].RelationshipsInconsistent_msg);
                 var notificationID = "or-req-diag-0";
@@ -1774,7 +1774,6 @@ class UIManager {
 
     showAmbiguityIssues() {
         var ambiguityIssueData = this.dataManager.ambiguityIssueData;
-        console.log(ambiguityIssueData);
         for (var requirementID in ambiguityIssueData) {
             var requirementIssues = ambiguityIssueData[requirementID];
             var numberOfIssues = requirementIssues.length;
@@ -3129,13 +3128,14 @@ class UIEventHandler {
 		});
 	}
 
-    createRequirementAssignedUserTableRow(requirementID, userID, isAccepted, isHidden, proposedBy, isAnonymousUser, stakeholderRatingAttributeData, stakeholderVotes, fullName, profileImagePath, isCurrentUser, currentUserID, creatorUserID) {
+    createRequirementAssignedUserTableRow(requirementID, userID, username, isAccepted, isHidden, proposedBy, isAnonymousUser, stakeholderRatingAttributeData, stakeholderVotes, fullName, profileImagePath, isCurrentUser, currentUserID, creatorUserID) {
         var isCurrentUserLabel = isCurrentUser ? " <span style=\"color:#AAAAAA;\">(you)</span>" : "";
         var rateStakeholderButton = $("<a></a>")
             .attr("href", "#")
             .addClass("or-rating-specific-content or-rate-stakeholder-btn")
             .attr("data-requirement-id", requirementID)
             .attr("data-user-id", userID)
+            .attr("data-username", username)
             .attr("data-is-anonymous-user", isAnonymousUser)
             .attr("data-user-fullname", fullName)
             .attr("title", "Rate " + fullName)
@@ -3147,6 +3147,7 @@ class UIEventHandler {
             .addClass(isHidden ? "or-unhide-stakeholder-assignment-btn" : "or-hide-stakeholder-assignment-btn")
             .attr("data-requirement-id", requirementID)
             .attr("data-user-id", userID)
+            .attr("data-username", username)
             .attr("data-is-anonymous-user", isAnonymousUser)
             .attr("data-user-fullname", fullName)
             .attr("title", "Hide " + fullName)
@@ -3158,6 +3159,7 @@ class UIEventHandler {
             .addClass(isAccepted ? "or-unaccept-stakeholder-assignment-btn" : "or-accept-stakeholder-assignment-btn")
             .attr("data-requirement-id", requirementID)
             .attr("data-user-id", userID)
+            .attr("data-username", username)
             .attr("data-is-anonymous-user", isAnonymousUser)
             .append("<i class=\"material-icons right\">person_pin</i>");
 
@@ -3374,12 +3376,14 @@ class UIEventHandler {
                 var tr = null;
                 if ("userData" in result) {
                     var fullName = result.userData.firstName + " " + result.userData.lastName;
-                    tr = uiEventHandler.createRequirementAssignedUserTableRow(requirementID, result.userData.id, false,
-                        false, currentUserID, false, dataManager.stakeholderRatingAttributeData, [],
-                        fullName, result.userData.profileImagePath, (result.userData.id == currentUserID), currentUserID, creatorUserID);
+                    tr = uiEventHandler.createRequirementAssignedUserTableRow(requirementID, result.userData.id,
+                        result.userData.username, false, false, currentUserID, false,
+                        dataManager.stakeholderRatingAttributeData, [],
+                        fullName, result.userData.profileImagePath, (result.userData.id == currentUserID),
+                        currentUserID, creatorUserID);
                 } else {
                     tr = uiEventHandler.createRequirementAssignedUserTableRow(requirementID, result.anonymousUserData.id,
-                        false, false, -1, true, dataManager.stakeholderRatingAttributeData,
+                        result.anonymousUserData.username, false, false, -1, true, dataManager.stakeholderRatingAttributeData,
                         [], result.anonymousUserData.fullName, null, false, currentUserID, creatorUserID);
                 }
                 tr.hide();
@@ -3679,7 +3683,6 @@ class UIEventHandler {
     showTweetsContainerEvent(event, thisObj) {
         $(".or-tweets-navigation-container > .tabs > .tab > .or-tweets-category-container").each(function () {
             var containerClass = $(this).attr("href").replace("#", ".");
-            console.log(containerClass);
             $(this).removeClass("active");
             $(containerClass).hide();
         });
@@ -4882,8 +4885,8 @@ class UIEventHandler {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var fullName = data.assignedUsers[i].firstName + " " + data.assignedUsers[i].lastName;
                     var tr = this.createRequirementAssignedUserTableRow(requirementID, data.assignedUsers[i].id,
-                        data.assignedUsers[i].isAccepted, data.assignedUsers[i].isHidden, data.assignedUsers[i].proposedBy,
-                        false, dataManager.stakeholderRatingAttributeData,
+                        data.assignedUsers[i].username, data.assignedUsers[i].isAccepted, data.assignedUsers[i].isHidden,
+                        data.assignedUsers[i].proposedBy, false, dataManager.stakeholderRatingAttributeData,
                         data.assignedUsers[i].stakeholderVotes, fullName,
                         data.assignedUsers[i].profileImagePath, (data.assignedUsers[i].id == currentUserID),
                         currentUserID, creatorUserID);
@@ -4898,9 +4901,10 @@ class UIEventHandler {
                 for (var i in data.assignedAnonymousUsers) {
                     $(".or-assign-stakeholder-placeholder").hide();
                     var tr = this.createRequirementAssignedUserTableRow(requirementID, data.assignedAnonymousUsers[i].id,
-                        data.assignedAnonymousUsers[i].isAccepted, data.assignedAnonymousUsers[i].isHidden, -1,
-                        true, dataManager.stakeholderRatingAttributeData, data.assignedAnonymousUsers[i].stakeholderVotes,
-                        data.assignedAnonymousUsers[i].fullName, null, false, currentUserID, creatorUserID);
+                        data.assignedAnonymousUsers[i].username, data.assignedAnonymousUsers[i].isAccepted,
+                        data.assignedAnonymousUsers[i].isHidden, -1, true, dataManager.stakeholderRatingAttributeData,
+                        data.assignedAnonymousUsers[i].stakeholderVotes, data.assignedAnonymousUsers[i].fullName, null,
+                        false, currentUserID, creatorUserID);
                     $(".or-assigned-stakeholders-table > tbody").prepend(tr);
                 }
             }
@@ -4962,7 +4966,6 @@ class UIEventHandler {
             if (ambiguityData[i].index_start <= currentIndex) {
                 continue;
             }
-            console.log(ambiguityData[i].title);
             usedAmbiguities[ambiguityData[i].title] = ambiguityData[i].description;
             var tooltipText = ambiguityData[i].title + ": " + ambiguityData[i].description;
             highlightedRequirementDescription += requirementDescription.slice(currentIndex, ambiguityData[i].index_start);
@@ -5163,6 +5166,8 @@ class UIEventHandler {
         var projectID = this.uiManager.projectID;
         var requirementID = parseInt($(thisObj).attr("data-requirement-id"));
         var userID = parseInt($(thisObj).attr("data-user-id"));
+        var currentUsername = this.dataManager.currentUsername;
+        var username = $(thisObj).attr("data-username");
         var isAnonymousUser = ($(thisObj).attr("data-is-anonymous-user") == "true");
         var uiEventHandler = this;
         var url = "/project/" + projectID + "/requirement/" + requirementID + "/stakeholder/" + userID + "/hide.json";
@@ -5181,6 +5186,13 @@ class UIEventHandler {
                     return false;
                 }
 
+                $.ajax("http://217.172.12.199:9410/upc/stakeholders-recommender/reject_recommendation?rejected=" +
+                    username + "&requirement=" + requirementID + "&user=" + currentUsername, {
+                    'type': 'POST',
+                    'success': function (result) {
+                        console.log(result);
+                    }
+                });
                 uiEventHandler.assignStakeholderEvent(event, thisObj, requirementID);
             }
         });
@@ -5430,7 +5442,6 @@ class UIEventHandler {
         var isPrivateProject = this.uiManager.dataManager.projectData.isPrivateProject;
         $(".or-stakeholder-rating-scheme").hide();
         var dataManager = this.dataManager;
-        console.log(dataManager.ratingAttributeData);
 
         $.getJSON("/project/" + projectID + "/requirement/rating/attribute/list.json", function (result) {
 			var tbody = $(".or-rating-attribute-table > tbody");

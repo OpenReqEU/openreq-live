@@ -3,8 +3,8 @@
 
 <head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link},~{})">
     <title th:text="${'OpenReq!Live - ' + #strings.replace(#strings.escapeXml(project.name), '&#10;', ' ')}">OpenReq</title>
-    <link href="/css/mvp.css?v=3" rel="stylesheet" media="screen" />
-    <link href="/css/openreq-mvp.css?v=3" rel="stylesheet" media="screen" />
+    <link href="/css/mvp.css?v=4" rel="stylesheet" media="screen" />
+    <link href="/css/openreq-mvp.css?v=4" rel="stylesheet" media="screen" />
     <link href="/css/jquery-ui.min.css" rel="stylesheet" media="screen" />
     <link href="/css/mdl-jquery-modal-dialog.css" rel="stylesheet" media="screen" />
     <link href="/css/fontawesome-stars-o.css" rel="stylesheet" media="screen" />
@@ -866,7 +866,7 @@
 <script src="/js/moment-with-locales.js"></script>
 <script src="/js/jquery-ui.min.js"></script>
 <script src="/js/jquery.ui.touch-punch.min.js"></script>
-<script src="/js/mvp.js?v=3"></script>
+<script src="/js/mvp.js?v=4"></script>
 <script src="/js/jquery.barrating.js"></script>
 <script type="text/javascript" src="/js/jquery.autocomplete.min.js"></script>
 <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
@@ -979,6 +979,7 @@
 
         var userData = {
             id: currentUserID,
+            username: [[${currentUser?.username}]],
             userFirstName: [[${currentUser?.firstName}]],
             userLastName: [[${currentUser?.lastName}]],
             userEmail: [[${currentUser?.mailAddress}]]

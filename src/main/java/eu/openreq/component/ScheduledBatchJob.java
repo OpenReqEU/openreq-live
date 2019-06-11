@@ -22,6 +22,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,10 +60,12 @@ public class ScheduledBatchJob {
         }
     }
 
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
     @Transactional
-    //@Scheduled(cron = "20 49 12 * * ?")
+    @Scheduled(cron = "0 51 19 * * ?")
     @Scheduled(cron = "0 0 0 * * ?")
-    public void batchProcess() throws JsonProcessingException {
+    public void batchProcess() throws JsonProcessingException, DatatypeConfigurationException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
         System.out.println("[CRON] Current Thread : " + Thread.currentThread().getName());
 
@@ -91,11 +97,19 @@ public class ScheduledBatchJob {
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
 
+            UserDbo creatorUser = project.getCreatorUser();
+            ParticipantDto participantDto = new ParticipantDto();
+            participantDto.setPerson(creatorUser.getUsername());
+            participantDto.setAvailability(0); // TODO: figure out what UPC expects...
+            participantDto.setProject(Long.toString(project.getId()));
+            batchProcessDto.addParticipant(participantDto);
+
             for (ProjectUserParticipationDbo userParticipation : project.getUserParticipations()) {
-                ParticipantDto participantDto = new ParticipantDto();
+                participantDto = new ParticipantDto();
                 participantDto.setPerson(userParticipation.getUser().getUsername());
                 participantDto.setAvailability(0); // TODO: figure out what UPC expects...
                 participantDto.setProject(Long.toString(project.getId()));
+                batchProcessDto.addParticipant(participantDto);
             }
 
             for (RequirementDbo requirement : project.getRequirements()) {
@@ -107,8 +121,8 @@ public class ScheduledBatchJob {
                 RequirementDto requirementDto = new RequirementDto();
                 requirementDto.setId(Long.toString(requirement.getId()));
                 requirementDto.setDescription(requirement.getTitle() + " " + strippedDescription);
-                requirementDto.setEffort(0);
-                requirementDto.setModified_at(Long.toString(((long) (requirement.getLastUpdatedDate().getTime() / 1000))));
+                requirementDto.setEffort(0); // TODO: figure out what UPC expects...
+                requirementDto.setModified_at(dateFormat.format(requirement.getLastUpdatedDate()));
 
                 for (RequirementStakeholderAssignment stakeholderAssignment : requirement.getUserStakeholderAssignments()) {
                     if (stakeholderAssignment.isAccepted() && allowedUserIDs.contains(stakeholderAssignment.getStakeholder().getId())) {
@@ -141,7 +155,7 @@ public class ScheduledBatchJob {
             // deletes all data from UPC stakeholder recommendation service since it might not be up2date any more
             // and also transfers all data to UPC's stakeholder recommendation service
             String url = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
-                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process?withAvailability=true";
+                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process?withAvailability=false";
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             if ((response.getStatusCodeValue() != 200) && (response.getStatusCodeValue() != 201)) {
                 throw new Exception("An error occured!");
@@ -152,7 +166,7 @@ public class ScheduledBatchJob {
             System.out.println("[CRON] Batch Process Task :: Successfully completed - "
                     + dateTimeFormatter.format(LocalDateTime.now()));
             emailService.sendEmailAsync(
-                    "martin.stettinger@ist.tugraz.at",
+                    "jmotger@essi.upc.edu,cpalomares@essi.upc.edu,martin.stettinger@ist.tugraz.at",
                     "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
                     "<b style='color:darkgreen;'>SUCCESSFULLY TRANSFERED!!</b><br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
                     "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
