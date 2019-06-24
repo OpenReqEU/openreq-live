@@ -63,7 +63,7 @@ public class ScheduledBatchJob {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     @Transactional
-    @Scheduled(cron = "0 51 19 * * ?")
+    @Scheduled(cron = "30 36 11 * * ?")
     @Scheduled(cron = "0 0 0 * * ?")
     public void batchProcess() throws JsonProcessingException, DatatypeConfigurationException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
@@ -83,7 +83,6 @@ public class ScheduledBatchJob {
                     || user.getLastName().startsWith("Stettinger")) {
                 PersonDto personDto = new PersonDto();
                 personDto.setUsername(user.getUsername());
-                personDto.setAvailability(0); // TODO: figure out what UPC expects...
                 batchProcessDto.addPerson(personDto);
                 allowedUserIDs.add(user.getId());
             }
@@ -100,7 +99,7 @@ public class ScheduledBatchJob {
             UserDbo creatorUser = project.getCreatorUser();
             ParticipantDto participantDto = new ParticipantDto();
             participantDto.setPerson(creatorUser.getUsername());
-            participantDto.setAvailability(0); // TODO: figure out what UPC expects...
+            participantDto.setAvailability(0);
             participantDto.setProject(Long.toString(project.getId()));
             batchProcessDto.addParticipant(participantDto);
 
@@ -120,8 +119,17 @@ public class ScheduledBatchJob {
                 String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
                 RequirementDto requirementDto = new RequirementDto();
                 requirementDto.setId(Long.toString(requirement.getId()));
-                requirementDto.setDescription(requirement.getTitle() + " " + strippedDescription);
-                requirementDto.setEffort(0); // TODO: figure out what UPC expects...
+                requirementDto.setName(requirement.getTitle());
+                requirementDto.setDescription(strippedDescription);
+                float sumEffort = 0.0f;
+                int countEffort = 0;
+                for (UserRequirementAttributeVoteDbo attributeVote : requirement.getUserRequirementAttributeVotes()) {
+                    if (attributeVote.getRatingAttribute().getName().toLowerCase().equals("effort")) {
+                        sumEffort += attributeVote.getValue();
+                        ++countEffort;
+                    }
+                }
+                requirementDto.setEffort(String.format("%.2f", (sumEffort / countEffort)));
                 requirementDto.setModified_at(dateFormat.format(requirement.getLastUpdatedDate()));
 
                 for (RequirementStakeholderAssignment stakeholderAssignment : requirement.getUserStakeholderAssignments()) {
@@ -155,7 +163,7 @@ public class ScheduledBatchJob {
             // deletes all data from UPC stakeholder recommendation service since it might not be up2date any more
             // and also transfers all data to UPC's stakeholder recommendation service
             String url = "http://" + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
-                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process?withAvailability=false";
+                    + UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT + "/upc/stakeholders-recommender/batch_process?withAvailability=false&withComponent=false&keywords=true&autoMapping=true&organization=tugraz";
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             if ((response.getStatusCodeValue() != 200) && (response.getStatusCodeValue() != 201)) {
                 throw new Exception("An error occured!");
@@ -166,7 +174,7 @@ public class ScheduledBatchJob {
             System.out.println("[CRON] Batch Process Task :: Successfully completed - "
                     + dateTimeFormatter.format(LocalDateTime.now()));
             emailService.sendEmailAsync(
-                    "jmotger@essi.upc.edu,cpalomares@essi.upc.edu,martin.stettinger@ist.tugraz.at",
+                    "cpalomares@essi.upc.edu",
                     "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
                     "<b style='color:darkgreen;'>SUCCESSFULLY TRANSFERED!!</b><br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
                     "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString

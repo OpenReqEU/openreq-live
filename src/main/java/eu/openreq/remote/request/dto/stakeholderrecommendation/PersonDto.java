@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PersonDto {
 
-    private int availability;
     private String username;
 
 }
