@@ -129,7 +129,7 @@ public class ScheduledBatchJob {
                         ++countEffort;
                     }
                 }
-                requirementDto.setEffort(String.format("%.2f", (sumEffort / countEffort)));
+                requirementDto.setEffort(String.format("%.2f", countEffort > 0 ? (sumEffort / countEffort) : 0.0f));
                 requirementDto.setModified_at(dateFormat.format(requirement.getLastUpdatedDate()));
 
                 for (RequirementStakeholderAssignment stakeholderAssignment : requirement.getUserStakeholderAssignments()) {
