@@ -63,7 +63,7 @@ public class ScheduledBatchJob {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     @Transactional
-    @Scheduled(cron = "30 36 11 * * ?")
+    //@Scheduled(cron = "30 36 11 * * ?")
     @Scheduled(cron = "0 0 0 * * ?")
     public void batchProcess() throws JsonProcessingException, DatatypeConfigurationException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
