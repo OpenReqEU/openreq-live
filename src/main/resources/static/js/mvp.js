@@ -5187,7 +5187,7 @@ class UIEventHandler {
                 }
 
                 $.ajax("http://217.172.12.199:9410/upc/stakeholders-recommender/reject_recommendation?rejected=" +
-                    username + "&requirement=" + requirementID + "&user=" + currentUsername, {
+                    username + "&requirement=" + requirementID + "&user=" + currentUsername + "&organization=tugraz", {
                     'type': 'POST',
                     'success': function (result) {
                         console.log(result);

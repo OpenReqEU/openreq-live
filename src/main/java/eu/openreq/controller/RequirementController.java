@@ -1,5 +1,7 @@
 package eu.openreq.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
@@ -12,6 +14,9 @@ import eu.openreq.dbo.*;
 import eu.openreq.dbo.UserRequirementCommentDbo.Sentiment;
 import eu.openreq.dbo.RequirementUpdateDbo.ActionType;
 import eu.openreq.remote.request.dto.stakeholderrecommendation.RecommendDto;
+import eu.openreq.remote.request.dto.stakeholderrecommendation.RecommendRequestProjectDto;
+import eu.openreq.remote.request.dto.stakeholderrecommendation.RecommendRequestRequirementDto;
+import eu.openreq.remote.request.dto.stakeholderrecommendation.RecommendRequestUserDto;
 import eu.openreq.remote.response.dto.stakeholderrecommendation.RecommendResponse;
 import eu.openreq.repository.*;
 import eu.openreq.service.DelegateUserRequirementVoteService;
@@ -46,7 +51,6 @@ import eu.openreq.remote.dto.RemoteRequirementDto;
 import eu.openreq.view.ImportedRequirementsBean;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import static java.util.Comparator.comparing;
 
 @Controller
@@ -128,6 +132,8 @@ public class RequirementController {
 
     @Autowired
     private EmailService emailService;
+
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     @ResponseBody
 	@GetMapping("/project/{projectID}/requirement/list.json")
@@ -1035,10 +1041,28 @@ public class RequirementController {
             map.put("Content-Type", "application/json");
             headers.setAll(map);
 
+            RecommendRequestProjectDto projectDto = new RecommendRequestProjectDto();
+            projectDto.setId(Long.toString(project.getId()));
+            RecommendRequestRequirementDto requirementDto = new RecommendRequestRequirementDto();
+            RecommendRequestUserDto userDto = new RecommendRequestUserDto();
+            userDto.setUsername(currentUser.getUsername());
+            requirementDto.setId(Long.toString(requirement.getId()));
+            requirementDto.setName(requirement.getTitle());
+            requirementDto.setDescription(requirement.getDescription());
+            float sumEffort = 0.0f;
+            int countEffort = 0;
+            for (UserRequirementAttributeVoteDbo attributeVote : requirement.getUserRequirementAttributeVotes()) {
+                if (attributeVote.getRatingAttribute().getName().toLowerCase().equals("effort")) {
+                    sumEffort += attributeVote.getValue();
+                    ++countEffort;
+                }
+            }
+            requirementDto.setEffort(String.format("%.2f", countEffort > 0 ? (sumEffort / countEffort) : 0.0f));
+            requirementDto.setModified_at(dateFormat.format(requirement.getLastUpdatedDate()));
             RecommendDto recommendDto = new RecommendDto();
-            recommendDto.setProject(Long.toString(project.getId()));
-            recommendDto.setRequirement(Long.toString(requirement.getId()));
-            recommendDto.setUser(currentUser.getUsername());
+            recommendDto.setProject(projectDto);
+            recommendDto.setRequirement(requirementDto);
+            recommendDto.setUser(userDto);
 
             try {
                 System.out.println("[Stakeholder Recommender] Sending request...");
@@ -1046,9 +1070,10 @@ public class RequirementController {
                 int k = 10;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
-                        + "/upc/stakeholders-recommender/recommend?k=" + k + "&projectSpecific=true";
+                        + "/upc/stakeholders-recommender/recommend?k=" + k + "&projectSpecific=true&organization=tugraz";
                 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-                ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(url, recommendRequest, RecommendResponse[].class);
+                ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(
+                        url, recommendRequest, RecommendResponse[].class);
                 RecommendResponse[] recommendations = response.getBody();
                 int numOfMeaningfulRecommendations = 0;
                 for (RecommendResponse recommendation : recommendations) {
@@ -1056,12 +1081,12 @@ public class RequirementController {
                         break;
                     }
 
-                    if (requirementID != Long.parseLong(recommendation.getRequirement())) {
+                    if (requirementID != Long.parseLong(recommendation.getRequirement().getId())) {
                         continue;
                     }
 
                     System.out.println("[Stakeholder Recommender] Recommended Person: " + recommendation.getPerson());
-                    UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson());
+                    UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson().getUsername());
                     RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
                     if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
                         continue;

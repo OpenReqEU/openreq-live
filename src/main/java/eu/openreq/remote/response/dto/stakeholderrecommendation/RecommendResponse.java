@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class RecommendResponse {
 
-    private String requirement;
-    private String person;
+    private RecommendResponseRequirementDto requirement;
+    private RecommendResponsePersonDto person;
     private float availabilityScore;
     private float apropiatenessScore;
 

@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecommendDto {
 
-    private String project;
-    private String requirement;
-    private String user;
+    private RecommendRequestProjectDto project;
+    private RecommendRequestRequirementDto requirement;
+    private RecommendRequestUserDto user;
 
 }
