@@ -74,9 +74,7 @@
 
         var consentCookieHandler = new ConsentCookieHandler("allowStatisticCookies", 365);
         if (consentCookieHandler.getValue() == "true") {
-            jQuery.getScript('https://api.openreq.eu/ri-logging/frontend/script', function() {
-                alert("loaded!!");
-            });
+            jQuery.getScript('https://api.openreq.eu/ri-logging/frontend/script', function() {});
         }
 
         window.addEventListener("load", function(){
