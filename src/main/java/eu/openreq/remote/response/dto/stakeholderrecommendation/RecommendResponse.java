@@ -10,6 +10,6 @@ public class RecommendResponse {
     private RecommendResponseRequirementDto requirement;
     private RecommendResponsePersonDto person;
     private float availabilityScore;
-    private float apropiatenessScore;
+    private float appropiatenessScore;
 
 }

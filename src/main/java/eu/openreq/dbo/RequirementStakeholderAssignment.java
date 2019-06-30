@@ -38,8 +38,8 @@ public class RequirementStakeholderAssignment {
         this.setStakeholder(stakeholder);
         this.accepted = false;
         this.proposedByStakeholder = proposedByStakeholder;
-        this.createdDate = null;
-        this.lastUpdatedDate = null;
+        this.createdDate = new Date();
+        this.lastUpdatedDate = new Date();
     }
 
     @PrePersist

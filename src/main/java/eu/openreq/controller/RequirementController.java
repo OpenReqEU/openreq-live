@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import eu.openreq.Util.Utils;
 import eu.openreq.api.internal.dto.*;
 import eu.openreq.component.ScheduledBatchJob;
@@ -1048,7 +1049,8 @@ public class RequirementController {
             userDto.setUsername(currentUser.getUsername());
             requirementDto.setId(Long.toString(requirement.getId()));
             requirementDto.setName(requirement.getTitle());
-            requirementDto.setDescription(requirement.getDescription());
+            String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
+            requirementDto.setDescription(strippedDescription);
             float sumEffort = 0.0f;
             int countEffort = 0;
             for (UserRequirementAttributeVoteDbo attributeVote : requirement.getUserRequirementAttributeVotes()) {
@@ -1072,6 +1074,7 @@ public class RequirementController {
                         + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_PORT
                         + "/upc/stakeholders-recommender/recommend?k=" + k + "&projectSpecific=true&organization=tugraz";
                 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+                //restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
                 ResponseEntity<RecommendResponse[]> response = restTemplate.postForEntity(
                         url, recommendRequest, RecommendResponse[].class);
                 RecommendResponse[] recommendations = response.getBody();
@@ -1103,7 +1106,7 @@ public class RequirementController {
                             .collect(Collectors.toList())
                             .get(0);
                     // apply inverse feature scaling
-                    float rescaledAppropriatenessValue = (recommendation.getApropiatenessScore()
+                    float rescaledAppropriatenessValue = (recommendation.getAppropiatenessScore()
                                                        * (ratingAttribute.getMaxValue() - ratingAttribute.getMinValue()))
                                                        + ratingAttribute.getMinValue();
                     int appropriatenessValue = (int) Math.max(Math.round(rescaledAppropriatenessValue), 1);
@@ -1120,7 +1123,7 @@ public class RequirementController {
                     float rescaledAvailabilityValue = (recommendation.getAvailabilityScore()
                                                     * (ratingAttribute.getMaxValue() - ratingAttribute.getMinValue()))
                                                     + ratingAttribute.getMinValue();
-                    int availabilityValue = (int) Math.max(Math.round(rescaledAvailabilityValue * 10.0), 1);
+                    int availabilityValue = (int) Math.max(Math.round(rescaledAvailabilityValue), 1);
                     BotUserStakeholderAttributeVoteDbo botUserStakeholderAvailabilityVoteDbo = new BotUserStakeholderAttributeVoteDbo(
                             availabilityValue, requirement, ratingAttribute, recommendedUser);
                     botUserStakeholderAttributeVoteRepository.save(botUserStakeholderAvailabilityVoteDbo);
@@ -1136,8 +1139,8 @@ public class RequirementController {
                 emailService.sendEmailAsync(
                         "martin.stettinger@ist.tugraz.at",
                         "[OpenReq!Live] UPC Stakeholder Recommendations Fetch",
-                        "<b style='color:darkred;'>FAILED!!</b><br /><br />Error: " + e.getMessage(),
-                        "FAILED!!\n\n Error: " + e.getMessage());
+                        "<b style='color:darkred;'>UPC Stakeholder Recommendation Service FAILED!!</b><br /><br />Error: " + e.getClass().getSimpleName() + " -> " + e.getMessage(),
+                        "UPC Stakeholder Recommendation Service FAILED!!\n\n Error: " + e.getClass().getSimpleName() + " -> " + e.getMessage());
             }
         }
 

@@ -2,6 +2,7 @@ package eu.openreq.component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openreq.Util.RequestResponseLoggingInterceptor;
 import eu.openreq.Util.Utils;
 import eu.openreq.dbo.*;
 import eu.openreq.remote.request.dto.stakeholderrecommendation.*;
@@ -63,7 +64,7 @@ public class ScheduledBatchJob {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     @Transactional
-    //@Scheduled(cron = "30 36 11 * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @Scheduled(cron = "0 0 0 * * ?")
     public void batchProcess() throws JsonProcessingException, DatatypeConfigurationException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
@@ -78,20 +79,18 @@ public class ScheduledBatchJob {
         BatchProcessDto batchProcessDto = new BatchProcessDto();
         Set<Long> allowedUserIDs = new HashSet<>();
         for (UserDbo user : userRepository.findAll()) {
-            if (user.getLastName().startsWith("Root") || user.getLastName().startsWith("Mustermann")
-                    || user.getLastName().startsWith("Atas") || user.getLastName().startsWith("Felfernig")
-                    || user.getLastName().startsWith("Stettinger")) {
-                PersonDto personDto = new PersonDto();
-                personDto.setUsername(user.getUsername());
-                batchProcessDto.addPerson(personDto);
-                allowedUserIDs.add(user.getId());
-            }
+            PersonDto personDto = new PersonDto();
+            personDto.setUsername(user.getUsername());
+            batchProcessDto.addPerson(personDto);
+            allowedUserIDs.add(user.getId());
         }
 
         for (ProjectDbo project : projects) {
-            if (!project.getUniqueKey().equals("h108VA0M") && project.getCreatedDate().before(getDeadline())) {
+            /*
+            if (project.getCreatedDate().before(getDeadline())) {
                 continue;
             }
+            */
 
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
@@ -99,14 +98,12 @@ public class ScheduledBatchJob {
             UserDbo creatorUser = project.getCreatorUser();
             ParticipantDto participantDto = new ParticipantDto();
             participantDto.setPerson(creatorUser.getUsername());
-            participantDto.setAvailability(0);
             participantDto.setProject(Long.toString(project.getId()));
             batchProcessDto.addParticipant(participantDto);
 
             for (ProjectUserParticipationDbo userParticipation : project.getUserParticipations()) {
                 participantDto = new ParticipantDto();
                 participantDto.setPerson(userParticipation.getUser().getUsername());
-                participantDto.setAvailability(0); // TODO: figure out what UPC expects...
                 participantDto.setProject(Long.toString(project.getId()));
                 batchProcessDto.addParticipant(participantDto);
             }
@@ -159,6 +156,8 @@ public class ScheduledBatchJob {
         System.out.println("[CRON] Batch Process Task :: Request: " + jsonInString);
 
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+        restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
+
         try {
             // deletes all data from UPC stakeholder recommendation service since it might not be up2date any more
             // and also transfers all data to UPC's stakeholder recommendation service

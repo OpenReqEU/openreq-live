@@ -43,8 +43,8 @@ public class BotUserStakeholderAttributeVoteDbo {
         this.setRatedStakeholder(ratedStakeholder);
         this.setRatingAttribute(ratingAttribute);
         setValue(value);
-        this.createdDate = null;
-        this.lastUpdatedDate = null;
+        this.createdDate = new Date();
+        this.lastUpdatedDate = new Date();
     }
 
     @PrePersist
