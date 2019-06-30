@@ -64,8 +64,8 @@ public class ScheduledBatchJob {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     @Transactional
-    @Scheduled(cron = "0 */10 * * * ?")
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 */3 * * ?")
+    //@Scheduled(cron = "0 0 0 * * ?")
     public void batchProcess() throws JsonProcessingException, DatatypeConfigurationException {
         System.out.println("[CRON] Batch Process Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
         System.out.println("[CRON] Current Thread : " + Thread.currentThread().getName());
@@ -86,11 +86,9 @@ public class ScheduledBatchJob {
         }
 
         for (ProjectDbo project : projects) {
-            /*
-            if (project.getCreatedDate().before(getDeadline())) {
+            if (!project.getName().toLowerCase().contains("upc stakeholder recommendation")) {
                 continue;
             }
-            */
 
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
