@@ -1682,6 +1682,7 @@ class UIManager {
         $(".or-consistency-check-message").hide();
 
 	    if (issueData.error) {
+	        console.log(issueData.errorMessage);
             var notificationID = "or-global-consistency-error";
             var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
                 "Consistency check error", "The consistency check service is not available! " +

@@ -42,7 +42,7 @@ public class ProxyServiceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyServiceController.class);
     private static final String SIEMENS_SERVICE_HOST = "169.254.6.175";
-    private static final String TUG_SERVICE_HOST = "217.172.12.199";
+    private static final String TUG_SERVICE_HOST = "openreq.ist.tugraz.at";
     //    private static final String TUG_SERVICE_HOST = "localhost";
 //	private static final String SIEMENS_SERVICE_HOST = "192.168.178.23";
 //	private static final String SIEMENS_SERVICE_HOST = "172.20.10.9";
