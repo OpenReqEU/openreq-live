@@ -1,9 +1,7 @@
 package eu.openreq.dbo;
 
 import lombok.Data;
-
 import java.util.*;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

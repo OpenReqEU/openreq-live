@@ -87,10 +87,6 @@ public class ScheduledBatchJob {
         }
 
         for (ProjectDbo project : projects) {
-            if (!project.getName().toLowerCase().contains("upc stakeholder recommendation")) {
-                continue;
-            }
-
             ProjectDto projectDto = new ProjectDto();
             projectDto.setId(Long.toString(project.getId()));
 
