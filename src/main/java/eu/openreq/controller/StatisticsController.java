@@ -274,6 +274,7 @@ public class StatisticsController {
             dependenciesMap.put(sourceID, dependencyList);
         }
 
+        model.addAttribute("project", project);
         model.addAttribute("requirementsTitleMap", requirementsTitleMap);
         model.addAttribute("requirementsDescriptionMap", requirementsDescriptionMap);
         model.addAttribute("dependenciesMap", dependenciesMap);

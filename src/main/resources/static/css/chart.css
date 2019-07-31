@@ -1,3 +1,12 @@
+h2 {
+    font-size: 24px !important;
+}
+
+h3 {
+    font-size: 20px !important;
+    font-weight: lighter !important;
+}
+
 canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -11,4 +20,24 @@ canvas {
 
 .dependencyWheel {
     font: 10px sans-serif;
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
 }

@@ -1,72 +1,290 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
 
+<meta charset="utf-8">
 <head th:replace="fragments/basictemplate :: common_header(~{::title},~{::link}, ~{::script})">
 	<title>InnoSensr - Optimal vs. Real Release Plan</title>
 	<link href="/css/chart.css" rel="stylesheet" media="screen" />
-    <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="/js/statistics/Chart.js"></script>
 </head>
 
 <body>
-<div id="chart_placeholder"></div>
-<script src="/js/statistics/d3.v4.min.js"></script>
-<script src="/js/statistics/d3.dependencyWheel.js"></script>
-<script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" th:inline="javascript">
-    var requirementsTitleMapping = [[${requirementsTitleMap}]];
-    var requirementsDescriptionMapping = [[${requirementsDescriptionMap}]];
-    var dependencyMapping = [[${dependenciesMap}]];
-    console.log(dependencyMapping);
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a id="or-tab-link-requirement-interactions" class="nav-link active" href="#">Requirement Interactions</a>
+            </li>
+            <!--
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Separated link</a>
+                </div>
+            </li>
+            -->
+            <li class="nav-item">
+                <a id="or-tab-link-requirement-dependencies" class="nav-link" href="#">Requirement Dependencies</a>
+            </li>
+        </ul>
+    </div>
+    <p>&nbsp;</p>
+    <div id="or-tab-requirement-interactions" style="display:none;text-align:center;">
+        <h2>Requirement Interaction Statistics</h2>
+        <h3>The plot below shows the 5 most frequently updated requirements.</h3>
+        <p>&nbsp;</p>
+        <div id="d3id"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+    <div id="or-tab-requirement-dependencies" style="display:none;text-align:center;">
+        <h2>Coherence of Requirement Dependencies</h2>
+        <h3>The graphic below visualizes the defined dependencies between the requirements.</h3>
+        <div id="chart_placeholder"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+    <script src="/js/statistics/d3.v4.min.js"></script>
+    <script src="/js/statistics/d3.dependencyWheel.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <!-- load the d3.js library -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var requirementsTitleMapping = [[${requirementsTitleMap}]];
+        var requirementInteractions = {};
+        var requirementsDescriptionMapping = [[${requirementsDescriptionMap}]];
+        var dependencyMapping = [[${dependenciesMap}]];
 
-    var chart = d3.chart.dependencyWheel()
-        .width(900)    // also used for height, since the wheel is in a a square
-        .margin(180)   // used to display package names
-        .padding(0.03); // separating groups in the wheel
+        var chart = d3.chart.dependencyWheel()
+            .width(900)    // also used for height, since the wheel is in a a square
+            .margin(180)   // used to display package names
+            .padding(0.03); // separating groups in the wheel
 
-    var matrixIds = Object.keys(requirementsTitleMapping);
-    var matrix = [];
-    var packageNames = [];
-    var requirementDescriptions = {};
+        var matrixIds = Object.keys(requirementsTitleMapping);
+        var matrix = [];
+        var packageNames = [];
+        var requirementDescriptions = {};
 
-    for (var index in matrixIds) {
-        var matrixRow = [];
-        var rowID = matrixIds[index];
-        packageNames.push(requirementsTitleMapping[rowID]);
-        requirementDescriptions[requirementsTitleMapping[rowID]] = requirementsDescriptionMapping[rowID];
-        var targetIDs = dependencyMapping[rowID];
-        for (var innerIndex in matrixIds) {
-            if (targetIDs !== undefined) {
-                var colID = matrixIds[innerIndex];
-                matrixRow.push((targetIDs.indexOf(parseInt(colID)) != -1) ? 1 : 0);
-            } else {
-                matrixRow.push(0);
+        for (var index in matrixIds) {
+            var matrixRow = [];
+            var rowID = matrixIds[index];
+            packageNames.push(requirementsTitleMapping[rowID]);
+            requirementDescriptions[requirementsTitleMapping[rowID]] = requirementsDescriptionMapping[rowID];
+            var targetIDs = dependencyMapping[rowID];
+            for (var innerIndex in matrixIds) {
+                if (targetIDs !== undefined) {
+                    var colID = matrixIds[innerIndex];
+                    matrixRow.push((targetIDs.indexOf(parseInt(colID)) != -1) ? 1 : 0);
+                } else {
+                    matrixRow.push(0);
+                }
             }
+            matrix.push(matrixRow);
         }
-        matrix.push(matrixRow);
-    }
-    console.log(matrix);
 
-    var data = {
-        matrix: matrix,
-        packageNames: packageNames
-    };
-    console.log(data);
-    d3.select('#chart_placeholder')
-        .datum(data)
-        .call(chart);
+        var data = {
+            matrix: matrix,
+            packageNames: packageNames
+        };
+        d3.select('#chart_placeholder')
+            .datum(data)
+            .call(chart);
 
-    $(document).ready(function() {
-        $("g.group").children("text").each(function () {
-            var requirementName = $(this).text();
-            $(this).attr("data-toggle", "tooltip").attr("data-placement", "left").attr("title", requirementDescriptions[requirementName]);
+        $("#or-tab-link-requirement-dependencies").click(function () {
+            $(".nav-link").removeClass("active");
+            $(this).addClass("active");
+            $("#or-tab-requirement-interactions").hide();
+            $("#or-tab-requirement-dependencies").fadeIn();
+            return false;
         });
-        $("[data-toggle=\"tooltip\"]").tooltip();
-    });
-</script>
+
+        $("#or-tab-link-requirement-interactions").click(function () {
+            $(".nav-link").removeClass("active");
+            $(this).addClass("active");
+            $("#or-tab-requirement-dependencies").hide();
+            $("#or-tab-requirement-interactions").fadeIn();
+            return false;
+        });
+
+        $(document).ready(function() {
+            $("g.group").children("text").each(function () {
+                var requirementName = $(this).text();
+                $(this).attr("data-toggle", "tooltip").attr("data-placement", "left").attr("title", requirementDescriptions[requirementName]);
+            });
+            $("[data-toggle=\"tooltip\"]").tooltip();
+
+            var projectUniqueKey = [[${project.uniqueKey}]];
+            if ($("#d3id").attr("data-rendered") == "true") {
+                return;
+            }
+
+            $("#d3id").attr("data-rendered", "true");
+
+            $.ajax({
+                type: "GET",
+                url: "https://api.openreq.eu/ri-logging/frontend/change/" + projectUniqueKey,
+                beforeSend: function(request) {
+                    request.setRequestHeader("accept", "application/json");
+                    request.setRequestHeader("Authorization", "Bearer 7kyT5sGL8y5ax6qHJU32L4CJ");
+                },
+                processData: false,
+                success: function(result) {
+                    var models = [];
+                    var topNRequirements = new Map();
+                    for (var i in result["changes"]) {
+                        if (result["changes"][i]["requirementId"] == null) {
+                            continue;
+                        }
+
+                        var changeCount = result["changes"][i]["changeCount"];
+                        var changeCountSum = changeCount["title"] + changeCount["description"] + changeCount["status"];
+                        topNRequirements.set(i, changeCountSum);
+                    }
+
+                    const orderedTopNRequirements = new Map([...topNRequirements.entries()].sort((a, b) => b[1] - a[1]));
+
+                    var counter = 0;
+                    for (const i of orderedTopNRequirements.keys()) {
+                        var changeCount = result["changes"][i]["changeCount"];
+                        var requirementID = result["changes"][i]["requirementId"];
+                        if (counter++ >= 5) {
+                            break;
+                        }
+
+                        requirementInteractions[requirementID] = changeCount;
+                        models.push({
+                            "model_name": "R" + requirementID,
+                            "field1": Math.max(changeCount["title"], 0.07),
+                            "field2": Math.max(changeCount["description"], 0.07),
+                            "field3": Math.max(changeCount["status"], 0.07)
+                        });
+                    }
+
+                    $("#d3id").attr("data-rendered", "true");
+                    renderStatistics(models);
+                    $("#or-tab-requirement-interactions").fadeIn();
+                    $("[data-toggle=\"tooltip\"]").tooltip();
+                }
+            });
+        });
+
+        function renderStatistics(models) {
+            models = models.map(i => {
+                i.model_name = i.model_name;
+                return i;
+            });
+
+            var container = d3.select('#d3id'),
+                width = 500,
+                height = 300,
+                margin = {top: 30, right: 20, bottom: 30, left: 50},
+                barPadding = .2,
+                axisTicks = {qty: 5, outerSize: 0, dateFormat: '%m-%d'};
+
+            var svg = container
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            var xScale0 = d3.scaleBand().range([0, width - margin.left - margin.right]).padding(barPadding);
+            var xScale1 = d3.scaleBand();
+            var yScale = d3.scaleLinear().range([height - margin.top - margin.bottom, 0]);
+
+            var xAxis = d3.axisBottom(xScale0).tickSizeOuter(axisTicks.outerSize);
+            var yAxis = d3.axisLeft(yScale).ticks(axisTicks.qty).tickSizeOuter(axisTicks.outerSize);
+
+            xScale0.domain(models.map(d => d.model_name));
+            xScale1.domain(['field1', 'field2', 'field3']).range([0, xScale0.bandwidth()]);
+            yScale.domain([0, d3.max(models, d => d.field1 > d.field2 ? d.field1 : d.field2)]);
+
+            console.log(models);
+            var model_name = svg.selectAll(".model_name")
+                .data(models)
+                .enter().append("g")
+                .attr("class", "model_name")
+                .attr("transform", d => `translate(${xScale0(d.model_name)},0)`)
+                .attr("data-requirement-id", d => d.model_name.substr(1));
+
+            /* Add field1 bars */
+            model_name.selectAll(".bar.field1")
+                .data(d => [d])
+            .enter()
+                .append("rect")
+                .attr("class", "bar field1")
+                .style("fill","blue")
+                .attr("x", d => xScale1('field1'))
+            .attr("y", d => yScale(d.field1))
+            .attr("width", xScale1.bandwidth())
+                .attr("height", d => {
+                return height - margin.top - margin.bottom - yScale(d.field1)
+            });
+
+            /* Add field2 bars */
+            model_name.selectAll(".bar.field2")
+                .data(d => [d])
+            .enter()
+                .append("rect")
+                .attr("class", "bar field2")
+                .style("fill","red")
+                .attr("x", d => xScale1('field2'))
+            .attr("y", d => yScale(d.field2))
+            .attr("width", xScale1.bandwidth())
+                .attr("height", d => {
+                return height - margin.top - margin.bottom - yScale(d.field2)
+            });
+
+            /* Add field3 bars */
+            model_name.selectAll(".bar.field3")
+                .data(d => [d])
+            .enter()
+                .append("rect")
+                .attr("class", "bar field3")
+                .style("fill","green")
+                .attr("x", d => xScale1('field3'))
+            .attr("y", d => yScale(d.field3))
+            .attr("width", xScale1.bandwidth())
+                .attr("height", d => {
+                return height - margin.top - margin.bottom - yScale(d.field3)
+            });
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", `translate(0,${height - margin.top - margin.bottom})`)
+                .call(xAxis);
+
+            // Add the Y Axis
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+            $("g.model_name").each(function () {
+                var requirementID = $(this).attr("data-requirement-id");
+                var title = "<div><b>" + requirementsTitleMapping[requirementID.toString()] + "</b></div>";
+                title += "<div>" + requirementsDescriptionMapping[requirementID.toString()] + "</div><br />";
+                title += "<div style='text-align:left;'><div>Changes of title: " + requirementInteractions[requirementID.toString()]["title"] + "</div>";
+                title += "<div>Changes of description: " + requirementInteractions[requirementID.toString()]["description"] + "</div>";
+                title += "<div>Changes of status: " + requirementInteractions[requirementID.toString()]["status"] + "</div></div>";
+
+                $(this)
+                    .css("cursor", "help")
+                    .attr("data-toggle", "tooltip")
+                    .attr("data-placement", "top")
+                    .attr("data-html", "true")
+                    .attr("title", title);
+            });
+            $("[data-toggle=\"tooltip\"]").tooltip();
+        }
+    </script>
 </body>
 </html>

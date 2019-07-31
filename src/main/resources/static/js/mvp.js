@@ -5618,6 +5618,7 @@ class UIEventHandler {
             if (port != 443 && port != 80) {
                 prefix += ":" + port;
             }
+            console.log("iframe!!");
             $("#iframe-depenency-wheel").attr("src", prefix + "/project/" + projectID + "/statistics/graph/dependency");
         }
         this.bindUIEvents();
