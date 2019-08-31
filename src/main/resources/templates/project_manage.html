@@ -125,12 +125,17 @@
                 <i class="material-icons dp48">verified_user</i> <div><b>Congratulations!</b> The data model is consistent.</div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-error-message or-icon-alert alert alert-danger" role="alert">
-                <i class="material-icons dp48">error</i> <div><b>Error:</b> Your requirements model is inconsistent..</div>
+                <i class="material-icons dp48">error</i> <div><b>Error:</b> Your requirements model is inconsistent.
+                <div id="or-inconsistency-details-button">
+                    <a class="or-inconsistency-details-button-link waves-effect waves-light btn btn-small red darken-3">
+                    <i class="material-icons left">dvr</i> <span>See Details</span></a>
+                </div>
+            </div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-service-unavailable-message or-icon-alert alert alert-danger" role="alert">
                 <i class="material-icons dp48">error</i> <div><b>Error!</b> The consistency check service is not available! Please contact the administrator of this system.</div>
             </div>
-            <h3>New Dependencies</h3>
+            <h3>Create Dependency</h3>
             <ul class="or-requirement-list collapsible" data-collapsible="expandable">
                 <li>
                     <div class="collapsible-header" style="cursor:auto;">
@@ -859,6 +864,47 @@
                 <div class="col-md-11 or-no-dependency-placeholder-row-text">No (further) dependencies found.</div>
             </div>
             <div class="or-dependency-row row"></div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div class="or-inconsistencies-summary-container or-dialog-container">
+        <h1>Requirement Model Inconsistencies</h1>
+        <h2>Conflicts</h2>
+        <div class="or-conflict-dependencies">
+            <p>Conflicting Dependencies:</p>
+            <div class="or-conflict-list or-conflict-list-dependencies"></div>
+        </div>
+        <div class="or-conflict-estimations">
+            <p>Conflicting Estimations:</p>
+            <div class="or-conflict-list or-conflict-list-estimations"></div>
+        </div>
+        <hr />
+        <div class="or-inconsistencies-diagnosis">
+            <h2>How to get consistent?</h2>
+            <div>
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="or-tab-link-adapt-requirements nav-link active" href="#or-inconsistencies-diagnosis-requirements">Adapt Requirements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="or-tab-link-adapt-dependencies nav-link" href="#or-inconsistencies-diagnosis-dependencies">Adapt Dependencies</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="or-inconsistencies-diagnosis-requirements or-inconsistencies-container" style="display:none;">
+                <p>The following requirement(s) have to be adapted:
+                    <span class="or-inconsistencies-diagnosis-requirements-list"></span>
+                </p>
+                <p>The new release plan should look as follows:</p>
+                <div class="or-inconsistencies-diagnosis-requirements-releaseplan"></div>
+            </div>
+            <div class="or-inconsistencies-diagnosis-dependencies or-inconsistencies-container" style="display:none;">
+                <p>The following dependencies have to be removed:</p>
+                <div class="or-conflict-list or-inconsistencies-diagnosis-dependencies-list"></div>
+                <p>The new release plan should look as follows:</p>
+                <div class="or-inconsistencies-diagnosis-dependencies-releaseplan"></div>
+            </div>
         </div>
     </div>
 </div>

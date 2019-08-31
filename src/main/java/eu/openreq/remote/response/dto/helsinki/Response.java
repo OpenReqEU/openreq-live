@@ -66,7 +66,7 @@ public class Response {
     }
 
     @JsonProperty("Consistent")
-    public Boolean getConsistent() {
+    public Boolean isConsistent() {
         return consistent;
     }
 

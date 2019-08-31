@@ -765,6 +765,7 @@ class DataManager {
             this.issueData = data;
             $.getJSON(this.consistencyCheckUrl, function(data) {
                 this.consistencyIssueData = data;
+                console.log(data);
                 callback();
             }.bind(this));
 		}.bind(this));
@@ -1700,64 +1701,54 @@ class UIManager {
                 "to the maximum capacity of the corresponding release.", [UINotificationTag.CONSISTENCY_CHECK]);
             this.notificationCenter.addNotification(notification);
 
-            for (var idx in issueData.diagnosisConstraints) {
-                var constraint = issueData.diagnosisConstraints[idx];
-                var notification = null;
+            if ("constraintDiagnosis" in issueData) {
+                for (var idx in issueData.constraintDiagnosis.Diagnosis.DiagnosisRelationships) {
+                    var constraint = issueData.constraintDiagnosis.Diagnosis.DiagnosisRelationships[idx];
+                    var notification = null;
+                    if (constraint.Type == "requires") {
+                        var rx = parseInt(constraint.From);
+                        var ry = parseInt(constraint.To);
+                        var rxRequirement = requirementsMap[rx];
+                        var ryRequirement = requirementsMap[ry];
 
-                if (constraint.type == "GREATER_EQUAL_THAN") {
-                    var rx = constraint.rx;
-                    var ry = constraint.ry;
-                    var rxRequirement = requirementsMap[rx];
-                    var ryRequirement = requirementsMap[ry];
+                        //title += "There are inconsistencies, issues with requirement <requirements> take a look at dependency between rx and ry, ry and rz ...";
+                        var notificationID = "or-req-diag-gte-" + rx + "-" + ry;
+                        notification = new UINotification(notificationID, UINotificationType.DEPENDENCY,
+                            //"This dependency is (probably a.o.) responsible for an inconsistency " +
+                            //"in the requirements model. Please take a detailed look at this one.
+                            "Constraint inconsistency", "There is an inconsistency issue between requirement \""
+                            + rxRequirement.title + "\" (#" + rxRequirement.projectSpecificRequirementId + ") and requirement \""
+                            + ryRequirement.title + "\" (#" + ryRequirement.projectSpecificRequirementId +"). "
+                            + "Please take a look at the dependency between #" + rxRequirement.projectSpecificRequirementId
+                            + " and #" + ryRequirement.projectSpecificRequirementId + ".", [UINotificationTag.CONSISTENCY_CHECK],
+                            { rx: rx, ry: ry, type: "REQUIRES" });
+                    } else if (constraint.type == "excludes") {
+                        var rx = parseInt(constraint.From);
+                        var ry = parseInt(constraint.To);
 
-                    //title += "There are inconsistencies, issues with requirement <requirements> take a look at dependency between rx and ry, ry and rz ...";
-                    var notificationID = "or-req-diag-gte-" + rx + "-" + ry;
-                    notification = new UINotification(notificationID, UINotificationType.DEPENDENCY,
-                        //"This dependency is (probably a.o.) responsible for an inconsistency " +
-                        //"in the requirements model. Please take a detailed look at this one.
-                        "Constraint inconsistency", "There is an inconsistency issue between requirement \""
-                        + rxRequirement.title + "\" (#" + rxRequirement.projectSpecificRequirementId + ") and requirement \""
-                        + ryRequirement.title + "\" (#" + ryRequirement.projectSpecificRequirementId +"). "
-                        + "Please take a look at the dependency between #" + rxRequirement.projectSpecificRequirementId
-                        + " and #" + ryRequirement.projectSpecificRequirementId + ".", [UINotificationTag.CONSISTENCY_CHECK],
-                        { rx: rx, ry: ry, type: "REQUIRES" });
-                } else if (constraint.type == "EXCLUDES") {
-                    var rx = constraint.rx;
-                    var ry = constraint.ry;
+                        var notificationID = "or-req-diag-exc-" + rx + "-" + ry;
+                        notification = new UINotification(notificationID, UINotificationType.DEPENDENCY,
+                            "Constraint inconsistency", "There is an inconsistency issue with requirement " + ry
+                            + " take a look at the dependency between " + rx + " and " + ry + ".", [UINotificationTag.CONSISTENCY_CHECK],
+                            { rx: rx, ry: ry, type: "EXCLUDES" });
+                    } else if (constraint.type == "sum") {
+                        var releaseID = constraint.meta.releaseID;
+                        var notificationID = "or-req-diag-sum-" + releaseID;
+                        notification = new UINotification(notificationID, UINotificationType.RELEASE,
+                            "Constraint inconsistency", "There is an inconsistency issue. The overall effort of all " +
+                            "requirements in release " + releaseID +" exceeds the maximum capacity of this release.",
+                            [UINotificationTag.CONSISTENCY_CHECK], { releaseID: releaseID });
+                    } else {
+                        console.log("Error: Unhandled constraint type \"" + constraint.type + "\"");
+                        continue;
+                    }
 
-                    var notificationID = "or-req-diag-exc-" + rx + "-" + ry;
-                    notification = new UINotification(notificationID, UINotificationType.DEPENDENCY,
-                        "Constraint inconsistency", "There is an inconsistency issue with requirement " + ry
-                        + " take a look at the dependency between " + rx + " and " + ry + ".", [UINotificationTag.CONSISTENCY_CHECK],
-                        { rx: rx, ry: ry, type: "EXCLUDES" });
-                } else if (constraint.type == "SUM") {
-                    var releaseID = constraint.meta.releaseID;
-                    var notificationID = "or-req-diag-sum-" + releaseID;
-                    notification = new UINotification(notificationID, UINotificationType.RELEASE,
-                        "Constraint inconsistency", "There is an inconsistency issue. The overall effort of all " +
-                        "requirements in release " + releaseID +" exceeds the maximum capacity of this release.",
-                        [UINotificationTag.CONSISTENCY_CHECK], { releaseID: releaseID });
-                } else {
-                    console.log("Error: Unhandled constraint type \"" + constraint.type + "\"");
-                    continue;
+                    this.notificationCenter.addNotification(notification);
                 }
-
-                this.notificationCenter.addNotification(notification);
             }
 
             if (this.dataManager.dependencyData.length > 0) {
                 $(".or-consistency-check-error-message").fadeIn();
-            }
-
-            var helsinkiAnalysis = issueData.response.response;
-            if ("RelationshipsInconsistent_msg" in helsinkiAnalysis[0] && "Diagnosis_msg" in helsinkiAnalysis[1]) {
-                console.log(helsinkiAnalysis[0].RelationshipsInconsistent_msg);
-                var notificationID = "or-req-diag-0";
-                var notification = new UINotification(notificationID, UINotificationType.SERVICE_ISSUE,
-                    "Constraint inconsistency",
-                    helsinkiAnalysis[1].Diagnosis_msg + " => " + helsinkiAnalysis[0].RelationshipsInconsistent_msg,
-                    [UINotificationTag.CONSISTENCY_CHECK]);
-                this.notificationCenter.addNotification(notification);
             }
         } else if (issueData.consistent) {
             var notificationID = "or-global-consistency-success";
@@ -2728,6 +2719,8 @@ class UIEventHandler {
         $(".or-add-rating-attribute-button").unbind("click");
         $(".or-tweets-category-container").unbind("click");
         $(".or-import-requirement-button").unbind("click");
+        $("#or-inconsistency-details-button").unbind("click");
+        $(".nav-link").unbind("click");
 
         $(".or-delete-button").on("click", bindUIEvent(this, "deleteRequirementEvent"));
         $(".or-delete-issue-button").on("click", bindUIEvent(this, "deleteIssueEvent"));
@@ -2739,6 +2732,7 @@ class UIEventHandler {
         $("#or-save-button").on("click", bindUIEvent(this.uiManager, "save"));
 		$("#or-check-button").on("click", bindUIEvent(this.uiManager, "checkInconsistencies"));
 		$(".or-delete-release-button").click(bindUIEvent(this, "deleteReleaseEvent"));
+        $(".nav-link").click(bindUIEvent(this, "switchConsistentSolutionsEvent"));
 
 		if (!this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").bind("click", bindUIEvent(this, "editReleaseDescriptionEvent"));
@@ -2800,6 +2794,7 @@ class UIEventHandler {
         $(".or-add-rating-attribute-button").bind("click", bindUIEvent(this, "addRatingAttributeEvent"));
         $(".or-tweets-category-container").bind("click", bindUIEvent(this, "showTweetsContainerEvent"));
         $(".or-import-requirement-button").bind("click", bindUIEvent(this, "importTwitterRequirementEvent"));
+        $("#or-inconsistency-details-button").bind("click", bindUIEvent(this, "showInconsistencySummaryClickEvent"));
 
         if (this.dataManager.projectData.projectSettings.readOnly) {
             $(".or-form-edit-release-description").css("color", "#d2d2d2").css("cursor", "default");
@@ -3704,6 +3699,195 @@ class UIEventHandler {
 	    tr.children("td.or-requirement-description").children(".or-requirement-description").summernote("code", requirementText);
         this.bindUIEvents();
         this.uiManager.showUnsavedChangesNotificationIfNecessary();
+	    return false;
+    }
+
+    showInconsistencySummaryClickEvent(event, thisObj) {
+        var consistencyIssueData = this.dataManager.consistencyIssueData;
+        var requirements = this.dataManager.requirementData;
+        var requirementsMap = {};
+        for (var idx in requirements) {
+            var requirement = requirements[idx];
+            requirementsMap[requirement.id] = requirement;
+        }
+
+        var generalAnalysis = consistencyIssueData.generalAnalysis;
+        $(".nav-link").removeClass("active");
+        $(".or-inconsistencies-container").hide();
+        $(".or-inconsistencies-diagnosis").hide();
+        $(".or-conflict-list").children().remove();
+        $(".or-conflict-list").hide();
+        var dependencySignMap = {
+            IMPLIES: "&ge;",
+            REQUIRES: "&gt;",
+            EXCLUDES: "x",
+            INCOMPATIBLE: "&ne;"
+        };
+
+        $(".or-conflict-dependencies").hide();
+        $(".or-conflict-estimations").hide();
+
+        if (generalAnalysis.RelationshipsInconsistent.length > 0) {
+            for (var i in generalAnalysis.RelationshipsInconsistent) {
+                var conflictingDependency = generalAnalysis.RelationshipsInconsistent[i];
+                var fromRequirement = requirementsMap[conflictingDependency.From];
+                var toRequirement = requirementsMap[conflictingDependency.To];
+                var fromRequirementDiv = $("<div></div>")
+                    .addClass("col s5 or-dependency-left")
+                    .append($("<div></div>").addClass("or-dependency-title")
+                        .text("[R" + fromRequirement.projectSpecificRequirementId + "] " + fromRequirement.title))
+                    .append($("<div></div>").addClass("or-dependency-description")
+                        .text(fromRequirement.description.replace(/<\/?[^>]+(>|$)/g, ""), 140));
+                var dependencyTypeDiv = $("<div></div>")
+                    .addClass("col s2 or-dependency-middle")
+                    .append($("<div></div>").addClass("or-dependency-type dp48")
+                        .html(dependencySignMap[conflictingDependency.Type.toUpperCase()]));
+                var toRequirementDiv = $("<div></div>")
+                    .addClass("col s5 or-dependency-right")
+                    .append($("<div></div>").addClass("or-dependency-title")
+                        .text("[R" + toRequirement.projectSpecificRequirementId + "] " + toRequirement.title))
+                    .append($("<div></div>").addClass("or-dependency-description")
+                        .text(toRequirement.description.replace(/<\/?[^>]+(>|$)/g, ""), 140));
+                var rowOfConflictingDependencyDiv = $("<div></div>")
+                    .addClass("or-dependency-conflict or-dependency-row row or-dependency-entity")
+                    .append(fromRequirementDiv)
+                    .append(dependencyTypeDiv)
+                    .append(toRequirementDiv);
+                $(".or-conflict-list-dependencies").append(rowOfConflictingDependencyDiv);
+            }
+            $(".or-conflict-dependencies").show();
+            $(".or-conflict-list").show();
+        }
+
+        if ("requirementDiagnosis" in consistencyIssueData) {
+            var reqDiagnosis = consistencyIssueData.requirementDiagnosis.Diagnosis;
+            var requirementsToBeReassigned = reqDiagnosis.DiagnosisRequirements;
+            $(".or-inconsistencies-diagnosis-requirements-releaseplan").children().remove();
+            if ((typeof requirementsToBeReassigned !== "undefined") && (requirementsToBeReassigned.length > 0)) {
+                // show inconsistencies
+                var requirementsTextList = [];
+                for (var i in requirementsToBeReassigned) {
+                    var requirementID = requirementsToBeReassigned[i];
+                    var requirementOfRelease = requirementsMap[requirementID];
+                    requirementsTextList.push(requirementOfRelease.title + " (#" + requirementOfRelease.projectSpecificRequirementId + ")");
+                }
+                $(".or-inconsistencies-diagnosis-requirements-list").text(requirementsTextList.join(", "));
+
+                // show release plan
+                var groupedReleases = {};
+                for (var i in consistencyIssueData.requirementDiagnosis.Releases) {
+                    var release = consistencyIssueData.requirementDiagnosis.Releases[i];
+                    var releaseName = ((release.Release == "0" || release.Release == "unassigned") ? "Unassigned Requirements" : ("Release " + release.Release));
+                    if (releaseName in groupedReleases) {
+                        groupedReleases[releaseName] = groupedReleases[releaseName].concat(release.RequirementsAssigned);
+                    } else {
+                        groupedReleases[releaseName] = release.RequirementsAssigned;
+                    }
+                }
+                for (var releaseName in groupedReleases) {
+                    var assignedRequirements = groupedReleases[releaseName];
+                    var releaseDiv = $("<div></div>").append($("<div></div>").css("font-weight", "bold").text(releaseName + ":"));
+                    if (assignedRequirements.length == 0) {
+                        releaseDiv.append($("<div></div>").text("No requirements."));
+                    }
+                    for (var j in assignedRequirements) {
+                        var requirementID = assignedRequirements[j];
+                        var requirementOfRelease = requirementsMap[requirementID];
+                        releaseDiv.append($("<div></div>").text("- " + requirementOfRelease.title));
+                    }
+                    $(".or-inconsistencies-diagnosis-requirements-releaseplan").append(releaseDiv);
+                }
+                $(".or-inconsistencies-diagnosis").show();
+            }
+        }
+
+        if ("constraintDiagnosis" in consistencyIssueData) {
+            var constraintDiagnosis = consistencyIssueData.constraintDiagnosis.Diagnosis;
+            var dependenciesToBeRemoved = constraintDiagnosis.DiagnosisRelationships;
+            $(".or-inconsistencies-diagnosis-dependencies-releaseplan").children().remove();
+            if ((typeof dependenciesToBeRemoved !== "undefined") && (dependenciesToBeRemoved.length > 0)) {
+                // show inconsistencies
+                $(".or-inconsistencies-diagnosis-dependencies-list").children().remove();
+                for (var i in dependenciesToBeRemoved) {
+                    var conflictingDependency = dependenciesToBeRemoved[i];
+                    var fromRequirement = requirementsMap[conflictingDependency.From];
+                    var toRequirement = requirementsMap[conflictingDependency.To];
+                    var fromRequirementDiv = $("<div></div>")
+                        .addClass("col s5 or-dependency-left")
+                        .append($("<div></div>").addClass("or-dependency-title")
+                            .text("[R" + fromRequirement.projectSpecificRequirementId + "] " + fromRequirement.title))
+                        .append($("<div></div>").addClass("or-dependency-description")
+                            .text(fromRequirement.description.replace(/<\/?[^>]+(>|$)/g, ""), 140));
+                    var dependencyTypeDiv = $("<div></div>")
+                        .addClass("col s2 or-dependency-middle")
+                        .append($("<div></div>").addClass("or-dependency-type dp48")
+                            .html(dependencySignMap[conflictingDependency.Type.toUpperCase()]));
+                    var toRequirementDiv = $("<div></div>")
+                        .addClass("col s5 or-dependency-right")
+                        .append($("<div></div>").addClass("or-dependency-title")
+                            .text("[R" + toRequirement.projectSpecificRequirementId + "] " + toRequirement.title))
+                        .append($("<div></div>").addClass("or-dependency-description")
+                            .text(toRequirement.description.replace(/<\/?[^>]+(>|$)/g, ""), 140));
+                    var rowOfConflictingDependencyDiv = $("<div></div>")
+                        .addClass("or-dependency-conflict or-dependency-row row or-dependency-entity")
+                        .append(fromRequirementDiv)
+                        .append(dependencyTypeDiv)
+                        .append(toRequirementDiv);
+                    $(".or-inconsistencies-diagnosis-dependencies-list").append(rowOfConflictingDependencyDiv);
+                }
+
+                // show release plan
+                var groupedReleases = {};
+                for (var i in consistencyIssueData.constraintDiagnosis.Releases) {
+                    var release = consistencyIssueData.constraintDiagnosis.Releases[i];
+                    var releaseName = ((release.Release == "0" || release.Release == "unassigned") ? "Unassigned Requirements" : ("Release " + release.Release));
+                    if (releaseName in groupedReleases) {
+                        groupedReleases[releaseName] = groupedReleases[releaseName].concat(release.RequirementsAssigned);
+                    } else {
+                        groupedReleases[releaseName] = release.RequirementsAssigned;
+                    }
+                }
+                for (var releaseName in groupedReleases) {
+                    var assignedRequirements = groupedReleases[releaseName];
+                    var releaseDiv = $("<div></div>").append($("<div></div>").css("font-weight", "bold").text(releaseName + ":"));
+                    if (assignedRequirements.length == 0) {
+                        releaseDiv.append($("<div></div>").text("No requirements."));
+                    }
+                    for (var j in assignedRequirements) {
+                        var requirementID = assignedRequirements[j];
+                        var requirementOfRelease = requirementsMap[requirementID];
+                        releaseDiv.append($("<div></div>").text("- " + requirementOfRelease.title));
+                    }
+                    $(".or-inconsistencies-diagnosis-dependencies-releaseplan").append(releaseDiv);
+                }
+
+                $(".or-inconsistencies-diagnosis").show();
+            } else {
+                $(".or-tab-link-adapt-dependencies").addClass("or-tab-link-disabled").css("pointer-events", "none");
+            }
+        }
+
+        var inconsistenciesContainer = $(".or-inconsistencies-summary-container");
+        var inconsistenciesContainerContent = inconsistenciesContainer.wrap('<p/>').parent().html();
+        inconsistenciesContainer.unwrap();
+
+        swal({
+            html: inconsistenciesContainerContent,
+            showCancelButton: true,
+            cancelButtonText: "Close",
+            showConfirmButton: false,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Inconsistencies"
+        }).then(function (result) {
+            if (("value" in result) && result.value) {
+                uiEventHandler.bindUIEvents();
+                return true;
+            }
+        }.bind(this));
+        $(".swal2-popup").css("width", "800px");
+        $(".or-tab-link-adapt-requirements").addClass("active");
+        $(".or-inconsistencies-diagnosis-requirements").fadeIn();
+        this.bindUIEvents();
 	    return false;
     }
 
@@ -6324,7 +6508,16 @@ class UIEventHandler {
 		return false;
 	}
 
-	expandReleaseContainer(liSelector) {
+    switchConsistentSolutionsEvent(event, thisObj) {
+	    $(".nav-link").removeClass("active");
+	    $(thisObj).addClass("active");
+        $(".or-inconsistencies-container").hide();
+	    var containerName = $(thisObj).attr("href").substring(1);
+	    $("." + containerName).fadeIn();
+	    return false;
+    }
+
+    expandReleaseContainer(liSelector) {
 		liSelector.addClass("active");
 		liSelector.children(".collapsible-body").show();
 		liSelector.children(".collapsible-header").addClass("active");

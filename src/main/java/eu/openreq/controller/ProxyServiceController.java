@@ -8,6 +8,7 @@ import eu.openreq.remote.dto.RemoteSimilarRequirementsDto;
 import eu.openreq.remote.errorhandler.HelsinkiDependencyDetectionResponseErrorHandler;
 import eu.openreq.remote.request.dto.helsinki.*;
 import eu.openreq.remote.response.dto.helsinki.CheckConsistencyResponse;
+import eu.openreq.remote.response.dto.helsinki.Response;
 import eu.openreq.repository.DependencyRepository;
 import eu.openreq.repository.ProjectRepository;
 import eu.openreq.repository.RequirementRepository;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -214,7 +216,7 @@ public class ProxyServiceController {
             return result;
         }
 
-        final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "/models/projects/consistencyCheckAndDiagnosis";
+        final String url = "http://" + HELSINKI_SERVICE_HOST + ":" + HELSINKI_CONSISTENCY_SERVICE_PORT + "/models/projects/consistencyCheckAndDiagnosis?analysisOnly=false";
         final HttpEntity<CheckConsistencyRequest> request1 = new HttpEntity<>(checkConsistencyRequest, headers);
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -225,25 +227,37 @@ public class ProxyServiceController {
             String jsonReq = mapper.writeValueAsString(checkConsistencyRequest);
             System.out.println(jsonReq);
             ResponseEntity<CheckConsistencyResponse> responseEntity = restTemplate.postForEntity(url, request1, CheckConsistencyResponse.class);
-
             CheckConsistencyResponse body = responseEntity.getBody();
+            List<Response> responses = body.getResponse();
+
+            result.put("error", false);
+            result.put("status", responseEntity.getStatusCodeValue());
 
             boolean consistent = true;
-            String errorMessage = "";
-            if(body.getResponse().size() == 4) {
-                consistent = false;
+            for (Response resp : responses) {
+                if (resp.getAnalysisVersion().equals("analysis")) {
+                    result.put("generalAnalysis", resp);
+                } else if (resp.getAnalysisVersion().equals("reqdiag")) {
+                    result.put("requirementDiagnosis", resp);
+                } else if (resp.getAnalysisVersion().equals("reldiag")) {
+                    result.put("constraintDiagnosis", resp);
+                } else if (resp.getAnalysisVersion().equals("reqreldiag")) {
+                    result.put("mixedDiagnosis", resp);
+                }
+                if (!resp.isConsistent()) {
+                    consistent = false;
+                }
             }
 
-            result.put("status", responseEntity.getStatusCodeValue());
-            result.put("response", responseEntity.getBody());
             result.put("consistent", consistent);
+            result.put("fullHelsinkiResponse", body);
             //    result.put("diagnoses", diagnoses);
-           // result.put("explanation", body.getResponse().get(1).getDiagnosisMsg());
+            // result.put("explanation", body.getResponse().get(1).getDiagnosisMsg());
         } catch (HttpMessageNotReadableException exception) {
             try {
                 ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, request1, String.class);
                 result.put("error", true);
-                result.put("errorMessage", responseEntity.getBody());
+                result.put("helsinkiResponse", responseEntity.getBody());
             } catch (Exception innerException) {
                 result.put("error", true);
                 result.put("errorMessage", innerException.getMessage());
@@ -259,9 +273,14 @@ public class ProxyServiceController {
     }
 
     private CheckConsistencyRequest getCheckConsistencyRequestDto(ProjectDbo project) {
-
         //FIXME projectstate
-        Project projectDto = new Project(project.getId(), ProjectStates.ONGOING, project.getCreatedDate());
+        Project projectDto = new Project(
+                Long.toString(project.getId()),
+                project.getName(),
+                project.getDescription(),
+                ProjectStates.ONGOING,
+                project.getCreatedDate()
+        );
 
         List<Requirement> requirements = new ArrayList<>();
         List<Release> releases = new ArrayList<>();
@@ -303,8 +322,12 @@ public class ProxyServiceController {
 
         //add pool of unassigned requirements in release 0 (helsinki service requirement)
         List<RequirementDbo> unassignedRequirements = project.getUnassignedRequirements();
-        Release unassignedPoolRelease = new Release(0l, ReleaseDbo.Status.NEW,
-                0,
+        Release unassignedPoolRelease = new Release(
+                "0",
+                "Unassigned",
+                "",
+                ReleaseDbo.Status.NEW,
+                1000000000, // unlimited
                  project.getCreatedDate());
         unassignedPoolRelease.setRequirements(unassignedRequirements.stream()
                 .map(x -> Long.toString(x.getId()))
@@ -312,10 +335,14 @@ public class ProxyServiceController {
         releases.add(unassignedPoolRelease);
 
         //add valid releases counting up from 1 (helsinki service requirement)
-        long releaseCounter = 1;
+        int releaseCounter = 1;
         for (ReleaseDbo release : sortedReleases) {
             List<String> requirementsPerRelease = new ArrayList<>();
-            Release releaseDto = new Release(releaseCounter++, release.getStatus(),
+            Release releaseDto = new Release(
+                    Integer.toString(releaseCounter++),
+                    release.getName(),
+                    release.getDescription(),
+                    release.getStatus(),
                     release.getCapacity(),
                     release.getCreatedDate());
             for (RequirementDbo requirement : release.getRequirements()) {
@@ -328,7 +355,9 @@ public class ProxyServiceController {
     }
 
     private Requirement getRequirementDtoFromDbo(RequirementDbo requirement) {
-        return new Requirement(requirement.getId(), requirement.getStatus(),requirement.getAvgEffort(), requirement.getCreatedDate());
+        String strippedDescription = Utils.removeURL(Jsoup.parse(requirement.getDescription()).text()).trim();
+        return new Requirement(Long.toString(requirement.getId()), requirement.getTitle(), strippedDescription,
+                requirement.getStatus(), requirement.getAvgEffort(), requirement.getCreatedDate());
     }
 
 }

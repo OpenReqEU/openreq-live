@@ -46,7 +46,9 @@ public class APIController {
             @ApiResponse(code = 200, message = "Successfully created project"),
             @ApiResponse(code = 400, message = "The project can not be created.")
     })
-    @RequestMapping(value="/project/create", method=RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/project/create",
+            method=RequestMethod.POST,
+            produces="application/json")
     @ResponseBody
     public CreateProjectResponseDto createProjectJson(@RequestBody CreateProjectDto createProjectDto)
     {

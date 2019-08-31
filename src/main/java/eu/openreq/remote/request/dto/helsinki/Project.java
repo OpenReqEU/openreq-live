@@ -15,10 +15,12 @@ public class Project extends Element {
     private List<String> specifiedRequirements;
     private ProjectStates status;
 
-    public Project(Long id, ProjectStates status, Date createdAt) {
+    public Project(String id, String title, String description, ProjectStates status, Date createdAt) {
+        this.id = id;
+        this.name = title;
+        this.text = description;
         this.releases = new ArrayList<>();
         this.specifiedRequirements = new ArrayList<>();
-        this.id = id;
         this.status = status;
         this.created_at = createdAt;
     }

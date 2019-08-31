@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class Release {
 
     @JsonProperty("Release")
-    private Integer release;
+    private String release;
     @JsonProperty("Release_msg")
     private String releaseMsg;
     @JsonProperty("RequirementsAssigned")
@@ -46,12 +46,12 @@ public class Release {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("Release")
-    public Integer getRelease() {
+    public String getRelease() {
         return release;
     }
 
     @JsonProperty("Release")
-    public void setRelease(Integer release) {
+    public void setRelease(String release) {
         this.release = release;
     }
 

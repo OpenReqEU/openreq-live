@@ -1,17 +1,9 @@
 package eu.openreq.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import eu.openreq.Similarities;
-import eu.openreq.UserInfo;
-import eu.openreq.dbo.UserDbo;
-import eu.openreq.service.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -28,7 +20,6 @@ import eu.openreq.repository.RequirementRepository;
 import eu.openreq.repository.SkillRepository;
 import eu.openreq.repository.UserRepository;
 import eu.openreq.service.UserService;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class DefaultController {

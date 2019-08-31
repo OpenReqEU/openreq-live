@@ -15,8 +15,10 @@ public class Release extends Element {
     private List<String> requirements;
     private ReleaseDbo.Status status;
 
-    public Release(Long id, ReleaseDbo.Status status, int capacity, Date created) {
+    public Release(String id, String name, String description, ReleaseDbo.Status status, int capacity, Date created) {
         this.id = id;
+        this.name = name;
+        this.text = description;
         this.status = status;
         this.created_at = created;
         this.requirements = new ArrayList<>();
