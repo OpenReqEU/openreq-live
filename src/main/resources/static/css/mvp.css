@@ -1936,7 +1936,7 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
     text-align: left;
 }
 
-.or-conflict-list, .or-inconsistencies-diagnosis-requirements-releaseplan, .or-inconsistencies-diagnosis-dependencies-releaseplan {
+.or-conflict-list-estimations, .or-inconsistencies-diagnosis-requirements-releaseplan, .or-inconsistencies-diagnosis-dependencies-releaseplan {
     padding: 8px 20px;
     background-color: #fefcf8;
     border: 1px #cccbca solid;
