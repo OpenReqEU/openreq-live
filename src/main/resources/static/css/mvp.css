@@ -1944,7 +1944,7 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
     font-size: 14px;
 }
 
-.or-conflict-list {
+.or-conflict-list-estimations {
     background-color: #f2dede;
     border: 1px #ebccd1 solid;
     color: #a94442;
