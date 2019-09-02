@@ -1930,12 +1930,32 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
     border: 1px #cccbca solid;
 }
 
-.or-inconsistencies-diagnosis-requirements-releaseplan, .or-inconsistencies-diagnosis-dependencies-releaseplan {
+.or-conflict-list-estimations > li {
+    margin-left: 40px;
+    list-style-type: square !important;
+    text-align: left;
+}
+
+.or-conflict-list, .or-inconsistencies-diagnosis-requirements-releaseplan, .or-inconsistencies-diagnosis-dependencies-releaseplan {
     padding: 8px 20px;
     background-color: #fefcf8;
     border: 1px #cccbca solid;
     font-family: Monaco;
     font-size: 14px;
+}
+
+.or-conflict-list {
+    background-color: #f2dede;
+    border: 1px #ebccd1 solid;
+    color: #a94442;
+}
+
+.or-constraint-conflict > .row {
+    margin: 0;
+}
+
+.or-constraint-conflict > .row > div {
+    padding: 0;
 }
 
 .or-tab-link-disabled {

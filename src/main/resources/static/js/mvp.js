@@ -3727,6 +3727,22 @@ class UIEventHandler {
         $(".or-conflict-dependencies").hide();
         $(".or-conflict-estimations").hide();
 
+        for (var i in generalAnalysis.Releases) {
+            var releaseInfo = generalAnalysis.Releases[i];
+            if (("CapacityBalance" in releaseInfo) && (releaseInfo.CapacityBalance < 0)) {
+                var rowOfCapacityOverrun = $("<li></li>")
+                    .addClass("or-constraint-conflict")
+                    .html("The maximum capacity of <b>release " + releaseInfo.Release + "</b> has been exceeded."
+                        + "<div class=\"row\"><div class=\"col-sm-4 col-xs-4\"><u>Available capacity:</u></div>"
+                        + "<div class=\"col-sm-8 col-xs-8\">" + releaseInfo.AvailableCapacity + "</div></div>"
+                        + "<div class=\"row\"><div class=\"col-sm-4 col-xs-4\"><u>Used capacity:</u></div>"
+                        + "<div class=\"col-sm-8 col-xs-8\">" + releaseInfo.CapacityUsed + "</div>");
+                $(".or-conflict-list-estimations").append(rowOfCapacityOverrun);
+                $(".or-conflict-estimations").show();
+                $(".or-conflict-list-estimations").show();
+            }
+        }
+
         if (generalAnalysis.RelationshipsInconsistent.length > 0) {
             for (var i in generalAnalysis.RelationshipsInconsistent) {
                 var conflictingDependency = generalAnalysis.RelationshipsInconsistent[i];
