@@ -1,5 +1,7 @@
 package eu.openreq.remote.dto;
 
+import java.util.Objects;
+
 public class RemoteDomainCandidateDto {
 
 	private double confidence;
@@ -48,9 +50,16 @@ public class RemoteDomainCandidateDto {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof RemoteDomainCandidateDto))
 			return false;
 		return this.getDomainId() == ((RemoteDomainCandidateDto) obj).getDomainId();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(confidence, domain, domainId);
+	}
+
 }

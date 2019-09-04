@@ -435,32 +435,31 @@ public class Utils {
 //	        project3.addRelease(release6);
 
 	        Map<String, Set<UserDbo>> requirementAssignments = new HashMap<>();
-			final HashSet<UserDbo> loginAssignments = new HashSet<UserDbo>() {{
-				add(users.get(0));
-				add(users.get(1));
-				add(users.get(2));
-				add(users.get(3));
-				add(users.get(4));
-				add(users.get(5));
-				add(users.get(6));
-				add(users.get(7));
-				add(users.get(8));
-				add(users.get(9));
-			}};
-			final HashSet<UserDbo> registerAssignments = new HashSet<UserDbo>() {{
-				add(users.get(0));
-				add(users.get(2));
-				add(users.get(3));
-				add(users.get(4));
-				add(users.get(5));
-				add(users.get(6));
-				add(users.get(7));
-				add(users.get(8));
-				add(users.get(9));
-			}};
-			final HashSet<UserDbo> configuratorInterfaceAssignments = new HashSet<UserDbo>() {{
-				add(users.get(1));
-			}};
+			final HashSet<UserDbo> loginAssignments = new HashSet<>();
+			loginAssignments.add(users.get(0));
+			loginAssignments.add(users.get(1));
+			loginAssignments.add(users.get(2));
+			loginAssignments.add(users.get(3));
+			loginAssignments.add(users.get(4));
+			loginAssignments.add(users.get(5));
+			loginAssignments.add(users.get(6));
+			loginAssignments.add(users.get(7));
+			loginAssignments.add(users.get(8));
+			loginAssignments.add(users.get(9));
+
+			final HashSet<UserDbo> registerAssignments = new HashSet<>();
+			registerAssignments.add(users.get(0));
+			registerAssignments.add(users.get(2));
+			registerAssignments.add(users.get(3));
+			registerAssignments.add(users.get(4));
+			registerAssignments.add(users.get(5));
+			registerAssignments.add(users.get(6));
+			registerAssignments.add(users.get(7));
+			registerAssignments.add(users.get(8));
+			registerAssignments.add(users.get(9));
+
+			final HashSet<UserDbo> configuratorInterfaceAssignments = new HashSet<>();
+			configuratorInterfaceAssignments.add(users.get(1));
 
 	        requirementAssignments.put("Login", loginAssignments);
 	        requirementAssignments.put("Registrierung", registerAssignments);
