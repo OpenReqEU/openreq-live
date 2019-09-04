@@ -42,7 +42,7 @@
                     <textarea id="or-project-description" rows="3" class="materialize-textarea form-control or-editable-form-textarea-field or-project-description or-form-field-disabled" name="or-project-description" th:text="${project.description}"></textarea>
                 </div>
                 <div class="col-sm-1 col-xs-1">
-                    <a id="or-form-edit-project-description" href="#"><i class="material-icons dp48">edit</i></a>
+                    <a id="or-form-edit-project-description" href="#"><span class="material-icons dp48">edit</span></a>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
     <div class="ripple-wrap"><div class="ripple"></div></div>
     <div th:insert="fragments/basictemplate :: content(~{::#content})">
         <div id="content" class="container">
-            <h3><i class="or-title-icon material-icons">archive</i> Unassigned Requirements</h3>
+            <h3><span class="or-title-icon material-icons">archive</span> Unassigned Requirements</h3>
             <ul class="or-requirement-list collapsible" data-collapsible="expandable">
                 <li id="or-project-unassigned-requirements-container">
                     <div class="collapsible-header" style="cursor:auto;">
@@ -75,7 +75,7 @@
                             </tbody>
                         </table>
                         <div class="or-add-button-container">
-                            <a id="or-add-unassigned-requirement-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Requirement</a>
+                            <a id="or-add-unassigned-requirement-button" class="waves-effect waves-light btn blue darken-3"><span class="material-icons left">add</span> Add Requirement</a>
                         </div>
                     </div>
                 </li>
@@ -90,16 +90,16 @@
                 </select>
                 <label>Visibility of releases:</label>
             </div>
-            <h3><i class="or-title-icon material-icons">move_to_inbox</i> Release Plan</h3>
+            <h3><span class="or-title-icon material-icons">move_to_inbox</span> Release Plan</h3>
             <form id="or-project-release-requirement-form" autocomplete="off" action="#" method="post">
                 <ul class="or-release-list collapsible" data-collapsible="expandable">
                     <li id="or-no-release-found-placeholder">
-                        <div class="collapsible-header" style="cursor:auto;"><i class="material-icons" style="color:#dad6c1;">info</i>Click on the "+" button to add a release.</div>
+                        <div class="collapsible-header" style="cursor:auto;"><span class="material-icons" style="color:#dad6c1;">info</span>Click on the "+" button to add a release.</div>
                     </li>
                 </ul>
                 <p>&nbsp;</p>
                 <div class="center" id="or-save-button-container" style="display:none;">
-                    <a id="or-save-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">backup</i>Save</a>
+                    <a id="or-save-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><span class="material-icons left" style="font-size:24px;">backup</span>Save</a>
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                 </div>
@@ -108,7 +108,7 @@
     </div>
     <div class="fixed-action-btn vertical">
         <a id="or-add-release-button" class="btn-floating btn-large waves-effect waves-light orange darken-4 z-depth-3" href="#" data-toggle="tooltip" data-placement="left" title="Click to add a new release.">
-            <i class="material-icons">add</i>
+            <span class="material-icons">add</span>
         </a>
     </div>
     <div class="tap-target" data-activates="or-add-release-button">
@@ -122,18 +122,18 @@
     <div class="maincontainer">
         <div class="container">
             <div class="or-consistency-check-message or-consistency-check-success-message or-icon-alert alert alert-success" role="alert">
-                <i class="material-icons dp48">verified_user</i> <div><b>Congratulations!</b> The data model is consistent.</div>
+                <span class="material-icons dp48">verified_user</span> <div><strong>Congratulations!</strong> The data model is consistent.</div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-error-message or-icon-alert alert alert-danger" role="alert">
-                <i class="material-icons dp48">error</i> <div><b>Error:</b> Your requirements model is inconsistent.
+                <span class="material-icons dp48">error</span> <div><strong>Error:</strong> Your requirements model is inconsistent.
                 <div id="or-inconsistency-details-button">
                     <a class="or-inconsistency-details-button-link waves-effect waves-light btn btn-small red darken-3">
-                    <i class="material-icons left">dvr</i> <span>See Details</span></a>
+                    <span class="material-icons left">dvr</span> <span>See Details</span></a>
                 </div>
             </div>
             </div>
             <div class="or-consistency-check-message or-consistency-check-service-unavailable-message or-icon-alert alert alert-danger" role="alert">
-                <i class="material-icons dp48">error</i> <div><b>Error!</b> The consistency check service is not available! Please contact the administrator of this system.</div>
+                <span class="material-icons dp48">error</span> <div><strong>Error!</strong> The consistency check service is not available! Please contact the administrator of this system.</div>
             </div>
             <h3>Create Dependency</h3>
             <ul class="or-requirement-list collapsible" data-collapsible="expandable">
@@ -150,8 +150,8 @@
                 </li>
                 <li>
                     <div class="or-add-dependency-button">
-                        <a class="or-add-dependency-button-link waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Dependency</a>
-                        <a class="or-import-dependency-button-link waves-effect waves-light btn blue darken-3"><i class="material-icons left">library_add</i> Import Recommendations</a>
+                        <a class="or-add-dependency-button-link waves-effect waves-light btn blue darken-3"><span class="material-icons left">add</span> Add Dependency</a>
+                        <a class="or-import-dependency-button-link waves-effect waves-light btn blue darken-3"><span class="material-icons left">library_add</span> Import Recommendations</a>
                     </div>
                 </li>
             </ul>
@@ -159,14 +159,14 @@
             <ul class="collapsible" data-collapsible="expandable">
                 <li id="or-no-dependency-found-placeholder">
                     <div class="collapsible-header" style="cursor:auto;padding:10px 10px;">
-                        <i class="material-icons" style="color:#dad6c1;">info</i> No dependency exists yet.
+                        <span class="material-icons" style="color:#dad6c1;">info</span> No dependency exists yet.
                     </div>
                 </li>
                 <li class="or-dependency-list"></li>
             </ul>
             <p>&nbsp;</p>
             <div class="center">
-                <a id="or-check-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">refresh</i>Check consistency</a>
+                <a id="or-check-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><span class="material-icons left" style="font-size:24px;">refresh</span>Check consistency</a>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -180,7 +180,7 @@
         <div class="container">
             <h3>Statistics</h3>
             <div>
-                <iframe id="iframe-depenency-wheel" frameBorder="0"></iframe>
+                <iframe id="iframe-depenency-wheel" title="Requirement Dependency Wheel" frameBorder="0"></iframe>
             </div>
         </div>
     </div>
@@ -207,7 +207,7 @@
                             </table>
                         </div>
                         <div class="or-add-button-container" style="margin-top:0;">
-                            <a id="or-add-issue-button" class="waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Issue</a>
+                            <a id="or-add-issue-button" class="waves-effect waves-light btn blue darken-3"><span class="material-icons left">add</span> Add Issue</a>
                         </div>
                     </li>
                 </ul>
@@ -221,12 +221,12 @@
     </div>
 </div>
 <ul id="or-menu-dropdown" class="dropdown-content">
-  <li id="or-share-menu-button"><a class="or-share-button" href="#"><i class="material-icons">share</i>Share Project</a></li>
-  <li><a id="or-assessment-scheme-button" href="#"><i class="material-icons">assessment</i>Specify Rating Dimensions</a></li>
-  <li><a id="or-import-requirements-twitter-button" href="#"><i class="material-icons">open_in_browser</i>Import Requirements from Twitter</a></li>
-  <li><a id="or-move-requirements-button" href="#"><i class="material-icons">drag_handle</i>Move Requirements</a></li>
-  <li><a id="or-delete-requirements-button" href="#"><i class="material-icons">delete</i>Delete Requirements</a></li>
-  <li><a id="or-project-settings-button" href="#"><i class="material-icons">settings</i>Project Settings</a></li>
+  <li id="or-share-menu-button"><a class="or-share-button" href="#"><span class="material-icons">share</span>Share Project</a></li>
+  <li><a id="or-assessment-scheme-button" href="#"><span class="material-icons">assessment</span>Specify Rating Dimensions</a></li>
+  <li><a id="or-import-requirements-twitter-button" href="#"><span class="material-icons">open_in_browser</span>Import Requirements from Twitter</a></li>
+  <li><a id="or-move-requirements-button" href="#"><span class="material-icons">drag_handle</span>Move Requirements</a></li>
+  <li><a id="or-delete-requirements-button" href="#"><span class="material-icons">delete</span>Delete Requirements</a></li>
+  <li><a id="or-project-settings-button" href="#"><span class="material-icons">settings</span>Project Settings</a></li>
   <!-- poll, equalizer, insert_chart, rate_review, star, star_border, insert_chart, featured_play_list, list, view_list, format_list_numbered, assignment, comment -->
 </ul>
 <ul id="or-dependency-type-menu-dropdown" class="dropdown-content" style="width:80px;">
@@ -384,7 +384,7 @@
               </tbody>
             </table>
             <div class="or-add-button-container">
-                <a class="or-add-rating-attribute-button waves-effect waves-light btn blue darken-3"><i class="material-icons left">add</i> Add Dimension</a>
+                <a class="or-add-rating-attribute-button waves-effect waves-light btn blue darken-3"><span class="material-icons left">add</span> Add Dimension</a>
             </div>
         </div>
         <div class="or-stakeholder-rating-scheme">
@@ -400,11 +400,11 @@
     <div class="or-rating-selection-container">
         <h2>Please select:</h2>
         <div style="text-align:center;">
-            <a class="or-rating-self-vote waves-effect waves-light btn"><i class="material-icons left">rate_review</i> I Vote</a>
+            <a class="or-rating-self-vote waves-effect waves-light btn"><span class="material-icons left">rate_review</span> I Vote</a>
         </div>
         <p>&nbsp;</p>
         <div style="text-align:center;">
-            <a class="or-rating-delegate-vote waves-effect waves-light btn"><i class="material-icons left">forward</i> Other Stakeholders should vote</a>
+            <a class="or-rating-delegate-vote waves-effect waves-light btn"><span class="material-icons left">forward</span> Other Stakeholders should vote</a>
         </div>
         <p>&nbsp;</p>
     </div>
@@ -433,7 +433,7 @@
         <h1>Evaluation of Requirement</h1>
         <h2 class="or-basic-rating-subtitle"></h2>
 		<div class="alert alert-warning" style="font-size:16px;">
-		  <b>Note:</b> Please keep in mind that high profit leads to high utility value.
+		  <strong>Note:</strong> Please keep in mind that high profit leads to high utility value.
 		  Furthermore, a low risk as well as a low effort leads to a high utility value.
 		</div>
         <div class="or-stakeholder-delegate-container">
@@ -469,7 +469,7 @@
                     <input class="or-search-user" placeholder="Enter name..." />
                 </div>
                 <div class="col-sm-3">
-                    <a class="or-complete-action-btn or-assign-stakeholder-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">person_add</i> Propose</a>
+                    <a class="or-complete-action-btn or-assign-stakeholder-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><span class="material-icons left">person_add</span> Propose</a>
                 </div>
             </div>
             <div class="ia-table-section ia-wide">
@@ -482,8 +482,8 @@
                 <tr class="or-rating-specific-content">
                     <th></th>
                     <th></th>
-                    <th class="or-rate-stakeholder-attribute-appropriateness or-rate-stakeholder-attribute center" colspan="2"><i class="or-rating-attribute-icon material-icons left">fitness_center</i>Appropriateness</th>
-                    <th class="or-rate-stakeholder-attribute-availability or-rate-stakeholder-attribute center" colspan="2"><i class="or-rating-attribute-icon material-icons left">access_time</i>Availability</th>
+                    <th class="or-rate-stakeholder-attribute-appropriateness or-rate-stakeholder-attribute center" colspan="2"><span class="or-rating-attribute-icon material-icons left">fitness_center</span>Appropriateness</th>
+                    <th class="or-rate-stakeholder-attribute-availability or-rate-stakeholder-attribute center" colspan="2"><span class="or-rating-attribute-icon material-icons left">access_time</span>Availability</th>
                     <th class="or-bottom-rating-border"></th>
                     <th></th>
                 </tr>
@@ -536,7 +536,7 @@
                     <input class="or-search-user" placeholder="Enter name or email address..." />
                 </div>
                 <div class="col-sm-5">
-                    <a class="or-complete-action-btn or-delegate-vote-user-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><i class="material-icons left">send</i> Delegate</a>
+                    <a class="or-complete-action-btn or-delegate-vote-user-btn waves-effect waves-light btn btn-tiny btn-primary blue darken-3" href="#" role="button"><span class="material-icons left">send</span> Delegate</a>
                 </div>
             </div>
             <div class="ia-table-section ia-wide">
@@ -628,13 +628,13 @@
                     <form style="background-color: #ececec;margin-bottom: 0; border-radius: 10px;">
                         <div class="or-message-container-row row">
                             <div class="input-field col s9">
-                                <i class="material-icons prefix">message</i>
+                                <span class="material-icons prefix">message</span>
                                 <textarea id="or-new-message-icon" class="or-new-message-textarea materialize-textarea" row="1" style="padding:0 !important;"></textarea>
                                 <label for="or-new-message-icon">Description of your argument</label>
                             </div>
                             <div class="input-field col s3">
                                 <a class="or-message-assignment waves-effect waves-light btn blue darken-3" href="#">
-                                    <i class="material-icons left">send</i> Send
+                                    <span class="material-icons left">send</span> Send
                                 </a>
                             </div>
                         </div>
@@ -662,10 +662,10 @@
                     <div class="col s2"></div>
                     <div class="col s8">
                         <div class="alert alert-warning" style="font-size:16px;">
-                            <b>Note:</b> Your argument must be assigned to at least one of the following dimensions.
+                            <strong>Note:</strong> Your argument must be assigned to at least one of the following dimensions.
                         </div>
                         <div class="or-no-dimension-selected-error alert alert-danger" style="font-size:16px;display:none;">
-                            <b>Error:</b> You must select at least one dimension!
+                            <strong>Error:</strong> You must select at least one dimension!
                         </div>
                     </div>
                     <div class="col s2"></div>
@@ -680,7 +680,7 @@
                 <div class="row">
                     <div class="col s12">
                         <a class="or-message-submit waves-effect waves-light btn blue darken-3" href="#">
-                            <i class="material-icons left">send</i> Send
+                            <span class="material-icons left">send</span> Send
                         </a>
                     </div>
                 </div>
@@ -695,7 +695,7 @@
                             <span>
                                 <input class="or-checkbox filled-in" type="checkbox" id="filter-conflicts">
                                 <label class="or-checkbox-label" for="filter-conflicts">Only conflicts</label>
-                                <i class="or-rating-attribute-icon material-icons" for="filter-conflicts">flash_on</i>
+                                <span class="or-rating-attribute-icon material-icons" for="filter-conflicts">flash_on</span>
                             </span>
                         </li>
                     </ul>
@@ -719,7 +719,7 @@
             </div>
             <div class="col s4 or-dependency-right"></div>
             <div class="col s2 or-dependency-delete">
-                <a class="or-delete-dependency-button" href="#"><i class="material-icons right">delete</i></a>
+                <a class="or-delete-dependency-button" href="#"><span class="material-icons right">delete</span></a>
             </div>
         </div>
     </div>

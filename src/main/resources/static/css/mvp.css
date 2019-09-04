@@ -513,11 +513,11 @@ h3 > .or-title-icon {
 		padding-right: 5px;
 	}
 
-	.or-form-edit-release-description > i {
+	.or-form-edit-release-description > span {
 		margin-right: 0;
 	}
 
-	.or-delete-release-button > i {
+	.or-delete-release-button > span {
 		margin-left: 0;
 	}
 
@@ -578,7 +578,7 @@ h3 > .or-title-icon {
 	color: #337ab7;
 }
 
-.or-rate-link > i, .or-stakeholder-assign-link > i {
+.or-rate-link > span, .or-stakeholder-assign-link > span {
 	display:block;
 	text-align:center;
 	margin-left: auto;
@@ -597,7 +597,7 @@ h3 > .or-title-icon {
     border: 4px #943620 solid;
 }
 
-.or-rating-conflict-indicator > i {
+.or-rating-conflict-indicator > span {
 	margin-right: 0;
 }
 
@@ -890,7 +890,7 @@ h2.or-subtitle {
 	display: none;
 }
 
-.dropdown-content li > a > i {
+.dropdown-content li > a > span {
     margin: 0 12px 0 0;
 }
 
@@ -954,7 +954,7 @@ td.or-requirement-description > .note-editor > .note-editing-area > .note-editab
     box-shadow: 0 1px 0 0 #26a69a !important;
 }
 
-.note-btn > i {
+.note-btn > span {
     color: #FFFFFF !important;
     cursor: pointer;
 }
@@ -1201,11 +1201,11 @@ input.select-dropdown {
 }
 
 
-.or-requirement-move > i.material-icons {
+.or-requirement-move > span.material-icons {
 	margin-left: 0;
 }
 
-.or-requirement-social-popularity > div > div > i {
+.or-requirement-social-popularity > div > div > span {
 	margin-right: 0;
 }
 
@@ -1501,7 +1501,7 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
 	padding-right: 15px;
 }
 
-.or-add-button-container > a > i {
+.or-add-button-container > a > span {
 	margin-right: 0.3rem;
 }
 
@@ -1515,11 +1515,14 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
     padding: 0 15px;
 }
 
-.or-inconsistency-details-button-link > i.material-icons {
+.or-inconsistency-details-button-link > span {
+    font-size: 12px;
+}
+
+.or-inconsistency-details-button-link > span.material-icons {
     font-size: 16px;
     margin-top: -3px;
 }
-
 
 .or-inconsistency-details-button-link > span {
     position: relative;
@@ -1634,7 +1637,7 @@ table.or-project-requirement-table > tbody > tr > td, table.or-project-issue-tab
     background-color: #c797f7;
 }
 
-.btn-floating i {
+.btn-floating span {
 	width: inherit !important;
 }
 

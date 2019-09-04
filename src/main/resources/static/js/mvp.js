@@ -443,7 +443,7 @@ function showBasicRatingConflict(inconsistencyLabel, basicRatings) {
             .attr("data-toggle", "tooltip")
             .attr("data-placement", "bottom")
             .attr("title", conflictMessage);
-        infoIconLink.append("<i class=\"material-icons\">flash_on</i>");
+        infoIconLink.append("<span class=\"material-icons\">flash_on</span>");
         inconsistencyLabel.html(infoIconLink);
         inconsistencyLabel.show();
     } else {
@@ -517,7 +517,7 @@ function showRatingConflict(inconsistencyLabel, ratingAttributeData, ratings) {
                                         .attr("data-toggle", "tooltip")
                                         .attr("data-placement", "bottom")
                                         .attr("title", conflictMessages.join("\n\n"));
-		infoIconLink.append("<i class=\"material-icons\">flash_on</i>");
+		infoIconLink.append("<span class=\"material-icons\">flash_on</span>");
 		inconsistencyLabel.html(infoIconLink);
 		inconsistencyLabel.show();
 	} else {
@@ -654,7 +654,7 @@ function showArgumentMAUTScore(inconsistencyLabel, requirement, requirementComme
             .attr("data-toggle", "tooltip")
             .attr("data-placement", "bottom")
             .attr("title", conflictMessages.join("\n\n"));
-        infoIconLink.append("<i class=\"material-icons\">flash_on</i>");
+        infoIconLink.append("<span class=\"material-icons\">flash_on</span>");
         inconsistencyLabel.html(infoIconLink);
         inconsistencyLabel.show();
         for (var attributeID in attributeConflicts) {
@@ -1879,7 +1879,7 @@ class UIManager {
 		// header
 		var dateLabel = $("<span></span>").addClass("badge or-date-badge waves-effect");
 		if (humanFriendlyEndDate != null) {
-			dateLabel.append($("<i></i>").addClass("material-icons").text("date_range"));
+			dateLabel.append($("<span></span>").addClass("material-icons").text("date_range"));
             dateLabel.append($("<span></span>").addClass("or-date-badge-text").text(humanFriendlyEndDate));
 		}
 
@@ -1900,7 +1900,7 @@ class UIManager {
                                                        .attr("autocomplete", "off")
                                                        .val(capacity);
 		var editReleaseNameInputColumn = $("<div></div>").addClass("col-sm-6 or-form-edit-release-description-col").append(editReleaseNameInput);
-		var editReleaseNameLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<i></i>").addClass("material-icons dp48").text("edit"));
+		var editReleaseNameLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<span></span>").addClass("material-icons dp48").text("edit"));
 		var editReleaseDescriptionLinkColumn = $("<div></div>").addClass("col-sm-1 or-form-edit-release-description-link-col").append(editReleaseNameLink);
         var capacityColumn = $("<div></div>").addClass("col-sm-2 or-form-edit-release-capacity-col")
             .append($("<label></label>").text("Capacity"))
@@ -1915,7 +1915,7 @@ class UIManager {
                                          .append(endDateField);
 		var deleteButton = $("<a></a>").addClass("or-delete-release-button")
                                        .attr("href", "#")
-                                       .append($("<i></i>").addClass("or-big-icon material-icons right").text("delete"));
+                                       .append($("<span></span>").addClass("or-big-icon material-icons right").text("delete"));
 		var deleteColumn = $("<div></div>").addClass("col-sm-1").append(deleteButton);
 		editReleaseTitleRow
             .append(editReleaseNameInputColumn)
@@ -1938,7 +1938,7 @@ class UIManager {
                                                                     .val(releaseDescription)
                                                                     .prop("disabled", true);
 		var editReleaseDescriptionInputColumn = $("<div></div>").addClass("col-sm-11 or-form-edit-release-description-col").attr("style", "margin:0;padding:0;").append(editReleaseDescriptionInput);
-		var editReleaseDescriptionLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<i></i>").addClass("material-icons dp48").text("edit"));
+		var editReleaseDescriptionLink = $("<a></a>").attr("href", "#").addClass("or-form-edit-release-description").append($("<span></span>").addClass("material-icons dp48").text("edit"));
 		var editReleaseDescriptionLinkColumn = $("<div></div>").addClass("col-sm-1 or-form-edit-release-description-link-col").append(editReleaseDescriptionLink);
 		editReleaseDescriptionRow.append(editReleaseDescriptionInputColumn).append(editReleaseDescriptionLinkColumn);
 		body.append($("<p></p>").addClass("flow-text").append(editReleaseDescriptionRow));
@@ -1971,7 +1971,7 @@ class UIManager {
 		requirementsTable.append($("<tbody></tbody>"));
 		var addRequirementButtonContainer = $("<div></div>").addClass("or-add-button-container");
 		var addRequirementButton = $("<a></a>").addClass("or-add-requirement-button waves-effect waves-light btn blue darken-3")
-                                               .append("<i class=\"material-icons left\">add</i> Add Requirement");
+                                               .append("<span class=\"material-icons left\">add</span> Add Requirement");
 		addRequirementButtonContainer.append(addRequirementButton);
 		if (this.dataManager.projectData.projectSettings.readOnly) {
             addRequirementButtonContainer.hide();
@@ -1979,7 +1979,7 @@ class UIManager {
 
         var noRequirementsDiv = $("<div></div>")
             .addClass("or-release-empty or-release-empty-" + releaseID + " alert alert-warning")
-            .append("<i class=\"material-icons\" style=\"color:#dad6c1;\">info</i>")
+            .append("<span class=\"material-icons\" style=\"color:#dad6c1;\">info</span>")
             .append($("<span></span>").text("No requirements have been assigned to this release so far."))
             .hide();
 		body.append($("<div></div>")
@@ -2065,7 +2065,7 @@ class UIManager {
 		//var display =  ? "block" : "none";
  		var td = $("<td></td>");
  		td.addClass("or-requirement-move");
-		td.append($("<i class=\"material-icons right\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Click and drag to move\" style=\"font-size:40px;\">drag_handle</i>"));
+		td.append($("<span class=\"material-icons right\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Click and drag to move\" style=\"font-size:40px;\">drag_handle</span>"));
 		if (this.uiEventHandler.isMoveable) {
 			tr.addClass("or-moveable");
 			td.show();
@@ -2119,7 +2119,7 @@ class UIManager {
         tr.append(td);
 
         td = $("<td></td>").addClass("or-requirement-social-popularity");
-		var div = $("<div></div>").append($("<div></div>").append($("<i></i>").addClass("fa fa-twitter")))
+		var div = $("<div></div>").append($("<div></div>").append($("<span></span>").addClass("fa fa-twitter")))
                                   .append($("<div></div>").text(((socialPopularity != null) ? socialPopularity.toFixed(2) : "-")));
 
 		if (socialPopularity != null) {
@@ -2138,7 +2138,7 @@ class UIManager {
             var proConIndicator = $("<div></div>").addClass("or-procon-indicator");
             updateProConIndicator(proConIndicator, numberOfPros, numberOfNeus, numberOfCons);
             var div = $("<div></div>").append($("<div></div>")
-                                          .append($("<i></i>").addClass("material-icons").text("message")))
+                                          .append($("<span></span>").addClass("material-icons").text("message")))
                                       .append($("<div></div>")
                                           .addClass("or-comment-count")
                                           .attr("data-comment-count", numberOfComments)
@@ -2171,7 +2171,7 @@ class UIManager {
             td.append(select);
 
             if (hasCurrentUserNotRated) {
-                td.append($("<div></div>").addClass("or-evaluation-result center").append($("<div></div>").addClass("or-rate-link").append("<i class=\"material-icons\">rate_review</i>").append("Click to rate")));
+                td.append($("<div></div>").addClass("or-evaluation-result center").append($("<div></div>").addClass("or-rate-link").append("<span class=\"material-icons\">rate_review</span>").append("Click to rate")));
             } else {
                 td.append($("<div></div>").addClass("or-evaluation-result center").text(averageResult.toFixed(2)));
                 showRatingStars = true;
@@ -2206,7 +2206,7 @@ class UIManager {
 			//td.append(rating);
 
 			if (hasCurrentUserNotRated && hasCurrentUserNotDelegatedVote) {
-				td.append($("<div></div>").addClass("center").append($("<div></div>").addClass("or-rate-link").append("<i class=\"material-icons\">rate_review</i>").append("Click to rate")));
+				td.append($("<div></div>").addClass("center").append($("<div></div>").addClass("or-rate-link").append("<span class=\"material-icons\">rate_review</span>").append("Click to rate")));
 			} else {
 				td.append($("<div></div>").addClass("center").text(mautResult.toFixed(2)));
 			}
@@ -2236,7 +2236,7 @@ class UIManager {
             var hasCurrentUserNotRated = !(currentUserID in ratedUsers);
 
             if (hasCurrentUserNotRated) {
-                td.append($("<div></div>").addClass("center").append($("<div></div>").addClass("or-rate-link").append("<i class=\"material-icons\">rate_review</i>").append("Click to rate")));
+                td.append($("<div></div>").addClass("center").append($("<div></div>").addClass("or-rate-link").append("<span class=\"material-icons\">rate_review</span>").append("Click to rate")));
             } else {
                 td.append($("<div></div>").addClass("center").text(mautResult.toFixed(2)));
             }
@@ -2257,7 +2257,7 @@ class UIManager {
         if (requirementID > 0) {
             td.append($("<div></div>").addClass("center")
                 .append($("<div></div>").addClass("or-stakeholder-assign-link")
-                    .append("<i class=\"material-icons\">person_add</i>"))
+                    .append("<span class=\"material-icons\">person_add</span>"))
                 .append($("<div></div>").addClass("or-assigned-stakeholder-count")
                     .attr("data-stakeholder-count", responsibleStakeholders.length)
                     .text(responsibleStakeholders.length + " user" + ((responsibleStakeholders.length != 1) ? "s" : ""))));
@@ -2266,7 +2266,7 @@ class UIManager {
         tr.append(td);
 
         td = $("<td></td>").addClass("or-requirement-delete");
-		td.append($("<a class=\"or-delete-button btn-floating btn-small waves-effect waves-light red lighten-2\"><i class=\"material-icons\">delete</i></a>"));
+		td.append($("<a class=\"or-delete-button btn-floating btn-small waves-effect waves-light red lighten-2\"><span class=\"material-icons\">delete</span></a>"));
         if (this.uiEventHandler.isDeleteable) { td.show(); } else { td.hide(); }
 		tr.append(td);
 		tableSelector.children("tbody").append(tr);
@@ -2975,7 +2975,7 @@ class UIEventHandler {
 
 		var aRemove = $("<a></a>").attr("href", "#")
             .addClass(removeClass)
-            .html("<i class=\"material-icons\">close</i></a>");
+            .html("<span class=\"material-icons\">close</span></a>");
 
 		if (removeData !== undefined) {
 		    for (var key in removeData) {
@@ -2999,7 +2999,7 @@ class UIEventHandler {
 	createGuestUserTableRow(guestUserParticipationData, showUninviteButton) {
 		var divEmail = $("<div></div>").html(guestUserParticipationData.email);
 		var divStatus = $("<div></div>").addClass("or-shared-users-table-email").text("Confirmation pending...");
-		var aRemove = $("<a></a>").attr("href", "#").addClass("or-uninvite-guest-user-btn").html("<i class=\"material-icons\">close</i></a>");
+		var aRemove = $("<a></a>").attr("href", "#").addClass("or-uninvite-guest-user-btn").html("<span class=\"material-icons\">close</span></a>");
 
 		var tr = $("<tr></tr>");
 		tr.attr("data-email", guestUserParticipationData.email);
@@ -3135,7 +3135,7 @@ class UIEventHandler {
             .attr("data-is-anonymous-user", isAnonymousUser)
             .attr("data-user-fullname", fullName)
             .attr("title", "Rate " + fullName)
-            .append("<i class=\"material-icons right\">rate_review</i>");
+            .append("<span class=\"material-icons right\">rate_review</span>");
 
         var hideStakeholderButton = $("<a></a>")
             .attr("href", "#")
@@ -3147,7 +3147,7 @@ class UIEventHandler {
             .attr("data-is-anonymous-user", isAnonymousUser)
             .attr("data-user-fullname", fullName)
             .attr("title", "Hide " + fullName)
-            .append("<i class=\"material-icons right\">" + (isHidden ? "visibility" : "visibility_off") + "</i>");
+            .append("<span class=\"material-icons right\">" + (isHidden ? "visibility" : "visibility_off") + "</span>");
 
         var acceptStakeholderAssignmentButton = $("<a></a>")
             .attr("href", "#")
@@ -3157,7 +3157,7 @@ class UIEventHandler {
             .attr("data-user-id", userID)
             .attr("data-username", username)
             .attr("data-is-anonymous-user", isAnonymousUser)
-            .append("<i class=\"material-icons right\">person_pin</i>");
+            .append("<span class=\"material-icons right\">person_pin</span>");
 
         if (isAccepted) {
             acceptStakeholderAssignmentButton.attr("title", isCurrentUser ? "Unaccept me" : ("Unaccept " + fullName));
@@ -3213,7 +3213,7 @@ class UIEventHandler {
             .addClass("or-unassign-user-btn" + (isAnonymousUser ? " or-anonymous-user" : ""))
             .attr("data-user-id", userID)
             .attr("title", isCurrentUser ? "Unassign me" : ("Unassign " + fullName))
-            .html("<i class=\"material-icons\">close</i></a>");
+            .html("<span class=\"material-icons\">close</span></a>");
 
         var tr = $("<tr></tr>");
         if (isHidden) {
@@ -3329,7 +3329,7 @@ class UIEventHandler {
         if (deleteIssueID != null) {
             var deleteLink = $("<a></a>").addClass("or-delete-issue-button btn-floating btn-small waves-effect waves-light red lighten-2");
             deleteLink.attr("data-issue-id", deleteIssueID);
-            deleteLink.append($("<i></i>").addClass("material-icons").text("delete"));
+            deleteLink.append($("<span></span>").addClass("material-icons").text("delete"));
             td.append(deleteLink);
         }
         tr.append(td);
@@ -4139,7 +4139,7 @@ class UIEventHandler {
             var label = $("<label />").addClass("or-checkbox-label")
                 .attr("for", checkBoxID)
                 .text(attributeTitle);
-            var icon = $("<i></i>").addClass("or-rating-attribute-icon material-icons")
+            var icon = $("<span></span>").addClass("or-rating-attribute-icon material-icons")
                 .attr("for", checkBoxID)
                 .text(ratingAttribute.iconName);
 
@@ -4223,7 +4223,7 @@ class UIEventHandler {
         var spanAssignedDimensions = $("<span></span>").addClass("or-message-assigned-dimensions-icon-bar");
         for (var i in assignedDimensions) {
             var ratingAttribute = ratingAttributeIDMap[assignedDimensions[i]];
-            var dimensionIcon = $("<i></i>")
+            var dimensionIcon = $("<span></span>")
                 .addClass("or-rating-attribute-icon material-icons")
                 .text(ratingAttribute.iconName)
                 .attr("data-toggle", "tooltip")
@@ -4233,7 +4233,7 @@ class UIEventHandler {
         }
 
         if (conflictingCommentIDs.length > 0) {
-            var dimensionIcon = $("<i></i>")
+            var dimensionIcon = $("<span></span>")
                 .addClass("or-rating-attribute-icon material-icons")
                 .text("flash_on")
                 .attr("data-toggle", "tooltip")
@@ -4252,7 +4252,7 @@ class UIEventHandler {
         messageDiv.append(messageBodyDiv);
 
         if (isCurrentUser) {
-            var closeIcon = $("<i></i>")
+            var closeIcon = $("<span></span>")
                     .addClass("material-icons")
                     .text("close")
                     .attr("data-toggle", "tooltip")
@@ -4562,7 +4562,7 @@ class UIEventHandler {
 				var td = $("<td></td>").append($("<div></div>").text(personName));
 
 				if (isRatingOfCurrentUser) {
-					var editIcon = $("<i></i>").addClass("material-icons right").text("edit");
+					var editIcon = $("<span></span>").addClass("material-icons right").text("edit");
 					td.append($("<a></a>").attr("href", "#").addClass("or-rating-edit").append(editIcon));
 				}
 				tr.append(td);
@@ -4733,7 +4733,7 @@ class UIEventHandler {
 
 			for (var i in dataManager.ratingAttributeData) {
 				var ratingAttribute = dataManager.ratingAttributeData[i];
-				var ratingAttriuteIcon = $("<i></i>").addClass("material-icons left").text(ratingAttribute.iconName);
+				var ratingAttriuteIcon = $("<span></span>").addClass("material-icons left").text(ratingAttribute.iconName);
 				var ratingAttributeValueField = $("<select></select>").addClass("or-rating-field or-rating-field-" + ratingAttribute.id)
                                                                       .attr("name", "or-rating-" + ratingAttribute.id)
                                                                       .attr("data-rating-attribute-id", ratingAttribute.id)
@@ -4776,7 +4776,7 @@ class UIEventHandler {
 
 			for (var i in dataManager.ratingAttributeData) {
 				var ratingAttribute = dataManager.ratingAttributeData[i];
-				var ratingAttriuteIcon = $("<i></i>").addClass("or-rating-attribute-icon material-icons left").text(ratingAttribute.iconName);
+				var ratingAttriuteIcon = $("<span></span>").addClass("or-rating-attribute-icon material-icons left").text(ratingAttribute.iconName);
 				var th = $("<th></th>");
 				th.append(ratingAttriuteIcon);
 				th.append("" + ratingAttribute.name);
@@ -4811,7 +4811,7 @@ class UIEventHandler {
                 }
 
 				if (isRatingOfCurrentUser) {
-					var editIcon = $("<i></i>").addClass("material-icons right").text("edit");
+					var editIcon = $("<span></span>").addClass("material-icons right").text("edit");
 					td.append($("<a></a>").attr("href", "#").addClass("or-rating-edit").append(editIcon));
 				}
 				tr.append(td);
@@ -5233,7 +5233,7 @@ class UIEventHandler {
 
         for (var i in dataManager.stakeholderRatingAttributeData) {
             var ratingAttribute = dataManager.stakeholderRatingAttributeData[i];
-            var ratingAttriuteIcon = $("<i></i>").addClass("material-icons left").text(ratingAttribute.iconName);
+            var ratingAttriuteIcon = $("<span></span>").addClass("material-icons left").text(ratingAttribute.iconName);
             var ratingAttributeValueField = $("<select></select>").addClass("or-rating-field or-rating-field-" + ratingAttribute.id)
                 .attr("name", "or-rating-" + ratingAttribute.id)
                 .attr("data-rating-attribute-id", ratingAttribute.id)
@@ -5648,7 +5648,7 @@ class UIEventHandler {
 			tbody.children("tr").remove();
 			for (var i in result) {
 				var ratingAttribute = result[i];
-				var ratingAttriuteIcon = $("<i></i>").addClass("material-icons left").text(ratingAttribute.iconName);
+				var ratingAttriuteIcon = $("<span></span>").addClass("material-icons left").text(ratingAttribute.iconName);
 				var ratingAttributeValueField = $("<input />").attr("name", "or-rating-attribute-" + ratingAttribute.id).attr("data-rating-attribute-id", ratingAttribute.id).attr("value", ratingAttribute.weight);
 				var tr = $("<tr></tr>");
 				var ratingAttributeNameColumn = $("<td></td>").addClass("or-rating-attribute-name-cell").append(ratingAttriuteIcon).append(" " + ratingAttribute.name);
@@ -5656,7 +5656,7 @@ class UIEventHandler {
 				var ratingAttributeValueColumn = $("<td></td>").addClass("or-rating-attribute-value-cell").append(ratingAttributeValueField);
 				var deleteRatingAttributeButton = $("<a></a>").addClass("or-delete-rating-attribute-button btn-floating btn-small waves-effect waves-light red lighten-2");
 				deleteRatingAttributeButton.attr("data-rating-attribute-id", ratingAttribute.id);
-				deleteRatingAttributeButton.append($("<i></i>").addClass("material-icons").text("delete"));
+				deleteRatingAttributeButton.append($("<span></span>").addClass("material-icons").text("delete"));
 
 				tr.append(ratingAttributeNameColumn);
 				tr.append(ratingAttributeDescriptionColumn);
@@ -5677,7 +5677,7 @@ class UIEventHandler {
                 tbody.children("tr").remove();
                 for (var i in result) {
                     var ratingAttribute = result[i];
-                    var ratingAttriuteIcon = $("<i></i>").addClass("material-icons left").text(ratingAttribute.iconName);
+                    var ratingAttriuteIcon = $("<span></span>").addClass("material-icons left").text(ratingAttribute.iconName);
                     var ratingAttributeValueField = $("<input />").attr("name", "or-rating-attribute-" + ratingAttribute.id).attr("data-rating-attribute-id", ratingAttribute.id).attr("value", ratingAttribute.weight);
                     var tr = $("<tr></tr>");
                     var ratingAttributeNameColumn = $("<td></td>").addClass("or-rating-attribute-name-cell").append(ratingAttriuteIcon).append(" " + ratingAttribute.name);
@@ -6143,7 +6143,7 @@ class UIEventHandler {
                 var tweetID = prefix + "-" + (parseInt(i) + 1);
                 var addRequirementCandidateButton = $("<a></a>")
                     .addClass("or-import-requirement-button waves-effect waves-light btn blue darken-3")
-                    .html("<i class=\"material-icons left\">add</i> Add")
+                    .html("<span class=\"material-icons left\">add</span> Add")
                     .attr("data-tweet-id", tweetID);
                 var importIDs = {};
                 $(".or-requirement-title").each(function () {
@@ -6357,7 +6357,7 @@ class UIEventHandler {
 		var buttonID = $(thisObj).attr("id");
 		var isPrivateProject = (buttonID == "or-visibility-button-private");
 		swal({
-            title: '<div style="padding-bottom:20px;"><i class="material-icons" style="font-size:140px;">' + (isPrivateProject ? "visibility" : "visibility_off") + '</i></div><div>This project is ' + (isPrivateProject ? 'private' : 'public') + '.</div>',
+            title: '<div style="padding-bottom:20px;"><span class="material-icons" style="font-size:140px;">' + (isPrivateProject ? "visibility" : "visibility_off") + '</span></div><div>This project is ' + (isPrivateProject ? 'private' : 'public') + '.</div>',
             html: 'Do you want to make it ' + (isPrivateProject ? 'public' : 'private') + ' now?',
             //type: "warning",
             showCancelButton: true,

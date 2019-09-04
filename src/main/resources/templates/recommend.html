@@ -31,7 +31,7 @@
                            Determine for each pair (individually) whether a dependency between both requirements
                            exists and assign the corresponding type of dependency.</p>
                         <p style="text-align:center;margin-top:10px;margin-bottom:20px;">
-                            <a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" width="30" height="32" style="margin-right:8px;" />Download document</a>
+                            <a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" alt="PDF Icon" width="30" height="32" style="margin-right:8px;" />Download document</a>
                         </p>
                         <ul class="or-release-list collapsible" data-collapsible="expandable">
                             <li id="or-no-release-found-placeholder">
@@ -48,7 +48,7 @@
                                                         <span>
                                                             <input class="or-checkbox filled-in" type="checkbox" id="filter-evaluated" />
                                                             <label class="or-checkbox-label" for="filter-evaluated">Only unevaluated pairs</label>
-                                                            <i class="or-select-menu-item-icon material-icons">error_outline</i>
+                                                            <span class="or-select-menu-item-icon material-icons">error_outline</span>
                                                             <span class="argument-issues"></span>
                                                         </span>
                                                     </li>
@@ -117,8 +117,8 @@
                                                     <hr />
                                                 </div>
                                                 <div class="row" style="text-align: center;">
-                                                    <a id="or-show-previous-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><i class="material-icons left">arrow_back</i><span class="hidden-xs"> Back</span></a>&nbsp;
-                                                    <a id="or-show-next-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><i class="material-icons right">arrow_forward</i><span class="hidden-xs"> Next</span></a>
+                                                    <a id="or-show-previous-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><span class="material-icons left">arrow_back</span><span class="hidden-xs"> Back</span></a>&nbsp;
+                                                    <a id="or-show-next-requirement-pair" class="waves-effect waves-light btn blue darken-3 center"><span class="material-icons right">arrow_forward</span><span class="hidden-xs"> Next</span></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -130,8 +130,8 @@
                         <div class="center" id="or-save-button-container">
                             <form id="or-complete-form" th:action="'/project/' + ${project.uniqueKey} + '/requirement/pairs/recommend/complete'" method="post">
                                 <div>
-                                    <a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" th:href="'/project/' + ${project.uniqueKey} + '/requirement/pairs/welcome'" role="button"><i class="material-icons left" style="font-size:24px;">arrow_back</i>Back<span class="hidden-xs"> to welcome page</span></a>
-                                    <a id="or-complete-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><i class="material-icons left" style="font-size:24px;">send</i>Submit and complete</a>
+                                    <a class="waves-effect waves-light btn btn-large btn-primary blue darken-3" th:href="'/project/' + ${project.uniqueKey} + '/requirement/pairs/welcome'" role="button"><span class="material-icons left" style="font-size:24px;">arrow_back</span>Back<span class="hidden-xs"> to welcome page</span></a>
+                                    <a id="or-complete-button" class="waves-effect waves-light btn btn-large btn-primary blue darken-3" href="#" role="button"><span class="material-icons left" style="font-size:24px;">send</span>Submit and complete</a>
                                 </div>
                                 <p>&nbsp;</p>
                                 <p>&nbsp;</p>

@@ -56,7 +56,7 @@
                             <li>
                                 <strong>REQUIRES dependency:</strong><br />
                                 x REQUIRES y: For the implementation of the Requirement x, Requirement y needs to be implemented first.
-                                <strong>Attention:</strong> A REQUIRES DEPENDENCY is always <i>unidirectional</i>, that means (x REQUIRES y) is NOT the same as (y REQUIRES x).
+                                <strong>Attention:</strong> A REQUIRES DEPENDENCY is always <em>unidirectional</em>, that means (x REQUIRES y) is NOT the same as (y REQUIRES x).
                             </li>
                             <li>
                                 <strong>EXCLUDES dependency:</strong><br />
@@ -85,22 +85,22 @@
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>unidirectional</i> type <strong>REQUIRES</strong>:</u><br />
+                            <u>Dependencies of <em>unidirectional</em> type <strong>REQUIRES</strong>:</u><br />
                             Requirement <strong>a</strong> REQUIRES requirement <strong>b</strong><br />
                             Requirement <strong>a</strong> REQUIRES requirement <strong>c</strong><br /><br />
-                            <u>Reason:</u> <i>in order to implement requirement a requirement b must be implemented first
+                            <u>Reason:</u> <em>in order to implement requirement a requirement b must be implemented first
                             because for the calculation of the distance the average length of steps is needed (i.e., a REQUIRES b).
-                            Also, the number of steps must be measured as well to compute the distance (i.e., a REQUIRES c).</i><br /><br />
+                            Also, the number of steps must be measured as well to compute the distance (i.e., a REQUIRES c).</em><br /><br />
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>unidirectional</i> type <strong>IS PART OF</strong>:</u><br />
-                            Requirement <b>c</b> IS PART OF requirement <strong>a</strong><br />
-                            Requirement <b>b</b> IS PART OF requirement <strong>a</strong>
+                            <u>Dependencies of <em>unidirectional</em> type <strong>IS PART OF</strong>:</u><br />
+                            Requirement <strong>c</strong> IS PART OF requirement <strong>a</strong><br />
+                            Requirement <strong>b</strong> IS PART OF requirement <strong>a</strong>
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>bidirectional</i> type <strong>EXCLUDES</strong>:</u><br />
+                            <u>Dependencies of <em>bidirectional</em> type <strong>EXCLUDES</strong>:</u><br />
                             Requirement <strong>d</strong> EXCLUDES requirement <strong>e</strong> (is equivalent to <strong>e</strong> EXCLUDES <strong>d</strong>, because it's a <em>bidirectional</em> dependency)<br />
                         </p>
 
