@@ -66,7 +66,6 @@ public class CSVReader {
                 studentsOfGroup.add(studentDto);
                 ++lineNumber;
             }
-            return students;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -86,8 +85,8 @@ public class CSVReader {
                     e.printStackTrace();
                 }
             }
-            return students;
         }
+        return students;
     }
 
     public static List<RequirementDto> parseRequirements() {
@@ -121,7 +120,6 @@ public class CSVReader {
                 requirements.add(requirementDto);
                 ++lineNumber;
             }
-            return requirements;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -141,7 +139,7 @@ public class CSVReader {
                     e.printStackTrace();
                 }
             }
-            return requirements;
         }
+        return requirements;
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import eu.openreq.handler.LoginSuccessHandler;
@@ -38,6 +37,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     // custom 403 access denied handler
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+    	final String adminGroupName = "ADMIN";
+		final String rmGroupName = "REQUIREMENTS_MANAGER";
+    	final String stakeholderGroupName = "STAKEHOLDER";
+
         http
 				.csrf().disable()
                 .authorizeRequests()
@@ -102,9 +105,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/configuration/security",
                         "/webjars/springfox-swagger-ui/**"
                     ).permitAll()
-					.antMatchers("/admin/**").hasAnyRole("ADMIN")
-					.antMatchers("/user/**").hasAnyRole("ADMIN", "STAKEHOLDER", "REQUIREMENTS_MANAGER")
-					.antMatchers("/project/**").hasAnyRole("ADMIN", "STAKEHOLDER", "REQUIREMENTS_MANAGER")
+					.antMatchers("/admin/**").hasAnyRole(adminGroupName)
+					.antMatchers("/user/**").hasAnyRole(adminGroupName, stakeholderGroupName, rmGroupName)
+					.antMatchers("/project/**").hasAnyRole(adminGroupName, stakeholderGroupName, rmGroupName)
 					.anyRequest()
 					.authenticated()
                 .and()

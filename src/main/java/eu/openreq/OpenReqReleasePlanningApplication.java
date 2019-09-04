@@ -32,7 +32,6 @@ public class OpenReqReleasePlanningApplication extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		//registry.addResourceHandler("/**").addResourceLocations("file:///home/choicla/src/main/resources/public/");
 		registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
 	}
@@ -44,10 +43,6 @@ public class OpenReqReleasePlanningApplication extends WebMvcConfigurerAdapter {
 		cookieLocaleResolver.setCookieMaxAge(3600);
 		cookieLocaleResolver.setDefaultLocale(new Locale("en"));
 		return cookieLocaleResolver;
-
-		/*SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.US);
-		return slr;*/
 	}
 
 	@Bean

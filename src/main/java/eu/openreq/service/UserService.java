@@ -36,18 +36,19 @@ public class UserService implements UserServiceI {
             throw new UsernameNotFoundException("Invalid username or password." + username);
         }
 
-        return new UserInfo(
-        		userDbo.getUsername(),
-        		userDbo.getPassword(),
-        		userDbo.getFirstName(),
-        		userDbo.getLastName(),
-        		userDbo.getProfileImagePath(),
-        		userDbo.isEnabled(),
-        		true, // accountNonExpired
-        		true, // credentialsNonExpired
-        		true, // accountNonLocked
-        		mapRolesToAuthorities(userDbo.getRoles())
-        	);
+        UserInfo userInfo = new UserInfo(
+            userDbo.getUsername(),
+            userDbo.getPassword(),
+            userDbo.isEnabled(),
+            true, // accountNonExpired
+            true, // credentialsNonExpired
+            true, // accountNonLocked
+            mapRolesToAuthorities(userDbo.getRoles())
+        );
+        userInfo.setFirstName(userDbo.getFirstName());
+        userInfo.setLastName(userDbo.getLastName());
+        userInfo.setProfileImagePath(userDbo.getProfileImagePath());
+        return userInfo;
     }
 
     public void updateLastLoginDateForUserByName(String username) {
@@ -93,13 +94,15 @@ public class UserService implements UserServiceI {
     @SuppressWarnings("serial")
 	@Override
     public UserDbo save(UserRegistrationDbo registration, String confirmationKey, boolean confirmed) {
-        UserDbo user = new UserDbo();
+        final UserDbo user = new UserDbo();
+        final HashSet<RoleDbo> roles = new HashSet<>();
+        roles.add(new RoleDbo(RoleDbo.Role.ROLE_STAKEHOLDER));
         user.setUsername(registration.getUsername());
         user.setFirstName(registration.getFirstName());
         user.setLastName(registration.getLastName());
         user.setMailAddress(registration.getEmail());
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
-        user.setRoles(new HashSet<RoleDbo>() {{ add(new RoleDbo(RoleDbo.Role.ROLE_STAKEHOLDER)); }});
+        user.setRoles(roles);
         user.setConfirmationKey(confirmationKey);
         user.setEnabled(confirmed);
         return userRepository.save(user);

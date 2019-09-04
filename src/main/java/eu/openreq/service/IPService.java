@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import java.net.InetAddress;
 import java.net.DatagramSocket;
+import java.util.Arrays;
 
 @Service
 public class IPService {
@@ -37,7 +38,7 @@ public class IPService {
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
-            logger.error(e.getStackTrace().toString());
+            logger.error(Arrays.toString(e.getStackTrace()));
         }
         return hostName;
     }

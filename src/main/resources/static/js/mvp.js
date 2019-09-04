@@ -2191,7 +2191,7 @@ class UIManager {
 
         td = $("<td></td>").addClass("or-requirement-normal-evaluation");
 
-        if (requirementID > 0) {
+        if (requirementData != null) {
 			var ratings = (isPrivateProject ? userRatings : anonymousRatings);
 			var ratingCount = Object.keys(ratings).length;
 
