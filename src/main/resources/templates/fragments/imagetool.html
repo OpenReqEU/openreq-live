@@ -2,7 +2,9 @@
 <html xmlns="https://www.w3.org/1999/xhtml"
       xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head></head>
+<head>
+    <title>Image Cropper</title>
+</head>
 
 <div id="or-image-upload-container-area" th:fragment="imageUploadContainer(defaultImageUrl)" style="display:none;">
     <div class="or-image-upload-container">
@@ -15,7 +17,7 @@
             </div>
         </div>
         <div class="or-image-cropper-area">
-            <img style="width: auto;height: auto;max-width: 100%;" th:src="${defaultImageUrl}" class="or-image" />
+            <img style="width: auto;height: auto;max-width: 100%;" alt="Image" th:src="${defaultImageUrl}" class="or-image" />
         </div>
         <div style="margin-top:20px;text-align:center;">
             <div class="btn-group">

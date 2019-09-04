@@ -96,15 +96,21 @@ public class Utils {
 	}
 
 	public static void generateDefaultRatingSchemeAndAddToProject(ProjectDbo project) {
+		final RatingAttributeDbo profitAttribute = new RatingAttributeDbo("Profit", "Profit of the mentioned requirement", "monetization_on", 1, 10, 1, 1.0f, false, project);
+		final RatingAttributeDbo riskAttribute = new RatingAttributeDbo("Risk", "Taken risk for developing the mentioned requirement", "report_problem", 1, 10, 1, 1.0f, true, project);
+		final RatingAttributeDbo effortAttribute = new RatingAttributeDbo("Effort", "Incurred costs for developing the mentioned requirement", "build", 1, 10, 1, 1.0f, true, project);
+		final StakeholderRatingAttributeDbo appropriatenessAttribute = new StakeholderRatingAttributeDbo("Appropriateness", "Degree of appropriateness of the stakeholder for the mentioned requirement", "fitness_center", 1, 10, 0.5f, project);
+		final StakeholderRatingAttributeDbo availabilityAttribute = new StakeholderRatingAttributeDbo("Availability", "Availability of the stakeholder for the mentioned requirement", "access_time", 1, 10, 0.5f, project);
+
 		if ((project.getRatingAttributes() == null) || project.getRatingAttributes().size() == 0) {
-			project.addRatingAttribute(new RatingAttributeDbo("Profit", "Profit of the mentioned requirement", "monetization_on", 1, 10, 1, 1.0f, false, project));
-			project.addRatingAttribute(new RatingAttributeDbo("Risk", "Taken risk for developing the mentioned requirement", "report_problem", 1, 10, 1, 1.0f, true, project));
-			project.addRatingAttribute(new RatingAttributeDbo("Effort", "Incurred costs for developing the mentioned requirement", "build", 1, 10, 1, 1.0f, true, project));
+			project.addRatingAttribute(profitAttribute);
+			project.addRatingAttribute(riskAttribute);
+			project.addRatingAttribute(effortAttribute);
 		}
 
 		if ((project.getStakeholderRatingAttributes() == null) || project.getStakeholderRatingAttributes().size() == 0) {
-            project.addStakeholderRatingAttribute(new StakeholderRatingAttributeDbo("Appropriateness", "Degree of appropriateness of the stakeholder for the mentioned requirement", "fitness_center", 1, 10, 0.5f, project));
-            project.addStakeholderRatingAttribute(new StakeholderRatingAttributeDbo("Availability", "Availability of the stakeholder for the mentioned requirement", "access_time", 1, 10, 0.5f, project));
+            project.addStakeholderRatingAttribute(appropriatenessAttribute);
+            project.addStakeholderRatingAttribute(availabilityAttribute);
 		}
 	}
 
@@ -126,9 +132,13 @@ public class Utils {
 	public static UserDbo createSuperuser(String username, String hashedPassword, String firstName,
                                           String lastName, String email, UserRepository userRepository) {
 		UserDbo superUser = userRepository.findOneByUsername(username);
+		final RoleDbo adminRole = new RoleDbo(RoleDbo.Role.ROLE_ADMIN);
+		final HashSet<RoleDbo> roles = new HashSet<>();
+		roles.add(adminRole);
+
 		if (superUser == null) {
 			superUser = new UserDbo(firstName, lastName, username, email, hashedPassword);
-			superUser.setRoles(new HashSet<RoleDbo>() {{ add(new RoleDbo(RoleDbo.Role.ROLE_ADMIN)); }});
+			superUser.setRoles(roles);
 			superUser.setEnabled(true);
 			userRepository.save(superUser);
 		}
@@ -367,11 +377,14 @@ public class Utils {
 					continue;
 				}
 
-				String firstName = name.split(" ")[0];
-				String lastName = name.split(" ")[1];
-				String email = firstName + "." + lastName + "@ist.tugraz.at";
+				final String firstName = name.split(" ")[0];
+				final String lastName = name.split(" ")[1];
+				final String email = firstName + "." + lastName + "@ist.tugraz.at";
+				final HashSet<RoleDbo> roles = new HashSet<>();
+				roles.add(new RoleDbo(RoleDbo.Role.ROLE_STAKEHOLDER));
+
 				newUser = new UserDbo(firstName, lastName, name.replace(' ', '.'), email, passwordEncoder.encode("test"));
-		        newUser.setRoles(new HashSet<RoleDbo>() {{ add(new RoleDbo(RoleDbo.Role.ROLE_STAKEHOLDER)); }});
+		        newUser.setRoles(roles);
 		        newUser.setEnabled(true);
 
 				for (String skillKeyword : skills.get(index)) {
@@ -421,34 +434,37 @@ public class Utils {
 //	        project2.addRelease(release5);
 //	        project3.addRelease(release6);
 
-
 	        Map<String, Set<UserDbo>> requirementAssignments = new HashMap<>();
-	        requirementAssignments.put("Login", new HashSet<UserDbo>() {{
-	        		add(users.get(0));
-	        		add(users.get(1));
-	        		add(users.get(2));
-	        		add(users.get(3));
-	        		add(users.get(4));
-	        		add(users.get(5));
-	        		add(users.get(6));
-	        		add(users.get(7));
-	        		add(users.get(8));
-	        		add(users.get(9));
-	        	}});
-	        requirementAssignments.put("Registrierung", new HashSet<UserDbo>() {{
-		        	add(users.get(0));
-		        	add(users.get(2));
-		        	add(users.get(3));
-		        	add(users.get(4));
-		        	add(users.get(5));
-		        	add(users.get(6));
-		        	add(users.get(7));
-		        	add(users.get(8));
-		        	add(users.get(9));
-	        }});
-	        requirementAssignments.put("Configurator Interface", new HashSet<UserDbo>() {{
-	        		add(users.get(1));
-	        }});
+			final HashSet<UserDbo> loginAssignments = new HashSet<UserDbo>() {{
+				add(users.get(0));
+				add(users.get(1));
+				add(users.get(2));
+				add(users.get(3));
+				add(users.get(4));
+				add(users.get(5));
+				add(users.get(6));
+				add(users.get(7));
+				add(users.get(8));
+				add(users.get(9));
+			}};
+			final HashSet<UserDbo> registerAssignments = new HashSet<UserDbo>() {{
+				add(users.get(0));
+				add(users.get(2));
+				add(users.get(3));
+				add(users.get(4));
+				add(users.get(5));
+				add(users.get(6));
+				add(users.get(7));
+				add(users.get(8));
+				add(users.get(9));
+			}};
+			final HashSet<UserDbo> configuratorInterfaceAssignments = new HashSet<UserDbo>() {{
+				add(users.get(1));
+			}};
+
+	        requirementAssignments.put("Login", loginAssignments);
+	        requirementAssignments.put("Registrierung", registerAssignments);
+	        requirementAssignments.put("Configurator Interface", configuratorInterfaceAssignments);
 
 	        Map<String, List<String>> requirementSkillAssignments = new HashMap<>();
 	        requirementSkillAssignments.put("Login", Arrays.asList("Android Development", "UI/UX Design", "Data validation"));

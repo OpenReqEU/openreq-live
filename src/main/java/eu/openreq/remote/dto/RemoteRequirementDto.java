@@ -1,8 +1,9 @@
   package eu.openreq.remote.dto;
 
 import java.util.List;
+import java.util.Objects;
 
-public class RemoteRequirementDto {
+  public class RemoteRequirementDto {
 
 	public enum ReqType { DEF, PROSE, NOT_CLASSIFIED}
 	
@@ -114,9 +115,16 @@ public class RemoteRequirementDto {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof RemoteRequirementDto))
 			return false;
 		return this.getId() == ((RemoteRequirementDto) obj).getId();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 }

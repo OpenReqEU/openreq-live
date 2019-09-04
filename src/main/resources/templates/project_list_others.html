@@ -44,7 +44,7 @@
                             <p class="or-project-tile-card-date"><th:block th:text="${#dates.format(project.startDate, 'MMM yy')} + ' - ' + ${#dates.format(project.endDate, 'MMM yy')}"></th:block></p>
                         </div>
                         <div class="card-action">
-                            <a th:href="'/project/p/' + ${project.uniqueKey} + '/manage'"><i class="material-icons">edit</i></a>
+                            <a th:href="'/project/p/' + ${project.uniqueKey} + '/manage'"><span class="material-icons">edit</span></a>
                             <span th:if="${project.creatorUser?.id == currentUser.id and !project.projectSettings.readOnly}" style="float:right;"><a href="#" style="color:#666666;font-size:18px;margin:0;" class="or-list-project-delete"><span class="glyphicon glyphicon-trash"></span></a></span>
                             <span th:unless="${project.creatorUser?.id == currentUser.id}" style="float:right;"><a href="#" style="color:#666666;font-size:18px;margin:0;" class="or-list-project-leave"><span class="glyphicon glyphicon-share"></span></a></span>
                         </div>

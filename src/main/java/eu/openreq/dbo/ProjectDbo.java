@@ -223,10 +223,16 @@ public class ProjectDbo {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof ProjectDbo))
 			return false;
 		return this.getId() == ((ProjectDbo) obj).getId();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 	public List<RequirementDbo> getUnassignedRequirements() {

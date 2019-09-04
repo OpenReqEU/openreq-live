@@ -144,7 +144,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="or-navbar-logo-small navbar-brand" href="/">
-                <i class="material-icons dp48">keyboard_arrow_left</i><img alt="Logo" src="/images/openreq_small.png" height="32" />
+                <span class="material-icons dp48">keyboard_arrow_left</span><img alt="Logo" src="/images/openreq_small.png" height="32" />
             </a>
             <div id="or-navbar-content-container"></div>
         </div>
@@ -184,7 +184,7 @@
 		          <a href="#" class="or-navbar-user-section dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="padding:0 5px !important;margin:0 !important;">
                     <!-- th:style="'background-image:url(\'' + ${#authentication.getPrincipal().getProfileImagePath()} + '\');'" -->
                     <span class="or-avatar-image-area" style="height: 40px;display: inline-block;width: 42px;margin: 4px 4px 4px 0 !important;">
-                        <img style="height: 42px;width: 42px;" th:src="${#authentication.getPrincipal().getProfileImagePath()}" class="or-message-avatar or-avatar" th:alt="${#authentication.getPrincipal().getFullName()}" />
+                        <img style="height: 42px;width: 42px;" th:src="${#authentication.getPrincipal().getProfileImagePath()}" alt="Avatar" class="or-message-avatar or-avatar" th:alt="${#authentication.getPrincipal().getFullName()}" />
                     </span>
                     <span class="or-avatar-text-area" style="height: auto;display: inline-block;margin-top: auto;margin-bottom: auto;">
                         <th:block th:text="${#authentication.getPrincipal().getShortFullName(12)}"></th:block> <span class="caret"></span>
@@ -262,7 +262,7 @@
 <div id="maincontainer" th:fragment="project_header(activeSection, id, title, image_path)">
     <div class="container">
         <row class="top-buffer">
-            <h2 class="title"><img th:src="${image_path}" class="img-thumbnail" style="max-width:80px;max-height:40px;margin-right:20px" /><th:block th:text="${title}"></th:block></h2>
+            <h2 class="title"><img th:src="${image_path}" alt="OpenReq!Live" class="img-thumbnail" style="max-width:80px;max-height:40px;margin-right:20px" /><th:block th:text="${title}"></th:block></h2>
         </row>
         <row>
 	        <a th:href="'/project/' + ${id} + '/requirement/list/new'" th:class="'btn ' + (${activeSection == 1} ? 'btn-info' : 'btn-secondary') + ' btn-lg active'" role="button" aria-pressed="true" style="width:24%;">Requirements</a>

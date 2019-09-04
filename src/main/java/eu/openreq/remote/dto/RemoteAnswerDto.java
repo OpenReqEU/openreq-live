@@ -1,5 +1,7 @@
 package eu.openreq.remote.dto;
 
+import java.util.Objects;
+
 public class RemoteAnswerDto {
 
 	public enum ComplianceType { COMPLIANT, COMPLIANT_W_COMMENT, NON_COMPLIANT}
@@ -101,9 +103,16 @@ public class RemoteAnswerDto {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof RemoteAnswerDto))
 			return false;
 		return this.getId() == ((RemoteAnswerDto) obj).getId();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 }

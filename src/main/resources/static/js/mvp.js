@@ -2225,7 +2225,7 @@ class UIManager {
 
         td = $("<td></td>").addClass("or-requirement-advanced-evaluation");
 
-        if (requirementID > 0) {
+        if (requirementData != null) {
             var ratedUsers = {};
             for (var i in requirementMessages) {
                 ratedUsers[requirementMessages[i].userData.userID] = true;
@@ -5157,11 +5157,10 @@ class UIEventHandler {
             "Weak": "weak"
         };
 
-        var ambiguityData = dataManager.ambiguityIssueData[requirementID];
         var currentIndex = 0;
         var highlightedRequirementDescription = "";
         var usedAmbiguities = {};
-        ambiguityData = ambiguityData.sort((a,b) => (a.index_start > b.index_start) ? 1 : ((b.index_start > a.index_start) ? -1 : 0));
+        var ambiguityData = dataManager.ambiguityIssueData[requirementID].sort((a,b) => (a.index_start > b.index_start) ? 1 : ((b.index_start > a.index_start) ? -1 : 0));
         var visibleAmbiguities = 0;
         for (var i in ambiguityData) {
             if (ambiguityData[i].index_start <= currentIndex) {

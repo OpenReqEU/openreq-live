@@ -325,17 +325,37 @@ public class ProjectController {
 	@ResponseBody
     @RequestMapping(value = "/project/upload", method = RequestMethod.POST)
     public String uploadProjectImage(@RequestParam("croppedImage") MultipartFile croppedImage) {
+        BufferedOutputStream bufferedOutputStream = null;
+        FileOutputStream fileOutputStream = null;
+
         try {
             String filename = "test.jpg";
             String directory = "/Users/r4ll3/Development/Web/openReqReleasePlanning/src/main/resources/public/upload";
             String filepath = Paths.get(directory, filename).toString();
 
-            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-            stream.write(croppedImage.getBytes());
-            stream.close();
+            File outputFile = new File(filepath);
+            fileOutputStream = new FileOutputStream(outputFile);
+            bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+            bufferedOutputStream.write(croppedImage.getBytes());
+            bufferedOutputStream.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "NOT OK!";
+        } finally {
+            if (bufferedOutputStream != null) {
+                try {
+                    bufferedOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 		return "OK! Moved: " + croppedImage.getOriginalFilename() + " " + croppedImage.getSize();
 	}
@@ -1067,6 +1087,7 @@ public class ProjectController {
 		} catch (Exception e) {
 			System.out.println(e.getClass().getSimpleName());
 			System.out.println(e.getMessage());
+			return null;
 		}
 		return "redirect:/project/p/" + project.getUniqueKey() + "/manage";
 	}
@@ -1209,6 +1230,7 @@ public class ProjectController {
 		} catch (Exception e) {
 			System.out.println(e.getClass().getSimpleName());
 			System.out.println(e.getMessage());
+			return null;
 		}
 		return "redirect:/project/p/" + project.getUniqueKey() + "/manage";
 	}
@@ -1278,6 +1300,7 @@ public class ProjectController {
         } catch (Exception e) {
             System.out.println(e.getClass().getSimpleName());
             System.out.println(e.getMessage());
+            return null;
         }
 		return "redirect:/project/p/" + project.getUniqueKey() + "/manage";
 	}
@@ -1480,6 +1503,7 @@ public class ProjectController {
 		} catch (Exception e) {
 			System.out.println(e.getClass().getSimpleName());
 			System.out.println(e.getMessage());
+			return null;
 		}
 
         return "redirect:/project/p/" + project.getUniqueKey() + "/manage";

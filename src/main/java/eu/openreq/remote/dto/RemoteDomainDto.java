@@ -1,5 +1,7 @@
 package eu.openreq.remote.dto;
 
+import java.util.Objects;
+
 public class RemoteDomainDto {
 
 	private long id;
@@ -97,9 +99,16 @@ public class RemoteDomainDto {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof RemoteDomainDto))
 			return false;
 		return this.getId() == ((RemoteDomainDto) obj).getId();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 }

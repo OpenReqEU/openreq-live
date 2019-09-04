@@ -1,8 +1,8 @@
 package eu.openreq.dbo;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,10 +66,16 @@ public class SkillDbo {
 		requirements.add(requirement);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof SkillDbo))
 			return false;
 		return getId() == ((SkillDbo) obj).getId();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 	public String toString() {

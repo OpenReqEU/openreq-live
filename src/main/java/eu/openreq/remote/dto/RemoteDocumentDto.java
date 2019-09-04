@@ -1,5 +1,7 @@
 package eu.openreq.remote.dto;
 
+import java.util.Objects;
+
 public class RemoteDocumentDto {
 
 	private long id;
@@ -53,9 +55,16 @@ public class RemoteDocumentDto {
         		   "'}";
     }
 
+    @Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof RemoteDocumentDto))
 			return false;
 		return this.getId() == ((RemoteDocumentDto) obj).getId();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 }

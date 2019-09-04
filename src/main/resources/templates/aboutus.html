@@ -10,7 +10,7 @@
 	<div th:replace="fragments/basictemplate :: subtitle('About us','')"></div>
 	<div th:insert="fragments/basictemplate :: content(~{::#content})">
 	    <div id="content" class="container">
-	        <img src="/images/tulogo.png" width="300" style="height: auto;" class="img-responsive center-block">
+	        <img src="/images/tulogo.png" alt="TU Graz Logo" width="300" style="height: auto;" class="img-responsive center-block">
 	        <p style="text-align: center; color:#777;" th:text="#{aboutus.developed}"></p>
 	        <p style="text-align: center;color:#777;" th:text="#{aboutus.aim}"></p>
 	    </div>

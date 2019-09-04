@@ -103,6 +103,14 @@ public class RatingAttributeDbo {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		RatingAttributeDbo that = (RatingAttributeDbo) o;
+		return id == that.id;
+	}
+
+	@Override
 	public String toString() {
 		return "RatingAttributeDbo{id=" + id + ", name=" + name + "}";
 	}

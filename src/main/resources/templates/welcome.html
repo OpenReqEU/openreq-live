@@ -33,7 +33,7 @@
                         </p>
 
                         <p>
-                        All software requirements of DH are defined and listed in the <a href="/upload/re_smarthome.pdf">PDF file</a> (<a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" width="20" height="21" style="margin-right:8px;" />Download PDF</a>).
+                        All software requirements of DH are defined and listed in the <a href="/upload/re_smarthome.pdf">PDF file</a> (<a href="/upload/re_smarthome.pdf" style="vertical-align:bottom;"><img src="/images/pdf_icon.svg" alt="PDF Icon" width="20" height="21" style="margin-right:8px;" />Download PDF</a>).
                         <div class="alert alert-danger or-alert">
                             Before you start with the identification of the dependencies between the requirements, please read the <a href="/upload/re_smarthome.pdf">PDF document</a> VERY CAREFULLY!<br />
                             Requirement dependencies can ONLY be identified correctly, after you completely understood the full content of the given PDF document.
@@ -54,20 +54,20 @@
                         Thereby, you have to choose one of the following 4 different dependency types:
                         <ul class="or-explanation-list">
                             <li>
-                                <b>REQUIRES dependency:</b><br />
+                                <strong>REQUIRES dependency:</strong><br />
                                 x REQUIRES y: For the implementation of the Requirement x, Requirement y needs to be implemented first.
-                                <b>Attention:</b> A REQUIRES DEPENDENCY is always <i>unidirectional</i>, that means (x REQUIRES y) is NOT the same as (y REQUIRES x).
+                                <strong>Attention:</strong> A REQUIRES DEPENDENCY is always <i>unidirectional</i>, that means (x REQUIRES y) is NOT the same as (y REQUIRES x).
                             </li>
                             <li>
-                                <b>EXCLUDES dependency:</b><br />
+                                <strong>EXCLUDES dependency:</strong><br />
                                 x EXCLUDES y: Requirement x and requirement y can not implemented in the same release, which means that the implementation of x forbids the implementation of y and vice versa.
                             </li>
                             <li>
-                                <b>IS SIMILAR TO dependency:</b><br />
+                                <strong>IS SIMILAR TO dependency:</strong><br />
                                 Rx IS SIMILAR TO Ry: Both Requirements are similar or related to each other based on their descriptions.
                             </li>
                             <li>
-                                <b>IS PART OF dependency:</b><br />
+                                <strong>IS PART OF dependency:</strong><br />
                                 x IS PART OF y: Requirement x is a part of requirement y means that y includes x.
                                 This can also be interpreted as follow: x is child/subrequirement of y, whereby y can have several children/subrequirements.
                             </li>
@@ -85,34 +85,34 @@
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>unidirectional</i> type <b>REQUIRES</b>:</u><br />
-                            Requirement <b>a</b> REQUIRES requirement <b>b</b><br />
-                            Requirement <b>a</b> REQUIRES requirement <b>c</b><br /><br />
+                            <u>Dependencies of <i>unidirectional</i> type <strong>REQUIRES</strong>:</u><br />
+                            Requirement <strong>a</strong> REQUIRES requirement <strong>b</strong><br />
+                            Requirement <strong>a</strong> REQUIRES requirement <strong>c</strong><br /><br />
                             <u>Reason:</u> <i>in order to implement requirement a requirement b must be implemented first
                             because for the calculation of the distance the average length of steps is needed (i.e., a REQUIRES b).
                             Also, the number of steps must be measured as well to compute the distance (i.e., a REQUIRES c).</i><br /><br />
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>unidirectional</i> type <b>IS PART OF</b>:</u><br />
-                            Requirement <b>c</b> IS PART OF requirement <b>a</b><br />
-                            Requirement <b>b</b> IS PART OF requirement <b>a</b>
+                            <u>Dependencies of <i>unidirectional</i> type <strong>IS PART OF</strong>:</u><br />
+                            Requirement <b>c</b> IS PART OF requirement <strong>a</strong><br />
+                            Requirement <b>b</b> IS PART OF requirement <strong>a</strong>
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>bidirectional</i> type <b>EXCLUDES</b>:</u><br />
-                            Requirement <b>d</b> EXCLUDES requirement <b>e</b> (is equivalent to <b>e</b> EXCLUDES <b>d</b>, because it's a <i>bidirectional</i> dependency)<br />
+                            <u>Dependencies of <i>bidirectional</i> type <strong>EXCLUDES</strong>:</u><br />
+                            Requirement <strong>d</strong> EXCLUDES requirement <strong>e</strong> (is equivalent to <strong>e</strong> EXCLUDES <strong>d</strong>, because it's a <em>bidirectional</em> dependency)<br />
                         </p>
 
                         <p>
-                            <u>Dependencies of <i>bidirectional</i> type <b>IS SIMILAR TO</b>:</u><br />
-                            Requirement <b>b</b> IS SIMILAR TO requirement <b>a</b> (is equivalent to <b>a</b> IS SIMILAR TO <b>b</b>, because it's a <i>bidirectional</i> dependency)<br />
+                            <u>Dependencies of <em>bidirectional</em> type <strong>IS SIMILAR TO</strong>:</u><br />
+                            Requirement <strong>b</strong> IS SIMILAR TO requirement <strong>a</strong> (is equivalent to <strong>a</strong> IS SIMILAR TO <strong>b</strong>, because it's a <em>bidirectional</em> dependency)<br />
                         </p>
 
                         <p>
                             <div class="alert alert-warning">
-                                Keep in mind that you will <b>ONLY</b> get all points if all of your defined requirement dependencies are accurate.<br />
-                                <b>Deadline:</b> 2018/12/04 at 11:59:00 PM
+                                Keep in mind that you will <strong>ONLY</strong> get all points if all of your defined requirement dependencies are accurate.<br />
+                                <strong>Deadline:</strong> 2018/12/04 at 11:59:00 PM
                             </div>
                         </p>
 
