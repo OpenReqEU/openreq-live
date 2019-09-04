@@ -274,7 +274,13 @@ public class StatisticsController {
             dependenciesMap.put(sourceID, dependencyList);
         }
 
+        Map<Long, Long> projectSpecificRequirementsIdMap = new HashMap<>();
+        for (RequirementDbo requirement : project.getRequirements()) {
+            projectSpecificRequirementsIdMap.put(requirement.getId(), requirement.getProjectSpecificRequirementId());
+        }
+
         model.addAttribute("project", project);
+        model.addAttribute("projectSpecificRequirementsIdMap", projectSpecificRequirementsIdMap);
         model.addAttribute("requirementsTitleMap", requirementsTitleMap);
         model.addAttribute("requirementsDescriptionMap", requirementsDescriptionMap);
         model.addAttribute("dependenciesMap", dependenciesMap);

@@ -47,13 +47,14 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script type="text/javascript" th:inline="javascript">
         var requirementsTitleMapping = [[${requirementsTitleMap}]];
+        var projectSpecificRequirementsIdMapping = [[${projectSpecificRequirementsIdMap}]];
         var requirementInteractions = {};
         var requirementsDescriptionMapping = [[${requirementsDescriptionMap}]];
         var dependencyMapping = [[${dependenciesMap}]];
 
         var chart = d3.chart.dependencyWheel()
-            .width(900)    // also used for height, since the wheel is in a a square
-            .margin(180)   // used to display package names
+            .width(900)     // also used for height, since the wheel is in a a square
+            .margin(180)    // used to display package names
             .padding(0.03); // separating groups in the wheel
 
         var matrixIds = Object.keys(requirementsTitleMapping);
@@ -110,6 +111,7 @@
             $("[data-toggle=\"tooltip\"]").tooltip();
 
             var projectUniqueKey = [[${project.uniqueKey}]];
+            projectUniqueKey = "rvc0Pu3E";
             if ($("#d3id").attr("data-rendered") == "true") {
                 return;
             }
@@ -148,8 +150,9 @@
                         }
 
                         requirementInteractions[requirementID] = changeCount;
+                        var projectSpecificRequirementId = projectSpecificRequirementsIdMapping[requirementID];
                         models.push({
-                            "model_name": "R" + requirementID,
+                            "model_name": "R" + projectSpecificRequirementId,
                             "field1": Math.max(changeCount["title"], 0.07),
                             "field2": Math.max(changeCount["description"], 0.07),
                             "field3": Math.max(changeCount["status"], 0.07)
