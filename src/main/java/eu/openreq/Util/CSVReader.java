@@ -1,7 +1,10 @@
 package eu.openreq.Util;
 
+import eu.openreq.controller.ProjectController;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
@@ -11,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CSVReader {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
     @Data
     @AllArgsConstructor
@@ -67,22 +72,22 @@ public class CSVReader {
                 ++lineNumber;
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("An exception occurred while opening the file.", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("An exception occurred while opening the file.", e);
         } finally {
             if (inputStreamReader != null) {
                 try {
                     inputStreamReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
         }
@@ -121,22 +126,22 @@ public class CSVReader {
                 ++lineNumber;
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("An exception occurred while opening the file.", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("An exception occurred while opening the file.", e);
         } finally {
             if (inputStreamReader != null) {
                 try {
                     inputStreamReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
         }

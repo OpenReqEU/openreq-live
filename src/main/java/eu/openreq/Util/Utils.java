@@ -102,13 +102,13 @@ public class Utils {
 		final StakeholderRatingAttributeDbo appropriatenessAttribute = new StakeholderRatingAttributeDbo("Appropriateness", "Degree of appropriateness of the stakeholder for the mentioned requirement", "fitness_center", 1, 10, 0.5f, project);
 		final StakeholderRatingAttributeDbo availabilityAttribute = new StakeholderRatingAttributeDbo("Availability", "Availability of the stakeholder for the mentioned requirement", "access_time", 1, 10, 0.5f, project);
 
-		if ((project.getRatingAttributes() == null) || project.getRatingAttributes().size() == 0) {
+		if ((project.getRatingAttributes() == null) || project.getRatingAttributes().isEmpty()) {
 			project.addRatingAttribute(profitAttribute);
 			project.addRatingAttribute(riskAttribute);
 			project.addRatingAttribute(effortAttribute);
 		}
 
-		if ((project.getStakeholderRatingAttributes() == null) || project.getStakeholderRatingAttributes().size() == 0) {
+		if ((project.getStakeholderRatingAttributes() == null) || project.getStakeholderRatingAttributes().isEmpty()) {
             project.addStakeholderRatingAttribute(appropriatenessAttribute);
             project.addStakeholderRatingAttribute(availabilityAttribute);
 		}
@@ -492,16 +492,6 @@ public class Utils {
 						release1.addRequirement(requirement);
 					}
 					counter++;
-				}
-
-				Set<UserDbo> stakeholderUsers = requirementAssignments.get(requirementName);
-				if ((stakeholderUsers != null) && (stakeholderUsers.size() > 0)) {
-				    /*
-					for (UserDbo stakeholderUser : stakeholderUsers) {
-						stakeholderUser.assignResponsibleRequirement(requirement);
-						requirement.assignResponsibleUser(stakeholderUser);
-					}
-					*/
 				}
 
 				List<String> skillNames = requirementSkillAssignments.get(requirementName);

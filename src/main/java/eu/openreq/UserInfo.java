@@ -22,9 +22,6 @@ public class UserInfo extends User {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.username = username;
 		this.password = password;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.profileImagePath = profileImagePath;
 	}
 
     public String getFullName() {
