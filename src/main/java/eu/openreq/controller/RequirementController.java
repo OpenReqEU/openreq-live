@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import eu.openreq.Util.Utils;
 import eu.openreq.api.internal.dto.*;
 import eu.openreq.component.ScheduledBatchJob;
@@ -937,9 +936,8 @@ public class RequirementController {
                 userStakeholderAttributeVoteRepository.save(vote);
             }
         } catch (DboConstraintException exception) {
-            System.out.println(exception.getMessage());
+            logger.error("An exception occurred!", exception);
         }
-
         result.put("error", false);
         return result;
     }
@@ -1034,7 +1032,6 @@ public class RequirementController {
                 .sorted(comparing(RequirementStakeholderAssignment::getStakeholderId))
                 .collect(Collectors.toList()));
 
-        System.out.println(requirement.isStakeholderRecommendationsFetched());
         if ((currentUser != null) && !requirement.isStakeholderRecommendationsFetched()) {
             RestTemplate restTemplate = new RestTemplate();
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -1067,7 +1064,7 @@ public class RequirementController {
             recommendDto.setUser(userDto);
 
             try {
-                System.out.println("[Stakeholder Recommender] Sending request...");
+                logger.info("[Stakeholder Recommender] Sending request...");
                 HttpEntity<RecommendDto> recommendRequest = new HttpEntity<>(recommendDto, headers);
                 int k = 10;
                 String url = "http://" + ScheduledBatchJob.UPC_STAKEHOLDER_RECOMMENDATION_SERVICE_HOST + ":"
@@ -1088,7 +1085,7 @@ public class RequirementController {
                         continue;
                     }
 
-                    System.out.println("[Stakeholder Recommender] Recommended Person: " + recommendation.getPerson());
+                    logger.info("[Stakeholder Recommender] Recommended Person: " + recommendation.getPerson());
                     UserDbo recommendedUser = userRepository.findOneByUsername(recommendation.getPerson().getUsername());
                     RequirementStakeholderAssignment stakeholderAssignment = requirementStakeholderAssignmentRepository.findOneByRequirementIdAndStakeholderId(requirementID, recommendedUser.getId());
                     if (stakeholderAssignment != null || (!project.isCreator(recommendedUser) && !project.isParticipant(recommendedUser))) {
@@ -1130,12 +1127,11 @@ public class RequirementController {
                     ++numOfMeaningfulRecommendations;
                 }
 
-                System.out.println("[Stakeholder Recommender] Finished processing request.");
+                logger.info("[Stakeholder Recommender] Finished processing request.");
                 requirement.setStakeholderRecommendationsFetched(true);
                 requirementRepository.save(requirement);
             } catch (Exception e) {
-                System.out.println("ERROR: Cannot reach UPC Stakeholder Recommendation Service!!!");
-                System.out.println(e.getMessage());
+                logger.error("ERROR: Cannot reach UPC Stakeholder Recommendation Service!!!", e);
                 emailService.sendEmailAsync(
                         "martin.stettinger@ist.tugraz.at",
                         "[OpenReq!Live] UPC Stakeholder Recommendations Fetch",
@@ -1997,7 +1993,7 @@ public class RequirementController {
                 conflicts = normalRatingConflicts(requirement, ConflictData.CONFLICT_DISTANCE_THRESHOLD_NORMAL_AND_ADVANCED);
                 storeRatingConflicts(conflicts, UserRatingConflictDbo.RatingType.NORMAL, now);
 			} catch (DboConstraintException exception) {
-				System.out.println(exception.getMessage());
+			    logger.error("An exception occured!", exception);
 			}
 
 			result.put("error", false);
@@ -2036,7 +2032,7 @@ public class RequirementController {
             conflicts = normalRatingConflicts(requirement, ConflictData.CONFLICT_DISTANCE_THRESHOLD_NORMAL_AND_ADVANCED);
             storeRatingConflicts(conflicts, UserRatingConflictDbo.RatingType.NORMAL, now);
 		} catch (DboConstraintException exception) {
-			System.out.println(exception.getMessage());
+		    logger.error("An exception occurred!", exception);
 		}
 
 		result.put("error", false);

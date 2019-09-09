@@ -377,22 +377,21 @@ public class OptimalReleasePlanCalculator {
     }
 
     private void printTreeLevelsInfo(Dictionary<Integer, TreeLevel> treeLevels, RequirementDbo requirement) {
-        System.out.println("------------------------------");
-        //System.out.println(String.format("[%s] tree height: %s", requirement.getTitle(), treeLevels.size()));
+        logger.info(String.format("[%s] tree height: %s", requirement.getTitle(), treeLevels.size()));
 
         for (int level = 0; level < treeLevels.size(); level++) {
             String reqsRequires = treeLevels.get(level).getRequiresRequirements().stream().map(t -> t.getCurrentReq().getTitle()).collect(Collectors.joining(","));
             String reqsExcludes= treeLevels.get(level).getExcludesRequirements().stream().map(t -> t.getCurrentReq().getTitle()).collect(Collectors.joining(","));
-            //System.out.println(String.format("level: %s, - Requires {%s} - Excludes {%s}", level, reqsRequires, reqsExcludes));
+            logger.info(String.format("level: %s, - Requires {%s} - Excludes {%s}", level, reqsRequires, reqsExcludes));
         }
     }
 
     private void printReleases(List<ReleaseDbo> releases, String msg) {
-        System.out.println("------------------------------");
+        logger.info("------------------------------");
 
         for (ReleaseDbo release : releases) {
             String requs = release.getRequirements().stream().map(RequirementDbo::getTitle).collect(Collectors.joining(","));
-            System.out.println(String.format("%s Release: %s, - Requirements {%s}", msg, release.getName(), requs));
+            logger.info(String.format("%s Release: %s, - Requirements {%s}", msg, release.getName(), requs));
         }
     }
 
@@ -403,7 +402,7 @@ public class OptimalReleasePlanCalculator {
         double cumulativeRelevance = 0.0;
         for (ReleaseDbo rel : sortedReleases){
             cumulativeRelevance += computeUtilityPerRelease(rel)*relWeight; //TODO: consider the free capacity of a release in the future except the last release
-            System.out.println("Relevance for "+rel.getName()+"= "+cumulativeRelevance);
+            logger.info("Relevance for " + rel.getName() + "= " + cumulativeRelevance);
             cummulativeRelevanceOfReleases.add(cumulativeRelevance);
             relWeight -= 0.1;
         }

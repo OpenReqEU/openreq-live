@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecommendRequestUserDto {
 
-    public String username;
+    private String username;
 
 }

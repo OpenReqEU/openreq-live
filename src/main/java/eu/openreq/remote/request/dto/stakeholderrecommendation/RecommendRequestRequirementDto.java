@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecommendRequestRequirementDto {
 
-    public String id;
-    public String name;
-    public String description;
-    public String effort;
-    public String modified_at;
+    private String id;
+    private String name;
+    private String description;
+    private String effort;
+    private String modified_at;
 
 }

@@ -6,7 +6,5 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RecommendResponseRequirementDto {
-
-    public String id;
-
+    private String id;
 }
