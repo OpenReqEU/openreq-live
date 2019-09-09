@@ -13,11 +13,11 @@ public class Requirement extends Element {
     private RequirementDbo.Status status;
 
     public Requirement(String id, String title, String description, RequirementDbo.Status status, int effort, Date created_at) {
-        this.id = id;
-        this.name = title;
-        this.text = description;
+        setId(id);
+        setName(title);
+        setText(description);
         this.status = status;
-        this.created_at = created_at;
+        setCreated_at(created_at);
         this.effort = effort;
     }
 

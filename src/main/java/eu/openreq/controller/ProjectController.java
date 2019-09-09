@@ -346,14 +346,14 @@ public class ProjectController {
                 try {
                     bufferedOutputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
             if (fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occurred while opening the file.", e);
                 }
             }
         }

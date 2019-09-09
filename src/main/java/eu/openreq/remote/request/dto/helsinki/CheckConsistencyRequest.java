@@ -23,13 +23,13 @@ public class CheckConsistencyRequest {
 
         if (releases != null)
         {
-            project.setReleases(releases.stream().map(x -> x.id.toString())
+            project.setReleases(releases.stream().map(x -> x.getId().toString())
                     .collect(Collectors.toList()));
         }
 
         if (requirements != null)
         {
-            project.setSpecifiedRequirements(requirements.stream().map(x -> x.id.toString())
+            project.setSpecifiedRequirements(requirements.stream().map(x -> x.getId().toString())
                     .collect(Collectors.toList()));
         }
 

@@ -16,11 +16,11 @@ public class Release extends Element {
     private ReleaseDbo.Status status;
 
     public Release(String id, String name, String description, ReleaseDbo.Status status, int capacity, Date created) {
-        this.id = id;
-        this.name = name;
-        this.text = description;
+        setId(id);
+        setName(name);
+        setText(description);
+        setCreated_at(created);
         this.status = status;
-        this.created_at = created;
         this.requirements = new ArrayList<>();
         this.capacity = capacity;
     }

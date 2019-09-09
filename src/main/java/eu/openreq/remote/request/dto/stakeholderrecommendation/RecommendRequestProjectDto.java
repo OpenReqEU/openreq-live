@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecommendRequestProjectDto {
 
-    public String id;
+    private String id;
 
 }

@@ -1680,8 +1680,8 @@ public class RequirementController {
     @Data
 	@AllArgsConstructor
     private static class ConflictData {
-        public static float CONFLICT_DISTANCE_THRESHOLD_BASIC = 2.5f;
-        public static float CONFLICT_DISTANCE_THRESHOLD_NORMAL_AND_ADVANCED = 2.5f;
+        public final static float CONFLICT_DISTANCE_THRESHOLD_BASIC = 2.5f;
+        public final static float CONFLICT_DISTANCE_THRESHOLD_NORMAL_AND_ADVANCED = 2.5f;
 
         private RequirementDbo requirement;
 		private UserDbo userA;

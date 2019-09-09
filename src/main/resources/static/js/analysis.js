@@ -376,7 +376,6 @@ class RequirementPairPresenter {
 
         if (typeStr === undefined) {
             if (!(uniqueKey in this.alreadyDefinedPotentialDependencies)) {
-                alert("A fatal error occured!");
                 return false;
             }
             var potentialDependencyData = this.alreadyDefinedPotentialDependencies[uniqueKey];

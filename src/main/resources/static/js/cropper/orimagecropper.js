@@ -80,8 +80,6 @@ class ImageCropper {
         $(".or-imagecropper-upload").click(function () {
             var width = $(".or-image-upload-container").width();
             var height = $(".or-image-upload-container").height();
-            alert(width);
-            alert(height);
             $(".or-image-upload-loader").show()
                 .attr("style", "position:absolute;width:" + width +"px;height:" + height + "px;background:black;z-index:999");
             var croppedCanvas = $image.cropper("getCroppedCanvas", { maxWidth: 4096, maxHeight: 4096 });

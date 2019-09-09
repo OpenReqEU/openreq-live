@@ -8,8 +8,11 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import eu.openreq.statistics.OptimalReleasePlanCalculator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,7 +26,9 @@ import java.util.Properties;
 @Service
 public class EmailService {
 
-    @Autowired
+	private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
+	@Autowired
     private JavaMailSender mailSender;
 
     @Autowired
@@ -158,7 +163,7 @@ public class EmailService {
             String from = environment.getProperty("mail.from");
             sendEmailAsync(from, toAddress, subject, htmlMessage, textMessage);
         } catch (Exception e) {
-            e.printStackTrace();
+			logger.error("An exception occurred while opening the file.", e);
         } finally {}
 	}
 
@@ -179,7 +184,7 @@ public class EmailService {
             mimeMessage.setContent(generateHTML(htmlMessage), "text/html; charset=utf-8");
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            e.printStackTrace();
+			logger.error("An exception occurred while opening the file.", e);
         } finally {}
 	}
 
@@ -235,17 +240,17 @@ public class EmailService {
                     mimeMessage.saveChanges();
                     transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
                 } catch (Exception e) {
-                    e.printStackTrace();
+					logger.error("An exception occurred while opening the file.", e);
                 } finally {}
             }
         } catch (NoSuchProviderException e) {
-		    e.printStackTrace();
+			logger.error("An exception occurred while opening the file.", e);
         } finally {
 		    if (transport != null) {
                 try {
                     transport.close();
                 } catch (MessagingException e) {
-                    e.printStackTrace();
+					logger.error("An exception occurred while opening the file.", e);
                 }
             }
         }

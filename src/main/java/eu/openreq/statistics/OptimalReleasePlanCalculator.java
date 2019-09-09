@@ -3,11 +3,14 @@ package eu.openreq.statistics;
 import eu.openreq.dbo.DependencyDbo;
 import eu.openreq.dbo.ReleaseDbo;
 import eu.openreq.dbo.RequirementDbo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class OptimalReleasePlanCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(OptimalReleasePlanCalculator.class);
     private Map<Long, RequirementDbo> requirementsMap;
     private Map<Long, Float> requirementEffortMap;
     private Map<Long, Double> sortedRequirementsUtilitiesMap;
@@ -29,7 +32,7 @@ public class OptimalReleasePlanCalculator {
                 this.sortedRequirementsUtilitiesMap.put(entry.getKey(), entry.getValue());
                 this.requirementsMap.put(entry.getKey(), targetRequirement);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("An exception occurred while opening the file.", e);
             }
         }
 

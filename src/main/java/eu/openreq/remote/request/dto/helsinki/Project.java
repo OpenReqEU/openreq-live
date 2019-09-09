@@ -16,12 +16,12 @@ public class Project extends Element {
     private ProjectStates status;
 
     public Project(String id, String title, String description, ProjectStates status, Date createdAt) {
-        this.id = id;
-        this.name = title;
-        this.text = description;
+        setId(id);
+        setName(title);
+        setText(description);
         this.releases = new ArrayList<>();
         this.specifiedRequirements = new ArrayList<>();
         this.status = status;
-        this.created_at = createdAt;
+        setCreated_at(createdAt);
     }
 }
