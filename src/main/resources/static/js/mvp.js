@@ -672,6 +672,10 @@ function showArgumentMAUTScore(inconsistencyLabel, requirement, requirementComme
     }
 }
 
+function showErrorMessage(msg) {
+    swal("Error", msg, "error");
+}
+
 var focusedLiSelector = null;
 
 class DataManager {
@@ -1013,7 +1017,7 @@ class DataManager {
 				});
 			}
 			if ((requirementTitle == "") && (requirementDescriptionStripped != "") && allowAlerts) {
-				alert("Please enter a valid title for the requirement!");
+			    showErrorMessage("Please enter a valid title for the requirement!");
 				requirementTitleSelector.focus();
 			}
 		}
@@ -1088,7 +1092,7 @@ class DataManager {
 			}
 
 			if ((releaseTitle == "") && (releaseDescription != "") && allowAlerts) {
-				alert("Please enter a valid title for the release!");
+                showErrorMessage("Please enter a valid title for the release!");
 				releaseTitleSelector.focus();
 			}
 		}
@@ -2623,7 +2627,7 @@ class SaveHandler {
 
 	successCallback(reference, result, status, xhr) {
 		if (result.error) {
-			alert("An error occured: " + result.errorMessage);
+            showErrorMessage("An error occured: " + result.errorMessage);
 			this.completeCallback(false);
 			return false;
 		}
@@ -2738,7 +2742,7 @@ class UIEventHandler {
             $(".or-form-edit-release-description").bind("click", bindUIEvent(this, "editReleaseDescriptionEvent"));
         } else {
 		    $(".or-form-edit-release-description").bind("click", function () {
-                alert("You are not allowed to change the title or description of a release! This is a read-only project.");
+                showErrorMessage("You are not allowed to change the title or description of a release! This is a read-only project.");
                 return false;
             });
         }
@@ -2747,7 +2751,7 @@ class UIEventHandler {
             $(".or-date-badge").bind("click", bindUIEvent(this, "datePickerEvent"));
         } else {
             $(".or-date-badge").bind("click", function (e) {
-                alert("You are not allowed to change the deadline of a release! This is a read-only project.");
+                showErrorMessage("You are not allowed to change the deadline of a release! This is a read-only project.");
                 return false;
             });
         }
@@ -2956,7 +2960,7 @@ class UIEventHandler {
 		        "ui-droppable-hover": "or-state-hover"
 		      },
 		      drop: function (event, ui) {
-		    	  	alert("Dropped!");
+		    	  	showErrorMessage("Dropped!");
 		        //$(this).addClass("ui-state-highlight").find("p").html("Dropped!");
 		      }
 	    });*/
@@ -3923,13 +3927,13 @@ class UIEventHandler {
         };
 
         if (name.length == 0) {
-            alert("Please enter a title!");
+            showErrorMessage("Please enter a title!");
             this.addRatingAttributeEvent(event, thisObj);
             return false;
         }
 
         if (description.length == 0) {
-            alert("Please enter a description!");
+            showErrorMessage("Please enter a description!");
             this.addRatingAttributeEvent(event, thisObj);
             return false;
         }
@@ -5566,7 +5570,7 @@ class UIEventHandler {
 
         var anonymousUsername = isPrivateProject ? "" : $(".or-rating-anonymous-username:last").val();
         if ((!isPrivateProject) && (anonymousUsername == "")) {
-            alert("Please enter a name!");
+            showErrorMessage("Please enter a name!");
             this.rateEvent(event, thisObj);
             return false;
         }
