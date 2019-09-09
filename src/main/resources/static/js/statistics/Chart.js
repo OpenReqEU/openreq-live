@@ -8605,10 +8605,9 @@ module.exports = function(Chart) {
 
 				// If the user provided a sorting function, use it to modify the tooltip items
 				if (opts.itemSort) {
-					var temp = tooltipItems.sort(function(a, b) {
+					tooltipItems.sort(function(a, b) {
 						return opts.itemSort(a, b, data);
 					});
-					tooltipItems = temp;
 				}
 
 				// Determine colors for boxes
