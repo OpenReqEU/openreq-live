@@ -13133,9 +13133,10 @@ module.exports = function(Chart) {
 
 				// If the user provided a filter function, use it to modify the tooltip items
 				if (opts.filter) {
-					tooltipItems = tooltipItems.filter(function(a) {
+					var temp = tooltipItems.filter(function(a) {
 						return opts.filter(a, data);
 					});
+					tooltipItems = temp;
 				}
 
 				// If the user provided a sorting function, use it to modify the tooltip items
