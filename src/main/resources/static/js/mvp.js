@@ -841,7 +841,7 @@ class DataManager {
             url: this.ambiguityIssueUrl,
             data: jsonifiedString,
             type: "POST",
-            headers: { "Bearer": apiBearer },
+            beforeSend: function (xhr) { xhr.setRequestHeader("Authorization", "Bearer " + apiBearer); },
             contentType: "application/json",
             processData: false,
             success: function (data) {
@@ -5398,7 +5398,7 @@ class UIEventHandler {
                 $.ajax({
                     url: "http://217.172.12.199:9410/upc/stakeholders-recommender/reject_recommendation?rejected=" +
                     username + "&requirement=" + requirementID + "&user=" + currentUsername + "&organization=tugraz",
-                    headers: { "Bearer": apiBearer },
+                    beforeSend: function (xhr) { xhr.setRequestHeader("Authorization", "Bearer " + apiBearer); },
                     type: "POST",
                     success: function (result) {
                         console.log(result);
@@ -6132,7 +6132,7 @@ class UIEventHandler {
             var data = [];
             $.ajax({
                 url: url,
-                headers: { "Bearer": apiBearer },
+                beforeSend: function (xhr) { xhr.setRequestHeader("Authorization", "Bearer " + apiBearer); },
                 type: "GET",
                 contentType: "application/json",
                 processData: false,
@@ -6321,7 +6321,7 @@ class UIEventHandler {
                     url: url,
                     data: jsonifiedString,
                     type: "POST",
-                    headers: { "Bearer": apiBearer },
+                    beforeSend: function (xhr) { xhr.setRequestHeader("Authorization", "Bearer " + apiBearer); },
                     contentType: "application/json",
                     processData: false,
                     success: function (data) {
