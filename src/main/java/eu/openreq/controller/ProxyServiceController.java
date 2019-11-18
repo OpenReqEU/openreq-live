@@ -79,7 +79,7 @@ public class ProxyServiceController {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         try {
-            map.put("Bearer", environment.getProperty("api.bearer.key"));
+            map.put("Authorization", "Bearer " + environment.getProperty("api.bearer.key"));
         } catch (Exception e) {
             logger.error("An exception occurred.", e);
         }
@@ -140,7 +140,7 @@ public class ProxyServiceController {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         try {
-            map.put("Bearer", environment.getProperty("api.bearer.key"));
+            map.put("Authorization", "Bearer " + environment.getProperty("api.bearer.key"));
         } catch (Exception e) {
             logger.error("An exception occurred.", e);
         }
@@ -218,7 +218,7 @@ public class ProxyServiceController {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         try {
-            map.put("Bearer", environment.getProperty("api.bearer.key"));
+            map.put("Authorization", "Bearer " + environment.getProperty("api.bearer.key"));
         } catch (Exception e) {
             logger.error("An exception occurred.", e);
         }
