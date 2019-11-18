@@ -7,7 +7,6 @@ import eu.openreq.api.internal.dto.ProjectSettingsDto;
 import eu.openreq.dbo.ProjectDbo;
 import eu.openreq.dbo.ProjectSettingsDbo;
 import eu.openreq.dbo.UserDbo;
-import eu.openreq.remote.dto.RemoteRequirementDependencyDto;
 import eu.openreq.repository.ProjectRepository;
 import eu.openreq.repository.ProjectSettingsRepository;
 import eu.openreq.repository.UserRepository;
@@ -15,16 +14,9 @@ import eu.openreq.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
 import javax.servlet.http.HttpServletRequest;
 
 @Controller

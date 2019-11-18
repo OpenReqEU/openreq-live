@@ -29,6 +29,7 @@ import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -132,6 +133,9 @@ public class RequirementController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private Environment environment;
 
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -1037,6 +1041,11 @@ public class RequirementController {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             Map<String, String> map = new HashMap<>();
             map.put("Content-Type", "application/json");
+            try {
+                map.put("Bearer", environment.getProperty("api.bearer.key"));
+            } catch (Exception e) {
+                logger.error("An exception occurred.", e);
+            }
             headers.setAll(map);
 
             RecommendRequestProjectDto projectDto = new RecommendRequestProjectDto();

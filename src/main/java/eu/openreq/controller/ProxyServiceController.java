@@ -18,8 +18,8 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -68,6 +68,8 @@ public class ProxyServiceController {
     private DependencyRepository dependencyRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private Environment environment;
 
     @ResponseBody
     @GetMapping("/project/{projectID}/requirement/recommend/similar")
@@ -76,10 +78,14 @@ public class ProxyServiceController {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
+        try {
+            map.put("Bearer", environment.getProperty("api.bearer.key"));
+        } catch (Exception e) {
+            logger.error("An exception occurred.", e);
+        }
         headers.setAll(map);
 
         ProjectDbo project = projectRepository.findOne(projectID);
-
         List<RemoteSimilarRequirementsDto> requirements = new ArrayList<>();
         Map<Long, Long> projectSpecificRequirementIDMap = new HashMap<>();
         for (RequirementDbo requirement : project.getRequirements()) {
@@ -133,6 +139,11 @@ public class ProxyServiceController {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
+        try {
+            map.put("Bearer", environment.getProperty("api.bearer.key"));
+        } catch (Exception e) {
+            logger.error("An exception occurred.", e);
+        }
         headers.setAll(map);
 
         ProjectDbo project = projectRepository.findOneByUniqueKey(projectKey);
@@ -206,6 +217,11 @@ public class ProxyServiceController {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
+        try {
+            map.put("Bearer", environment.getProperty("api.bearer.key"));
+        } catch (Exception e) {
+            logger.error("An exception occurred.", e);
+        }
         headers.setAll(map);
 
         final CheckConsistencyRequest checkConsistencyRequest = getCheckConsistencyRequestDto(project);

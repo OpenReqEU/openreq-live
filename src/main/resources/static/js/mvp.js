@@ -701,6 +701,7 @@ class DataManager {
 		this.issueData = [];
         this.consistencyIssueData = [];
         this.requirementMessages = {};
+		this.apiBearer = userData.apiBearer;
 		this.userData = userData;
 		this.uiManager = uiManager;
 
@@ -715,7 +716,7 @@ class DataManager {
 	}
 
 	getRequirementsMap() {
-        var requirementsMap = {}
+        var requirementsMap = {};
         for (var idx in this.requirementData) {
             var requirement = this.requirementData[idx];
             requirementsMap[requirement.id] = requirement;
@@ -835,16 +836,19 @@ class DataManager {
         }
 
         var jsonifiedString = JSON.stringify({ "requirements": requirements });
-        $.ajax(this.ambiguityIssueUrl, {
-            "data": jsonifiedString,
-            "type": "POST",
-            "contentType": "application/json",
-            "processData": false,
-            "success": function (data) {
+        var apiBearer = this.apiBearer;
+        $.ajax({
+            url: this.ambiguityIssueUrl,
+            data: jsonifiedString,
+            type: "POST",
+            headers: { "Bearer": apiBearer },
+            contentType: "application/json",
+            processData: false,
+            success: function (data) {
                 this.ambiguityIssueData = data;
                 callback();
             }.bind(this),
-            "error": function () {
+            error: function () {
             	this.ambiguityIssueData = [];
                 callback();
 			}.bind(this)
@@ -5371,6 +5375,7 @@ class UIEventHandler {
         var requirementID = parseInt($(thisObj).attr("data-requirement-id"));
         var userID = parseInt($(thisObj).attr("data-user-id"));
         var currentUsername = this.dataManager.currentUsername;
+        var apiBearer = this.dataManager.apiBearer;
         var username = $(thisObj).attr("data-username");
         var isAnonymousUser = ($(thisObj).attr("data-is-anonymous-user") == "true");
         var uiEventHandler = this;
@@ -5390,10 +5395,12 @@ class UIEventHandler {
                     return false;
                 }
 
-                $.ajax("http://217.172.12.199:9410/upc/stakeholders-recommender/reject_recommendation?rejected=" +
-                    username + "&requirement=" + requirementID + "&user=" + currentUsername + "&organization=tugraz", {
-                    'type': 'POST',
-                    'success': function (result) {
+                $.ajax({
+                    url: "http://217.172.12.199:9410/upc/stakeholders-recommender/reject_recommendation?rejected=" +
+                    username + "&requirement=" + requirementID + "&user=" + currentUsername + "&organization=tugraz",
+                    headers: { "Bearer": apiBearer },
+                    type: "POST",
+                    success: function (result) {
                         console.log(result);
                     }
                 });
@@ -5821,7 +5828,6 @@ class UIEventHandler {
             if (port != 443 && port != 80) {
                 prefix += ":" + port;
             }
-            console.log("iframe!!");
             $("#iframe-depenency-wheel").attr("src", prefix + "/project/" + projectID + "/statistics/graph/dependency");
         }
         this.bindUIEvents();
@@ -6115,6 +6121,7 @@ class UIEventHandler {
         $(".dropdown-button").dropdown("close");
 	    var projectKey = this.uiManager.projectKey;
 	    var projectSettings = this.uiManager.dataManager.projectData.projectSettings;
+	    var apiBearer = this.uiManager.dataManager.apiBearer;
         var twitterChannel = (projectSettings.twitterChannel != "") ? projectSettings.twitterChannel.replace("#", "").replace("@", "") : "FitbitSupport";
         var categoryClasses = ["inquiry", "problem_report", "irrelevant"];
 
@@ -6123,12 +6130,14 @@ class UIEventHandler {
                 + "/class/" + categoryClasses[i];
             var htmlClass = ".container-tweets-" + categoryClasses[i] + " > .or-tweets-table > tbody";
             var data = [];
-            $.ajax(url, {
-                "type": "GET",
-                "contentType": "application/json",
-                "processData": false,
-                "async": false,
-                "success": function (d) { data = d }
+            $.ajax({
+                url: url,
+                headers: { "Bearer": apiBearer },
+                type: "GET",
+                contentType: "application/json",
+                processData: false,
+                async: false,
+                success: function (d) { data = d }
             });
 
             $(htmlClass).children().remove();
@@ -6221,6 +6230,7 @@ class UIEventHandler {
         var consentCookieHandler = this.uiManager.consentCookieHandler;
 	    var projectID = this.uiManager.projectID;
 	    var projectSettings = dataManager.projectData.projectSettings;
+	    var apiBearer = dataManager.apiBearer;
 
 	    if (projectSettings.showDependencies) {
             $(".or-settings-show-dependencies-tab").attr("checked", "checked");
@@ -6307,12 +6317,14 @@ class UIEventHandler {
                 var twitterChannel = projectSettings.twitterChannel.replace("@", "").replace("#", "");
                 var url = "https://api.openreq.eu/ri-orchestration-twitter/hitec/orchestration/twitter/observe" +
                     "/tweet/account/" + twitterChannel + "/interval/2h/lang/en";
-                $.ajax(url, {
-                    "data": jsonifiedString,
-                    "type": "POST",
-                    "contentType": "application/json",
-                    "processData": false,
-                    "success": function (data) {
+                $.ajax({
+                    url: url,
+                    data: jsonifiedString,
+                    type: "POST",
+                    headers: { "Bearer": apiBearer },
+                    contentType: "application/json",
+                    processData: false,
+                    success: function (data) {
                         if (!data.status) {
                             swal("Error", data.message, "error");
                             return false;

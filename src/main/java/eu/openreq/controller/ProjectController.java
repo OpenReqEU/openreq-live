@@ -20,6 +20,7 @@ import eu.openreq.service.IPService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -87,6 +88,9 @@ public class ProjectController {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Environment environment;
 
     @RequestMapping("/test")
     public String test(Model model, HttpServletResponse http, Authentication authentication) {
@@ -665,6 +669,11 @@ public class ProjectController {
 		model.addAttribute("currentUser", currentUser);
 		model.addAttribute("project", project);
 		model.addAttribute("projectSettings", settings);
+        try {
+            model.addAttribute("apiBearer", environment.getProperty("api.bearer.key"));
+        } catch (Exception e) {
+            logger.error("An exception occurred.", e);
+        }
 		return "project_manage";
 	}
 

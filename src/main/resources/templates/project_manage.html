@@ -983,6 +983,7 @@
         var creatorUserID = [[${(project.creatorUser != null) ? project.creatorUser.id : 0}]];
         var isPrivateProject = [[${project.visibilityPrivate}]];
         var isReadOnlyProject = [[${projectSettings.readOnly}]];
+        var apiBearer = [[${apiBearer}]];
 
         var projectSettings = {
             readOnly: [[${projectSettings.readOnly}]],
@@ -1028,7 +1029,8 @@
             username: [[${currentUser?.username}]],
             userFirstName: [[${currentUser?.firstName}]],
             userLastName: [[${currentUser?.lastName}]],
-            userEmail: [[${currentUser?.mailAddress}]]
+            userEmail: [[${currentUser?.mailAddress}]],
+            apiBearer: apiBearer
         };
 
         let uiEventHandler = new UIEventHandler();
