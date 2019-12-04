@@ -6127,7 +6127,7 @@ class UIEventHandler {
 
         for (var i in categoryClasses) {
             var url = "https://api.openreq.eu/ri-storage-twitter/account_name/" + twitterChannel
-                + "/class/" + categoryClasses[i];
+                + "/class/" + categoryClasses[i] + "/limit/20";
             var htmlClass = ".container-tweets-" + categoryClasses[i] + " > .or-tweets-table > tbody";
             var data = [];
             $.ajax({
