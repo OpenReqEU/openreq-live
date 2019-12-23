@@ -33,7 +33,7 @@ public class EmailService {
     @Autowired
     private Environment environment;
 
-    final static String exceptionMessage = "An exception occurred while opening the file.";
+    private String exceptionMessage = "An exception occurred while opening the file";
 
     private String generateHTML(String htmlMessage) {
         String hostName = ipService.getHost();
@@ -121,29 +121,7 @@ public class EmailService {
             transport = session.getTransport("smtp");
 
             for (EmailData email : emails) {
-                try {
-                    MimeMessage mimeMessage = mailSender.createMimeMessage();
-                    if (!transport.isConnected()) {
-                        if (port != null && port.length() > 0) {
-                            transport.connect(host, Integer.parseInt(port), userName, password);
-                        } else {
-                            transport.connect(host, userName, password);
-                        }
-                    }
-
-                    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
-                    helper.setTo(email.getToAddress());
-                    helper.setReplyTo(replyTo);
-                    helper.setFrom(from);
-                    helper.setSubject(email.getSubject());
-                    helper.setText(email.getTextMessage());
-                    helper.setBcc(bcc);
-                    mimeMessage.setContent(generateHTML(email.getHtmlMessage()), "text/html; charset=utf-8");
-                    mimeMessage.saveChanges();
-                    transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-                } catch (Exception e) {
-					logger.error(exceptionMessage, e);
-                }
+                sendMimeEmail(email, host, port, userName, password, from, replyTo, bcc, transport);
             }
         } catch (NoSuchProviderException e) {
 			logger.error(exceptionMessage, e);
@@ -157,6 +135,33 @@ public class EmailService {
             }
         }
 	}
+
+	private void sendMimeEmail(EmailData email, String host, String port, String userName, String password,
+                               String from, String replyTo, String[] bcc, Transport transport) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            if (!transport.isConnected()) {
+                if (port != null && port.length() > 0) {
+                    transport.connect(host, Integer.parseInt(port), userName, password);
+                } else {
+                    transport.connect(host, userName, password);
+                }
+            }
+
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
+            helper.setTo(email.getToAddress());
+            helper.setReplyTo(replyTo);
+            helper.setFrom(from);
+            helper.setSubject(email.getSubject());
+            helper.setText(email.getTextMessage());
+            helper.setBcc(bcc);
+            mimeMessage.setContent(generateHTML(email.getHtmlMessage()), "text/html; charset=utf-8");
+            mimeMessage.saveChanges();
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+        } catch (Exception e) {
+            logger.error(exceptionMessage, e);
+        }
+    }
 
 	public boolean isValidEmailAddress(String email) {
 		boolean result = true;
