@@ -8,7 +8,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import eu.openreq.statistics.OptimalReleasePlanCalculator;
+import eu.openreq.Util.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -37,7 +36,6 @@ public class EmailService {
     @Autowired
     private Environment environment;
 
-    // TODO: create a Thymeleaf template instead!!
     private String generateHTML(String htmlMessage) {
         String hostName = ipService.getHost();
         long port = ipService.getPort();
@@ -46,94 +44,8 @@ public class EmailService {
     		"<html>\n" + 
     		"<head>\n" + 
     		"<link href=\"https://fonts.googleapis.com/css?family=Roboto\" rel=\"stylesheet\" type=\"text/css\" />\n" +
-    		"<style>\n" + 
-    		"body {\n" + 
-    		"	font-family: 'Roboto', sans-serif;\n" + 
-    		"	font-size: 14px;\n" + 
-    		"	background-color: #eee;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"hr {\n" + 
-    		"	border: 0;\n" + 
-    		"	border-top: 1px solid #eee;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		".container {\n" + 
-    		"	width: 40%;\n" + 
-    		"	background-color: #fff;\n" + 
-    		"	color: #666;\n" + 
-    		"	margin-left: auto;\n" + 
-    		"	margin-right: auto;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"@media ( max-width : 991px) {\n" + 
-    		"	.container {\n" + 
-    		"		width: 100%;\n" + 
-    		"	}\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"header {\n" + 
-    		"	background-color: #fff !important;\n" + 
-    		"	text-align: center;\n" + 
-    		"	padding: 15px;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"header img {\n" + 
-    		"	width: 180px;\n" + 
-    		"	height: auto;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"header hr {\n" + 
-    		"	margin-bottom: 0 !important;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"footer {\n" + 
-    		"	background-color: #f5f5f5;\n" + 
-    		"	color: #9da8b7;\n" + 
-    		"	text-align: center;\n" + 
-    		"	padding: 15px;\n" + 
-    		"	margin-bottom: 20px;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"footer a {\n" + 
-    		"	color: #337ab7 !important;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"footer a:active, footer a:visited, footer a:focus {\n" + 
-    		"	color: #337ab7 !important;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"footer a:hover {\n" + 
-    		"	color: #2f97f3 !important;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		".content {\n" + 
-    		"	padding: 15px;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		".btn {\n" + 
-    		"	padding: 6px 12px;\n" + 
-    		"	text-align: center;\n" + 
-    		"	cursor: pointer;\n" + 
-    		"	display: inline-block;\n" + 
-    		"	background-color: #039be5;\n" + 
-    		"	color: #fff;\n" + 
-    		"	border-radius: 2px;\n" + 
-    		"	text-decoration: none !important;\n" + 
-    		"	margin-top: 10px;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		".btn:hover{\n" + 
-    		"	background-color: #406392; \n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"p.greetings {\n" + 
-    		"	margin-top: 20px; \n" + 
-    		"	white-space: pre-wrap;\n" + 
-    		"}\n" + 
-    		"\n" + 
-    		"</style>\n" + 
-    		"</head>\n" + 
+    		"<link href=\"https://" + hostName + ":" + port + "/css/email.css\" rel=\"stylesheet\" type=\"text/css\" />\n" +
+    		"</head>\n" +
     		"\n" + 
     		"<body>\n" + 
     		"	<div class=\"container\">\n" + 
@@ -164,7 +76,7 @@ public class EmailService {
             sendEmailAsync(from, toAddress, subject, htmlMessage, textMessage);
         } catch (Exception e) {
 			logger.error("An exception occurred while opening the file.", e);
-        } finally {}
+        }
 	}
 
 	@Async
@@ -185,7 +97,7 @@ public class EmailService {
             mailSender.send(mimeMessage);
         } catch (Exception e) {
 			logger.error("An exception occurred while opening the file.", e);
-        } finally {}
+        }
 	}
 
 	@Data
@@ -241,7 +153,7 @@ public class EmailService {
                     transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
                 } catch (Exception e) {
 					logger.error("An exception occurred while opening the file.", e);
-                } finally {}
+                }
             }
         } catch (NoSuchProviderException e) {
 			logger.error("An exception occurred while opening the file.", e);

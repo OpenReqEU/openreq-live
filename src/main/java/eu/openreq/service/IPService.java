@@ -1,5 +1,6 @@
 package eu.openreq.service;
 
+import eu.openreq.Util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,7 @@ public class IPService {
     private Environment environment;
 
     public long getPort() {
-        return 443;
-        /*return Long.parseLong(environment.getProperty("server.port"));*/
+        return Constants.PORT;
     }
 
     public String getHost() {

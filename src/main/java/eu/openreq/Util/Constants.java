@@ -7,4 +7,5 @@ public class Constants {
 
     public static final long PASSWORD_EXPIRES_IN_MINUTES = 10;
     public static final long ONE_MINUTE_IN_MILLIS = 60000;
+    public static final long PORT = 443;
 }
