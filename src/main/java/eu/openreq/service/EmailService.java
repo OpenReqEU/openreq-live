@@ -108,8 +108,6 @@ public class EmailService {
             String[] bcc = environment.getProperty("mail.bcc").split(",");
             String host = environment.getProperty("massmail.host");
             String port = environment.getProperty("massmail.port");
-            String userName = environment.getProperty("massmail.username");
-            String password = environment.getProperty("massmail.password");
 
             Properties prop = System.getProperties(); // load all smtp properties
             prop.put("mail.smtp.auth", "true");
@@ -121,7 +119,7 @@ public class EmailService {
             transport = session.getTransport("smtp");
 
             for (EmailData email : emails) {
-                sendMimeEmail(email, host, port, userName, password, from, replyTo, bcc, transport);
+                sendMimeEmail(email, host, port, from, replyTo, bcc, transport);
             }
         } catch (NoSuchProviderException e) {
 			logger.error(exceptionMessage, e);
@@ -136,9 +134,12 @@ public class EmailService {
         }
 	}
 
-	private void sendMimeEmail(EmailData email, String host, String port, String userName, String password,
-                               String from, String replyTo, String[] bcc, Transport transport) {
+	private void sendMimeEmail(EmailData email, String host, String port, String from, String replyTo,
+                               String[] bcc, Transport transport) {
         try {
+            String userName = environment.getProperty("massmail.username");
+            String password = environment.getProperty("massmail.password");
+
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             if (!transport.isConnected()) {
                 if (port != null && port.length() > 0) {
