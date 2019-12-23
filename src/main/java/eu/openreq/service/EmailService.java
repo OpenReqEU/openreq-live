@@ -7,10 +7,7 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import eu.openreq.Util.Constants;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import eu.openreq.remote.dto.EmailData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,7 @@ import java.util.Properties;
 @Service
 public class EmailService {
 
-	private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
 	@Autowired
     private JavaMailSender mailSender;
@@ -35,6 +32,8 @@ public class EmailService {
 
     @Autowired
     private Environment environment;
+
+    final static String exceptionMessage = "An exception occurred while opening the file.";
 
     private String generateHTML(String htmlMessage) {
         String hostName = ipService.getHost();
@@ -75,7 +74,7 @@ public class EmailService {
             String from = environment.getProperty("mail.from");
             sendEmailAsync(from, toAddress, subject, htmlMessage, textMessage);
         } catch (Exception e) {
-			logger.error("An exception occurred while opening the file.", e);
+			logger.error(exceptionMessage, e);
         }
 	}
 
@@ -96,18 +95,9 @@ public class EmailService {
             mimeMessage.setContent(generateHTML(htmlMessage), "text/html; charset=utf-8");
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-			logger.error("An exception occurred while opening the file.", e);
+			logger.error(exceptionMessage, e);
         }
 	}
-
-	@Data
-    @AllArgsConstructor
-	public static class EmailData {
-        private String toAddress;
-        private String subject;
-        private String htmlMessage;
-        private String textMessage;
-    }
 
 	@Async
 	public void sendMassEmailAsync(String from, List<EmailData> emails) {
@@ -152,17 +142,17 @@ public class EmailService {
                     mimeMessage.saveChanges();
                     transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
                 } catch (Exception e) {
-					logger.error("An exception occurred while opening the file.", e);
+					logger.error(exceptionMessage, e);
                 }
             }
         } catch (NoSuchProviderException e) {
-			logger.error("An exception occurred while opening the file.", e);
+			logger.error(exceptionMessage, e);
         } finally {
 		    if (transport != null) {
                 try {
                     transport.close();
                 } catch (MessagingException e) {
-					logger.error("An exception occurred while opening the file.", e);
+					logger.error(exceptionMessage, e);
                 }
             }
         }
