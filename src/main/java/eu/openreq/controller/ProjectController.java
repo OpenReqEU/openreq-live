@@ -1085,10 +1085,11 @@ public class ProjectController {
 		ProjectDbo project;
 		Date now = new Date();
         String currentYear = yearDateFormat.format(now);
+        int nextYear = Integer.parseInt(yearDateFormat.format(now)) + 1;
 
 		try {
 	        Date projectStart = dateFormat.parse(currentYear + "-01-01");
-	        Date projectEnd = dateFormat.parse((currentYear + 1) + "-01-31");
+	        Date projectEnd = dateFormat.parse(nextYear + "-01-31");
 	        project = new ProjectDbo(Utils.generateRandomProjectKey(projectRepository), "Sportswatch project",
                     "Some description.", projectStart, projectEnd, "/images/innosensr_logo.png",
                     (currentUser != null), currentUser);
@@ -1212,7 +1213,7 @@ public class ProjectController {
 		} catch (Exception e) {
 			System.out.println(e.getClass().getSimpleName());
 			System.out.println(e.getMessage());
-			return null;
+			return "redirect:/project/list";
 		}
 		return "redirect:/project/p/" + project.getUniqueKey() + "/manage";
 	}
