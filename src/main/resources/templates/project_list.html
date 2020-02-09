@@ -31,7 +31,7 @@
                   <p class="or-project-tile-card-description">
                       <span th:text="${project.description}" style="display:none;"></span>
                   </p>
-                  <p>Releases: <th:block th:text="${#lists.size(project.releases)}"></th:block>, Requirements: <th:block th:text="${#lists.size(project.requirements)}"></th:block></p>
+                  <p>Releases: <th:block th:text="${#lists.size(project.visibleReleases)}"></th:block>, Requirements: <th:block th:text="${#lists.size(project.visibleRequirements)}"></th:block></p>
                   <p class="or-project-tile-card-date"><th:block th:text="${#dates.format(project.startDate, 'MMM yy')} + ' - ' + ${#dates.format(project.endDate, 'MMM yy')}"></th:block></p>
                 </div>
                 <div class="card-action">

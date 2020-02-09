@@ -239,4 +239,12 @@ public class ProjectDbo {
 		return  getRequirements().stream().filter(x -> x.getRelease() == null && x.isVisible()).collect(Collectors.toList());
 	}
 
+	public List<ReleaseDbo> getVisibleReleases() {
+		return  getReleases().stream().filter(x -> x.isVisible()).collect(Collectors.toList());
+	}
+
+	public List<RequirementDbo> getVisibleRequirements() {
+		return  getRequirements().stream().filter(x -> x.isVisible()).collect(Collectors.toList());
+	}
+
 }

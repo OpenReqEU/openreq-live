@@ -238,9 +238,10 @@ public class ProxyServiceController {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Arrays.asList(TEXT_PLAIN, APPLICATION_JSON));
         restTemplate.getMessageConverters().add(converter);
+        String jsonReq = null;
 
         try {
-            String jsonReq = mapper.writeValueAsString(checkConsistencyRequest);
+            jsonReq = mapper.writeValueAsString(checkConsistencyRequest);
             System.out.println(jsonReq);
             ResponseEntity<CheckConsistencyResponse> responseEntity = restTemplate.postForEntity(url, request1, CheckConsistencyResponse.class);
             CheckConsistencyResponse body = responseEntity.getBody();
@@ -284,6 +285,8 @@ public class ProxyServiceController {
         } catch (Exception exception) {
             result.put("error", true);
             result.put("errorMessage", "Ups something unexpected has happened! Please try again!");
+            result.put("helsinkiRequest", jsonReq);
+            result.put("exception", exception.getMessage());
         }
         return result;
     }
@@ -329,11 +332,7 @@ public class ProxyServiceController {
 
         List<ReleaseDbo> sortedReleases = new ArrayList<>(project.getReleases().stream()
                 .filter(x -> x.isVisible()).collect(Collectors.toList()));
-        Collections.sort(sortedReleases, new Comparator<ReleaseDbo>() {
-            public int compare(ReleaseDbo r1, ReleaseDbo r2) {
-                return r1.getEndDate().compareTo(r2.getEndDate());
-            }
-        });
+        Collections.sort(sortedReleases, Comparator.comparing(ReleaseDbo::getEndDate));
 
         //add pool of unassigned requirements in release 0 (helsinki service requirement)
         List<RequirementDbo> unassignedRequirements = project.getUnassignedRequirements();
