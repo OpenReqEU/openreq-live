@@ -32,18 +32,10 @@
                                 <td>Mail Address:</td>
                                 <td><a th:href="'mailto:' + ${user.mailAddress}" th:text="${user.mailAddress}"></a></td>
                             </tr>
-                            <tr>
-                                <td>Group Number:</td>
-                                <td th:text="${user.groupNumber}"></td>
-                            </tr>
-                            <tr>
-                                <td>Purpose of registration:</td>
-                                <td>Participation in course</td>
-                            </tr>
                         </tbody>
                     </table>
                     <p>&nbsp;</p>
-                    <div>In case your data is not correct or complete, please contact us via email as soon as possible (Mail: <a href="mailto:oad@ist.tugraz.at">oad@ist.tugraz.at</a>).</div>
+                    <div>In case your data is not correct or complete, please contact us via email as soon as possible.</div>
                     <p>&nbsp;</p>
                     <form id="or-confirmation-form" th:action="'/registration/user/' + ${user.id} + '/confirm/' + ${user.confirmationKey} + '/finish'" method="post">
                         <div class="form-group">

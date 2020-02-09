@@ -235,7 +235,6 @@ public class UserController {
             return "reset_password";
         }
 
-        // TODO: force user to define a new password... -> mutate session
         final String newPassword = Utils.generateRandomPassword();
         userService.changePassword(user, newPassword);
 
@@ -421,7 +420,6 @@ public class UserController {
         }
 
         if ((userProfileForm.getPassword().length() > 0) || (userProfileForm.getConfirmPassword().length() > 0)) {
-            // FIXME: validate length of password!!
             if (!userProfileForm.getPassword().equals(userProfileForm.getConfirmPassword())) {
                 bindingResult.rejectValue("confirmPassword", null, "The passwords must be equal!");
             }
@@ -431,11 +429,9 @@ public class UserController {
             return "profile_update";
         }
 
-        /*
         currentUser.setFirstName(userProfileForm.getFirstName());
         currentUser.setLastName(userProfileForm.getLastName());
         currentUser.setMailAddress(userProfileForm.getEmail());
-        */
 
         if (!currentUser.getUsername().equals(userProfileForm.getUsername())) {
             currentUser.setUsername(userProfileForm.getUsername());
@@ -476,13 +472,6 @@ public class UserController {
                 .map(p -> p.getUserId())
                 .collect(Collectors.toSet());
         alreadyParticipatingUserIDs.add(project.getCreatorUser().getId());
-
-        // FIXME: disabled during study {
-        if (!currentUser.isAdministrator()) {
-            result.put("users", userDataList);
-            return result;
-        }
-        // }
 
         for (UserDbo user : foundUsers) {
             if (type.equals("projectInvitation") && alreadyParticipatingUserIDs.contains(user.getId())) {

@@ -32,7 +32,7 @@
                         <label for="firstName" class="control-label">First name</label>
                         <input id="firstName"
                                class="form-control"
-                               th:field="*{firstName}" readonly="readonly" />
+                               th:field="*{firstName}" />
                         <p class="error-message"
                            th:each="error: ${#fields.errors('firstName')}"
                            th:text="${error}">Validation error</p>
@@ -42,7 +42,7 @@
                         <label for="lastName" class="control-label">Last name</label>
                         <input id="lastName"
                                class="form-control"
-                               th:field="*{lastName}" readonly="readonly" />
+                               th:field="*{lastName}" />
                         <p class="error-message"
                            th:each="error : ${#fields.errors('lastName')}"
                            th:text="${error}">Validation error</p>
@@ -52,7 +52,7 @@
                         <label for="email" class="control-label">Email</label>
                         <input id="email"
                                class="form-control"
-                               th:field="*{email}" readonly="readonly" />
+                               th:field="*{email}" />
                         <p class="error-message"
                            th:each="error : ${#fields.errors('email')}"
                            th:text="${error}">Validation error</p>

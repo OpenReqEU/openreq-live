@@ -289,7 +289,6 @@ public class ProxyServiceController {
     }
 
     private CheckConsistencyRequest getCheckConsistencyRequestDto(ProjectDbo project) {
-        //FIXME projectstate
         Project projectDto = new Project(
                 Long.toString(project.getId()),
                 project.getName(),

@@ -42,7 +42,6 @@ public class StatisticsController {
             HttpServletRequest request, @PathVariable(value="projectID") Long projectID,
             Model model, Authentication authentication)
     {
-        // TODO: protect if project is not private!
         UserDbo currentUser = Utils.getCurrentUser(authentication, userRepository);
         ProjectDbo project = projectRepository.findOne(projectID);
 
@@ -122,7 +121,6 @@ public class StatisticsController {
         requirementMap.put(reqs.get(6).getId(), reqs.get(6));
         requirementMap.put(reqs.get(7).getId(), reqs.get(7));
 
-        //TODO: values are fixed!
         requirementUtilityMap.put(reqs.get(0).getId(), 22.0);
         requirementUtilityMap.put(reqs.get(1).getId(), 8.0);
         requirementUtilityMap.put(reqs.get(2).getId(), 12.0);
@@ -132,7 +130,6 @@ public class StatisticsController {
         requirementUtilityMap.put(reqs.get(6).getId(), 18.0);
         requirementUtilityMap.put(reqs.get(7).getId(), 10.0);
 
-        //TODO: values are fixed!
         requirementEffortMap.put(reqs.get(0).getId(), 200.0f);
         requirementEffortMap.put(reqs.get(1).getId(), 150.0f);
         requirementEffortMap.put(reqs.get(2).getId(), 400.0f);
@@ -175,7 +172,7 @@ public class StatisticsController {
             for (RequirementDbo requirement : rel.getRequirements()) {
                 sumOfUtilties += sortedRequirementsUtilitiesMap.get(requirement.getId());
             }
-            cumulativeRelevance += sumOfUtilties*relWeight; // TODO: consider the free capacity of a release in the future except the last release
+            cumulativeRelevance += sumOfUtilties*relWeight;
             System.out.println("Relevance for "+rel.getName()+"= "+cumulativeRelevance);
             cummulativeRelevanceOfReleases.add(cumulativeRelevance);
             relWeight -= 0.1;

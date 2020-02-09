@@ -632,7 +632,7 @@ public class ProjectController {
 
 				if (userParticipation == null) {
 					userParticipation = new ProjectUserParticipationDbo(project, currentUser);
-					userParticipation.setInvitedDate(new Date()); // FIXME: use date of guestUserPatricipation object...
+					userParticipation.setInvitedDate(new Date());
 					userParticipation.setAccepted(true);
 					//currentUser.addProjectUserParticipation(newUserParticipation);
 					project.addUserParticipation(userParticipation);
@@ -693,13 +693,7 @@ public class ProjectController {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, errorMessage);
         }
 
-        // FIXME: disabled during study {
-        return "redirect:/project/p/" + projectUniqueKey + "/manage";
-        // }
-
-        /*
         boolean isNewVibilityStatePrivate = visibilityState.equals("private");
-		ProjectDbo project = projectRepository.findOneByUniqueKey(projectUniqueKey);
 		project.setVisibilityPrivate(isNewVibilityStatePrivate);
 		project.setCreatorUser(isNewVibilityStatePrivate ? currentUser : null);
 		projectRepository.save(project);
@@ -734,7 +728,6 @@ public class ProjectController {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
 		}
 		return "redirect:/project/p/" + projectUniqueKey + "/manage";
-		*/
 	}
 
 	@ResponseBody
@@ -825,13 +818,6 @@ public class ProjectController {
 
 		List<UserDbo> foundUsers = userService.searchUser(query, query.contains("@"));
 		String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
-        // FIXME: disabled during study {
-		if (!currentUser.isAdministrator()) {
-			result.put("error", true);
-			result.put("errorMessage", "This feature has been temporarily disabled.");
-			return result;
-		}
-        // }
 
 		if (foundUsers.size() == 0) {
 			if (!emailService.isValidEmailAddress(query)) {
@@ -947,14 +933,6 @@ public class ProjectController {
             return result;
         }
 
-		// FIXME: disabled during study {
-		if (!currentUser.isAdministrator()) {
-			result.put("error", true);
-			result.put("errorMessage", "This feature has been temporarily disabled.");
-			return result;
-		}
-		// }
-
 		UserDbo creatorUser = project.getCreatorUser();
 		if ((creatorUser != null) && (creatorUser.getId() == userID)) {
 			result.put("error", true);
@@ -993,14 +971,6 @@ public class ProjectController {
             result.put("errorMessage", errorMessage);
             return result;
         }
-
-        // FIXME: disabled during study {
-        if (!currentUser.isAdministrator()) {
-            result.put("error", true);
-            result.put("errorMessage", "This feature has been temporarily disabled.");
-            return result;
-        }
-		// }
 
 		List<ProjectGuestUserParticipationDbo> guestUserParticipations = projectGuestUserParticipationRepository.findByProjectIdAndEmailAddress(projectID, emailAddress);
 		if (guestUserParticipations.size() == 0) {
@@ -1110,12 +1080,15 @@ public class ProjectController {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, errorMessage);
         }
 
-		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-		ProjectDbo project = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
+		ProjectDbo project;
+		Date now = new Date();
+        String currentYear = yearDateFormat.format(now);
 
 		try {
-	        Date projectStart = dateformat.parse("2019-01-01");
-	        Date projectEnd = dateformat.parse("2020-01-31");
+	        Date projectStart = dateFormat.parse(currentYear + "-01-01");
+	        Date projectEnd = dateFormat.parse((currentYear + 1) + "-01-31");
 	        project = new ProjectDbo(Utils.generateRandomProjectKey(projectRepository), "Sportswatch project",
                     "Some description.", projectStart, projectEnd, "/images/innosensr_logo.png",
                     (currentUser != null), currentUser);
@@ -1165,9 +1138,9 @@ public class ProjectController {
 			requirement7.setSocialPopularity(0.09f);
 			requirement8.setSocialPopularity(0.11f);
 
-            Date deadlineOfRelease1 = dateformat.parse("2019-03-31");
-            Date deadlineOfRelease2 = dateformat.parse("2019-04-15");
-            Date deadlineOfRelease3 = dateformat.parse("2020-04-30");
+            Date deadlineOfRelease1 = dateFormat.parse(currentYear + "-03-31");
+            Date deadlineOfRelease2 = dateFormat.parse(currentYear + "-04-15");
+            Date deadlineOfRelease3 = dateFormat.parse(currentYear + "-04-30");
 			ReleaseDbo release1 = new ReleaseDbo("Release 1", "", deadlineOfRelease1, 1400, project);
 			ReleaseDbo release2 = new ReleaseDbo("Release 2", "", deadlineOfRelease2, 900, project);
 			ReleaseDbo release3 = new ReleaseDbo("Release 3", "", deadlineOfRelease3, 500, project);
@@ -1378,11 +1351,6 @@ public class ProjectController {
                     ProjectUserParticipationDbo participation = new ProjectUserParticipationDbo(project, groupUser);
                     project.addUserParticipation(participation);
 
-                    // TODO FIXME change Email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // TODO FIXME change Email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // TODO FIXME change Email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // TODO FIXME change Email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // TODO FIXME change Email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     emails.add(new EmailService.EmailData(
                             //student.getEmail(),
                             "ralph.samer@student.tugraz.at",
@@ -1536,7 +1504,6 @@ public class ProjectController {
 
 		project.setVisible(false);
 		projectRepository.save(project);
-		// FIXME: Delete doesn't work correctly with Hibernate -> fix foreign keys/diagnosis!
 //		projectRepository.delete(projectID);
 		return "redirect:/project/list";
     }
