@@ -240,11 +240,11 @@ public class ProjectDbo {
 	}
 
 	public List<ReleaseDbo> getVisibleReleases() {
-		return  getReleases().stream().filter(x -> x.isVisible()).collect(Collectors.toList());
+		return  releases.stream().filter(x -> x.isVisible()).collect(Collectors.toList());
 	}
 
 	public List<RequirementDbo> getVisibleRequirements() {
-		return  getRequirements().stream().filter(x -> x.isVisible()).collect(Collectors.toList());
+		return  requirements.stream().filter(x -> x.isVisible()).collect(Collectors.toList());
 	}
 
 }

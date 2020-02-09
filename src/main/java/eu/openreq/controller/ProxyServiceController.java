@@ -283,9 +283,11 @@ public class ProxyServiceController {
             result.put("error", true);
             result.put("errorMessage", exception.getMessage());
         } catch (Exception exception) {
+            exception.printStackTrace();
             result.put("error", true);
             result.put("errorMessage", "Ups something unexpected has happened! Please try again!");
             result.put("helsinkiRequest", jsonReq);
+            result.put("exceptionClassName", exception.getClass().getSimpleName());
             result.put("exception", exception.getMessage());
         }
         return result;
