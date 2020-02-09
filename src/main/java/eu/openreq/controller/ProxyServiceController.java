@@ -362,6 +362,9 @@ public class ProxyServiceController {
                     release.getCapacity(),
                     release.getCreatedDate());
             for (RequirementDbo requirement : release.getRequirements()) {
+                if (!requirement.isVisible()) {
+                    continue;
+                }
                 requirementsPerRelease.add(Long.toString(requirement.getId()));
             }
             releaseDto.setRequirements(requirementsPerRelease);
