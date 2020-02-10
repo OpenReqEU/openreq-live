@@ -245,12 +245,16 @@ public class StatisticsController {
         Set<DependencyDbo> dependencies = new LinkedHashSet<>();
         Map<Long, String> requirementsTitleMap = new HashMap<>();
         Map<Long, String> requirementsDescriptionMap = new HashMap<>();
+        Map<Long, String> requirementsProjectSpecificIdTitleMap = new HashMap<>();
+        Map<Long, String> requirementsProjectSpecificIdDescriptionMap = new HashMap<>();
         for (RequirementDbo requirement : requirements) {
             if (!requirement.isVisible()) {
                 continue;
             }
             requirementsTitleMap.put(requirement.getId(), requirement.getTitle());
             requirementsDescriptionMap.put(requirement.getId(), requirement.getDescription());
+            requirementsProjectSpecificIdTitleMap.put(requirement.getProjectSpecificRequirementId(), requirement.getTitle());
+            requirementsProjectSpecificIdDescriptionMap.put(requirement.getProjectSpecificRequirementId(), requirement.getDescription());
             dependencies.addAll(requirement.getSourceDependencies());
             dependencies.addAll(requirement.getTargetDependencies());
         }
@@ -280,6 +284,8 @@ public class StatisticsController {
         model.addAttribute("projectSpecificRequirementsIdMap", projectSpecificRequirementsIdMap);
         model.addAttribute("requirementsTitleMap", requirementsTitleMap);
         model.addAttribute("requirementsDescriptionMap", requirementsDescriptionMap);
+        model.addAttribute("requirementsProjectSpecificIdTitleMap", requirementsProjectSpecificIdTitleMap);
+        model.addAttribute("requirementsProjectSpecificIdDescriptionMap", requirementsProjectSpecificIdDescriptionMap);
         model.addAttribute("dependenciesMap", dependenciesMap);
         return "statistics/graph_dependencies";
     }

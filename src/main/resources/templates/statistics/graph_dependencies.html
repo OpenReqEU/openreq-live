@@ -47,9 +47,11 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script type="text/javascript" th:inline="javascript">
         var requirementsTitleMapping = [[${requirementsTitleMap}]];
+        var requirementsProjectSpecificIdTitleMapping = [[${requirementsProjectSpecificIdTitleMap}]];
         var projectSpecificRequirementsIdMapping = [[${projectSpecificRequirementsIdMap}]];
         var requirementInteractions = {};
         var requirementsDescriptionMapping = [[${requirementsDescriptionMap}]];
+        var requirementsProjectSpecificIdDescriptionMapping = [[${requirementsProjectSpecificIdDescriptionMap}]];
         var dependencyMapping = [[${dependenciesMap}]];
 
         var chart = d3.chart.dependencyWheel()
@@ -148,8 +150,8 @@
                             break;
                         }
 
-                        requirementInteractions[requirementID] = changeCount;
                         var projectSpecificRequirementId = projectSpecificRequirementsIdMapping[requirementID];
+                        requirementInteractions[projectSpecificRequirementId] = changeCount;
                         models.push({
                             "model_name": "R" + projectSpecificRequirementId,
                             "field1": Math.max(changeCount["title"], 0.07),
@@ -204,7 +206,7 @@
                 .append("g")
                 .attr("class", "model_name")
                 .attr("transform", d => `translate(${xScale0(d.model_name)},0)`)
-                .attr("data-requirement-id", d => d.model_name.substr(1));
+                .attr("data-project-specific-requirement-id", d => d.model_name.substr(1));
 
             /* Add field1 bars */
             model_name.selectAll(".bar.field1")
@@ -260,14 +262,16 @@
                 .call(yAxis);
 
             $("g.model_name").each(function () {
-                var requirementID = $(this).attr("data-requirement-id");
-                console.log(requirementID);
+                var projectSpecificRequirementID = $(this).attr("data-project-specific-requirement-id");
+                console.log(projectSpecificRequirementID);
                 console.log(requirementsTitleMapping);
-                var title = "<div><b>" + requirementsTitleMapping[requirementID.toString()] + "</b></div>";
-                title += "<div>" + requirementsDescriptionMapping[requirementID.toString()] + "</div><br />";
-                title += "<div style='text-align:left;'><div>Changes of title: " + requirementInteractions[requirementID.toString()].title + "</div>";
-                title += "<div>Changes of description: " + requirementInteractions[requirementID.toString()].description + "</div>";
-                title += "<div>Changes of status: " + requirementInteractions[requirementID.toString()].status + "</div></div>";
+                console.log(requirementInteractions);
+                var interactions = requirementInteractions[projectSpecificRequirementID.toString()];
+                var title = "<div><b>" + requirementsProjectSpecificIdTitleMapping[projectSpecificRequirementID.toString()] + "</b></div>";
+                title += "<div>" + requirementsProjectSpecificIdDescriptionMapping[projectSpecificRequirementID.toString()] + "</div><br />";
+                title += "<div style='text-align:left;'><div>Changes of title: " + interactions.title + "</div>";
+                title += "<div>Changes of description: " + interactions.description + "</div>";
+                title += "<div>Changes of status: " + interactions.status + "</div></div>";
 
                 $(this)
                     .css("cursor", "help")
