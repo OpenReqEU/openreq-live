@@ -200,7 +200,8 @@
             console.log(models);
             var model_name = svg.selectAll(".model_name")
                 .data(models)
-                .enter().append("g")
+                .enter()
+                .append("g")
                 .attr("class", "model_name")
                 .attr("transform", d => `translate(${xScale0(d.model_name)},0)`)
                 .attr("data-requirement-id", d => d.model_name.substr(1));
@@ -260,11 +261,13 @@
 
             $("g.model_name").each(function () {
                 var requirementID = $(this).attr("data-requirement-id");
+                console.log(requirementID);
+                console.log(requirementsTitleMapping);
                 var title = "<div><b>" + requirementsTitleMapping[requirementID.toString()] + "</b></div>";
                 title += "<div>" + requirementsDescriptionMapping[requirementID.toString()] + "</div><br />";
-                title += "<div style='text-align:left;'><div>Changes of title: " + requirementInteractions[requirementID.toString()]["title"] + "</div>";
-                title += "<div>Changes of description: " + requirementInteractions[requirementID.toString()]["description"] + "</div>";
-                title += "<div>Changes of status: " + requirementInteractions[requirementID.toString()]["status"] + "</div></div>";
+                title += "<div style='text-align:left;'><div>Changes of title: " + requirementInteractions[requirementID.toString()].title + "</div>";
+                title += "<div>Changes of description: " + requirementInteractions[requirementID.toString()].description + "</div>";
+                title += "<div>Changes of status: " + requirementInteractions[requirementID.toString()].status + "</div></div>";
 
                 $(this)
                     .css("cursor", "help")
