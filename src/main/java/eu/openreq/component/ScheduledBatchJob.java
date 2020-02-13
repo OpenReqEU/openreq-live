@@ -164,15 +164,17 @@ public class ScheduledBatchJob {
             }
 
             String body = response.getBody();
+            String currentTime = dateTimeFormatter.format(LocalDateTime.now());
             System.out.println("[CRON] Batch Process Task :: Body: " + body);
-            System.out.println("[CRON] Batch Process Task :: Successfully completed - "
-                    + dateTimeFormatter.format(LocalDateTime.now()));
-            emailService.sendEmailAsync(
-                    "cpalomares@essi.upc.edu",
-                    "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
-                    "<b style='color:darkgreen;'>SUCCESSFULLY TRANSFERED!!</b><br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
-                    "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
-            );
+            System.out.println("[CRON] Batch Process Task :: Successfully completed - " + currentTime);
+            if (currentTime.startsWith("00:")) {
+                emailService.sendEmailAsync(
+                        "cpalomares@essi.upc.edu",
+                        "[OpenReq!Live] UPC Stakeholder Recommendation Cronjob",
+                        "<b style='color:darkgreen;'>SUCCESSFULLY TRANSFERED!!</b><br /><br />The following input was transfered to UPC's Stakeholder Recommendation Service:<br /><br /><code>" + jsonInString + "</code>",
+                        "SUCCESSFULLY TRANSFERED!!\n\n The following input was transfered to UPC's Stakeholder Recommendation Service:\n\n" + jsonInString
+                );
+            }
             return;
         } catch (Exception e) {
             System.out.println(e.getMessage());
